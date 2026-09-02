@@ -1,0 +1,57 @@
+# =========================
+# Bel-CMS Upload Security
+# =========================
+
+Options -Indexes
+Options -ExecCGI
+
+# Désactive PHP
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+# =========================
+# Bloquer scripts dangereux
+# =========================
+
+<FilesMatch "\.(php|php[0-9]?|phtml|phar|cgi|pl|py|sh|bash|inc)$">
+    Require all denied
+</FilesMatch>
+
+RemoveHandler .php .php5 .php7 .php8 .phtml .phar
+RemoveType .php .php5 .php7 .php8 .phtml .phar
+
+AddType text/plain .php .php5 .php7 .php8 .phtml .phar .sh .cgi .pl .py
+
+# =========================
+# Headers sécurité
+# =========================
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# =========================
+# Bloquer fichiers sensibles
+# =========================
+
+<FilesMatch "^(\.env|composer\.(json|lock)|package\.json|yarn\.lock|\.git)">
+    Require all denied
+</FilesMatch>
+
+# =========================
+# Cache images
+# =========================
+
+<IfModule mod_expires.c>
+
+    ExpiresActive On
+
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+
+</IfModule>
