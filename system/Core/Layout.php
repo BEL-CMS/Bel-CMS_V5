@@ -10,19 +10,28 @@
 */
 
 declare(strict_types=1);
+namespace BelCMS\Core;
 
 if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
 	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
 endif;
 
-return [
-    'driver'   => 'mysql',
-    'host'     => 'localhost',
-    'port'     => 3306,
-    'database' => 'belcms_v5',
-    'username' => 'root',
-    'password' => '',
-    'prefix'   => 'belcms_',
-    'charset'  => 'utf8mb4',
-];
+final class Layout
+{
+    private Assets $assets;
+
+    public function __construct(
+        Assets $assets
+    ) {
+        $this->assets = $assets;
+    }
+
+    public function render(string $content): void
+    {
+        $title = 'Bel-CMS V5';
+
+        require dirname(__DIR__, 2)
+            . '/themes/default/layout.php';
+    }
+}

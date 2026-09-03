@@ -16,13 +16,18 @@ if (!defined('CHECK_INDEX')):
 	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
 endif;
 
-return [
-    'driver'   => 'mysql',
-    'host'     => 'localhost',
-    'port'     => 3306,
-    'database' => 'belcms_v5',
-    'username' => 'root',
-    'password' => '',
-    'prefix'   => 'belcms_',
-    'charset'  => 'utf8mb4',
+$config = require __DIR__ . '/database.php';
+$prefix = $config['prefix'] ?? '';
+
+$tables = [
+    'TABLE_NEWS'               => $prefix . 'news',
+    'TABLE_NEWS_CAT'           => $prefix . 'news_cat',
 ];
+
+foreach ($tables as $name => $value) {
+    if (!defined($name)) {
+        define($name, $value);
+    }
+}
+
+return $tables;
