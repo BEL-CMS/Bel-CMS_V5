@@ -36,7 +36,7 @@ if (is_file(__DIR__.'/INSTALL/index.php')) {          #
 #######################################################
 define('CHECK_INDEX', true);                          #
 #######################################################
-require_once __DIR__ . '/system/debug.php';
+require_once __DIR__ . '/system/helpers.php';
 require_once __DIR__ . '/system/common.php';
 require_once __DIR__ . '/system/Autoloader.php';
 #######################################################
