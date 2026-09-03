@@ -11,11 +11,9 @@
 
 declare(strict_types=1);
 
-use BelCMS\Modules\News\Controller;
+use BelCMS\Modules\Pages\Controller;
 
 return [
-    'GET /' => [Controller::class, 'index'],
-    'GET /news' => [Controller::class, 'index'],
-    'GET /news/categorie/{category}' => [Controller::class, 'category'],
-    'GET /news/{rewrite}' => [Controller::class, 'show'],
+    'GET /pages' => [Controller::class, 'index'],
+    'GET /pages/categorie/{category}' => [Controller::class, 'category'],
 ];

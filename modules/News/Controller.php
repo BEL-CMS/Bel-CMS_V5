@@ -30,30 +30,29 @@ final class Controller
         $this->view = $view;
     }
 
-public function index(): void
-{
-    $news = $this->model->getNews();
+    public function index(): void
+    {
+        $news = $this->model->getNews();
 
-    $categories = $this->model->getCategories();
+        $categories = $this->model->getCategories();
 
-    foreach ($news as $article) {
+        foreach ($news as $article) {
+            $text = strip_tags($article->content);
 
-        $text = strip_tags($article->content);
+            $article->excerpt = mb_strlen($text) > 250
+                ? mb_substr($text, 0, 250) . '...'
+                : $text;
+        }
 
-        $article->excerpt = mb_strlen($text) > 250
-            ? mb_substr($text, 0, 250) . '...'
-            : $text;
+        echo $this->view->render(
+            'News',
+            'index',
+            [
+                'news' => $news,
+                'categories' => $categories
+            ]
+        );
     }
-
-    echo $this->view->render(
-        'News',
-        'index',
-        [
-            'news' => $news,
-            'categories' => $categories
-        ]
-    );
-}
 
     public function show(string $rewrite): void
     {

@@ -20,8 +20,10 @@ $config = require __DIR__ . '/database.php';
 $prefix = $config['prefix'] ?? '';
 
 $tables = [
-    'TABLE_NEWS'               => $prefix . 'news',
-    'TABLE_NEWS_CAT'           => $prefix . 'news_cat',
+    'TABLE_NEWS'              => $prefix . 'news',
+    'TABLE_NEWS_CAT'          => $prefix . 'news_cat',
+    'TABLE_PAGES'             => $prefix . 'pages',
+    'TABLE_PAGES_CONTENT'     => $prefix . 'pages_content',
 ];
 
 foreach ($tables as $name => $value) {

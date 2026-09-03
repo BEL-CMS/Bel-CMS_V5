@@ -25,20 +25,20 @@ use RuntimeException;
 class BDD
 {
     private PDO $db;
-    private string $table = '';
-    private string $fields = '*';
-    private string $where = '';
+    private string $table   = '';
+    private string $fields  = '*';
+    private string $where   =  '';
     private string $orderby = '';
-    private string $limit = '';
-    private string $join = '';
+    private string $limit   = '';
+    private string $join    = '';
 
-    public mixed $data = null;
-    public int $rowCount = 0;
+    public mixed $data      = null;
+    public int $rowCount    = 0;
     public int|string|null $lastId = null;
-    public string $update = '';
+    public string $update   = '';
 
-    private bool $isObject = true;
-    private array $sqlInsert = [];
+    private bool $isObject    = true;
+    private array $sqlInsert  = [];
     private array $parameters = [];
     private string $likeValue = '';
 

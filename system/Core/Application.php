@@ -36,7 +36,6 @@ class Application
          * -------------------------------------------------
          */
         $this->container = new Container();
-
         /*
          * -------------------------------------------------
          * Configuration
@@ -45,56 +44,47 @@ class Application
         $this->config = new Config(
             dirname(__DIR__, 2) . '/config/app.php'
         );
-
         /*
          * -------------------------------------------------
          * Tables
          * -------------------------------------------------
          */
         require_once dirname(__DIR__, 2) . '/config/tables.php';
-
         /*
          * -------------------------------------------------
          * Base de données
          * -------------------------------------------------
          */
         $this->db = new BDD();
-
         /*
          * -------------------------------------------------
          * Moteur de vues
          * -------------------------------------------------
          */
         $this->view = new View();
-
         /*
          * -------------------------------------------------
          * Gestion des assets
          * -------------------------------------------------
          */
         $this->assets = new Assets();
-
         /*
          * -------------------------------------------------
          * Enregistrement des services
          * -------------------------------------------------
          */
-
         $this->container->set(
             BDD::class,
             $this->db
         );
-
         $this->container->set(
             View::class,
             $this->view
         );
-
         $this->container->set(
             Assets::class,
             $this->assets
         );
-
         $this->assets->pluginCss('fontawesome/all.min.css');
         $this->assets->pluginJs('jquery-4.0.0.min.js');
         /*
@@ -105,7 +95,6 @@ class Application
         $this->router = new Router(
             $this->container
         );
-
         /*
          * -------------------------------------------------
          * Gestionnaire de modules
@@ -115,12 +104,10 @@ class Application
             $this->router,
             $this->assets
         );
-
         /*
          * Chargement automatique des modules
          */
         $this->modules->loadAll();
-
         /*
          * -------------------------------------------------
          * Layout
@@ -130,7 +117,6 @@ class Application
             $this->assets
         );
     }
-
     /**
      * Retourne le routeur
      */
@@ -138,7 +124,6 @@ class Application
     {
         return $this->router;
     }
-
     /**
      * Retourne la configuration
      */
@@ -146,7 +131,6 @@ class Application
     {
         return $this->config;
     }
-
     /**
      * Retourne la base de données
      */
@@ -154,7 +138,6 @@ class Application
     {
         return $this->db;
     }
-
     /**
      * Retourne le gestionnaire de modules
      */
@@ -162,7 +145,6 @@ class Application
     {
         return $this->modules;
     }
-
     /**
      * Retourne le moteur de vues
      */
@@ -170,7 +152,6 @@ class Application
     {
         return $this->view;
     }
-
     /**
      * Retourne la gestion des assets
      */
@@ -178,7 +159,6 @@ class Application
     {
         return $this->assets;
     }
-
     /**
      * Retourne le layout
      */
@@ -186,7 +166,6 @@ class Application
     {
         return $this->layout;
     }
-
     /**
      * Retourne le Container
      */
@@ -194,7 +173,6 @@ class Application
     {
         return $this->container;
     }
-
     /**
      * Lance l'application
      */
@@ -202,7 +180,6 @@ class Application
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
-
         /*
          * Capture du contenu du contrôleur
          */
@@ -214,7 +191,6 @@ class Application
         );
 
         $content = ob_get_clean();
-
         /*
          * Envoi du contenu vers le layout
          */

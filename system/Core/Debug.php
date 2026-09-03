@@ -44,7 +44,6 @@ final class Debug
             exit;
         }
     }
-
     /**
      * Affichage récursif
      */
@@ -83,7 +82,6 @@ final class Debug
             $isCli
         );
     }
-
     /**
      * Retourne le type lisible
      */
@@ -103,7 +101,6 @@ final class Debug
             default           => ucfirst(gettype($data)),
         };
     }
-
     /**
      * Affiche un tableau ou objet
      */
@@ -118,7 +115,6 @@ final class Debug
         $values = is_object($data)
             ? get_object_vars($data)
             : $data;
-
         /*
          * Mode terminal
          */
@@ -150,7 +146,6 @@ final class Debug
 
             return;
         }
-
         /*
          * Génère un identifiant unique
          */
@@ -164,7 +159,6 @@ final class Debug
             0,
             8
         );
-
         $display = $collapse
             ? 'none'
             : 'inline';
@@ -237,7 +231,6 @@ final class Debug
 
         echo '</div>';
     }
-
     /**
      * Affiche une valeur simple
      */
@@ -311,7 +304,6 @@ final class Debug
             . $value
             . '</span>';
     }
-
     /**
      * JavaScript de dépliage
      */

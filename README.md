@@ -1,6 +1,6 @@
 # 🚀 Bel-CMS v5.0
 
-[![Apache-2.0 license](https://img.shields.io/badge/License-MIT-yellow.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![PHP Version](https://img.shields.io/badge/PHP-8.4%2B-777BB4.svg)](https://www.php.net/)
 [![Website](https://img.shields.io/badge/Website-bel--cms.dev-blue)](https://www.bel-cms.dev)
 
@@ -34,5 +34,5 @@ Pour faire tourner **Bel-CMS v5**, votre serveur doit répondre aux exigences su
 
 ### 1. Cloner le dépôt
 ```bash
-git clone [https://github.com/BEL-CMS/Bel-CMS_V5](https://github.com/BEL-CMS/Bel-CMS_V5)
+git clone [https://github.com/BEL-CMS/Bel-CMS_V5](hhttps://github.com/BEL-CMS/Bel-CMS_V5/archive/refs/heads/main.zip)
 cd bel-cms

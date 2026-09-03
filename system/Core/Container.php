@@ -22,7 +22,6 @@ use RuntimeException;
 final class Container
 {
     private array $instances = [];
-
     /**
      * Enregistre une instance
      */
@@ -32,7 +31,6 @@ final class Container
     ): void {
         $this->instances[$name] = $instance;
     }
-
     /**
      * Récupère une instance
      */
@@ -46,7 +44,6 @@ final class Container
 
         return $this->instances[$name];
     }
-
     /**
      * Vérifie si un service existe
      */

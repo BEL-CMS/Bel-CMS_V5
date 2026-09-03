@@ -21,7 +21,6 @@ final class Assets
 {
     private array $css = [];
     private array $js = [];
-
     /**
      * Ajoute un fichier CSS
      */
@@ -31,20 +30,18 @@ final class Assets
             $this->css[] = $file;
         }
     }
-
     /**
-     * Ajoute un fichier JavaScript
-     */
+    * Ajoute un fichier JavaScript
+    */
     public function js(string $file): void
     {
         if (!in_array($file, $this->js, true)) {
             $this->js[] = $file;
         }
     }
-
     /**
      * Ajoute le CSS d'un module
-     */
+    */
     public function moduleCss(string $module): void
     {
         $file = '/modules/'
@@ -55,10 +52,9 @@ final class Assets
 
         $this->css($file);
     }
-
     /**
-     * Ajoute le JavaScript d'un module
-     */
+    * Ajoute le JavaScript d'un module
+    */
     public function moduleJs(string $module): void
     {
         $file = '/modules/'
@@ -69,7 +65,6 @@ final class Assets
 
         $this->js($file);
     }
-
     /**
      * Ajoute un plugin CSS
      *
@@ -83,8 +78,7 @@ final class Assets
             . ltrim($file, '/')
         );
     }
-
-    /**
+     /**
      * Ajoute un plugin JavaScript
      *
      * Exemple :
@@ -92,12 +86,8 @@ final class Assets
      */
     public function pluginJs(string $file): void
     {
-        $this->js(
-            '/assets/plugins/'
-            . ltrim($file, '/')
-        );
+        $this->js('/assets/plugins/'. ltrim($file, '/'));
     }
-
     /**
      * Retourne les fichiers CSS
      */
@@ -105,7 +95,6 @@ final class Assets
     {
         return $this->css;
     }
-
     /**
      * Retourne les fichiers JavaScript
      */
@@ -113,7 +102,6 @@ final class Assets
     {
         return $this->js;
     }
-
     /**
      * Génère les balises CSS
      */
@@ -131,7 +119,6 @@ final class Assets
 
         return $html;
     }
-
     /**
      * Génère les balises JavaScript
      */
