@@ -9,14 +9,12 @@ use RuntimeException;
 final class Language
 {
     private string $language;
-
     private array $translations = [];
 
     public function __construct(string $language = 'fr')
     {
         $this->setLanguage($language);
     }
-
     /**
      * Définit la langue courante
      */
@@ -30,7 +28,6 @@ final class Language
 
         $this->language = $language;
     }
-
     /**
      * Retourne la langue courante
      */
@@ -38,7 +35,6 @@ final class Language
     {
         return $this->language;
     }
-
     /**
      * Charge un fichier de langue
      */
@@ -49,16 +45,13 @@ final class Language
                 'Fichier de langue introuvable : ' . $file
             );
         }
-
         $translations = require $file;
-
         if (!is_array($translations)) {
             throw new RuntimeException(
                 'Le fichier de langue doit retourner un tableau : '
                 . $file
             );
         }
-
         /*
          * Les nouvelles traductions écrasent
          * une clé existante.
@@ -68,7 +61,6 @@ final class Language
             $translations
         );
     }
-
     /**
      * Charge les langues globales
      */
@@ -85,7 +77,6 @@ final class Language
 
         $this->load($file);
     }
-
     /**
      * Charge les langues d'un module
      */
@@ -104,24 +95,17 @@ final class Language
 
         $this->load($file);
     }
-
     /**
      * Retourne une traduction
      */
-    public function get(
-        string $key,
-        ?string $default = null
-    ): string {
-        if (
-            array_key_exists($key, $this->translations)
-            && is_string($this->translations[$key])
-        ) {
+    public function get(string $key, ?string $default = null): string 
+    {
+        if (array_key_exists($key, $this->translations) && is_string($this->translations[$key])) {
             return $this->translations[$key];
         }
 
         return $default ?? $key;
     }
-
     /**
      * Vérifie si une traduction existe
      */
@@ -132,7 +116,6 @@ final class Language
             $this->translations
         );
     }
-
     /**
      * Retourne toutes les traductions
      */
@@ -140,7 +123,6 @@ final class Language
     {
         return $this->translations;
     }
-
     /**
      * Réinitialise les traductions
      */

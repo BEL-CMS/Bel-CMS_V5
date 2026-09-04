@@ -8,35 +8,33 @@
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
 */
-
 declare(strict_types=1);
 ?>
-
-<div class="news-page">
-    <header class="news-header">
+<div class="belcms_module_news_page">
+    <header class="belcms_module_news_header">
         <h1>Actualités : <?= htmlspecialchars($categoryName) ?></h1>
         <p>Les actualités de cette catégorie.</p>
     </header>
 
     <?php if (empty($news)): ?>
-        <div class="news-empty">Aucune actualité dans cette catégorie.</div>
+        <div class="belcms_module_news_empty">Aucune actualité dans cette catégorie.</div>
     <?php else: ?>
-        <div class="news-list">
+        <div class="belcms_module_news_list">
             <?php foreach ($news as $article): ?>
-                <article class="news-card">
+                <article class="belcms_module_news_card">
                     <?php if (!empty($article->img) && $article->img !== '/uploads/news/UPLOAD_NONE'): ?>
-                        <div class="news-image">
+                        <div class="belcms_module_news_image">
                             <img src="<?= htmlspecialchars($article->img) ?>" alt="<?= htmlspecialchars($article->name) ?>">
                         </div>
                     <?php endif; ?>
-                    <div class="news-content">
+                    <div class="belcms_module_news_content">
                         <h2><?= htmlspecialchars($article->name) ?></h2>
-                        <div class="news-meta">
+                        <div class="belcms_module_news_meta">
                             <span><?= htmlspecialchars($article->date_create) ?></span>
                             <span><?= (int) $article->view ?> vues</span>
                         </div>
-                        <div class="news-excerpt"><?= htmlspecialchars($article->excerpt) ?></div>
-                        <a href="/news/<?= urlencode($article->rewrite_name) ?>" class="news-link">Lire la suite</a>
+                        <div class="belcms_module_news_excerpt"><?= htmlspecialchars($article->excerpt) ?></div>
+                        <a href="/news/<?= urlencode($article->rewrite_name) ?>" class="belcms_module_news_link">Lire la suite</a>
                     </div>
                 </article>
             <?php endforeach; ?>

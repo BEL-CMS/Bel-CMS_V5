@@ -33,9 +33,14 @@ final class Controller
 
     public function index(): void
     {
+        $pages = $this->model->getPages();
+
         echo $this->view->render(
             'Pages',
             'index',
-            []);
+            [
+                'pages' => $pages
+            ]
+        );
     }
 }

@@ -37,7 +37,6 @@ final class Application
          * -------------------------------------------------
          */
         $this->container = new Container();
-
         /*
          * -------------------------------------------------
          * Configuration
@@ -46,52 +45,52 @@ final class Application
         $this->config = new Config(
             dirname(__DIR__, 2) . '/config/app.php'
         );
-
         /*
          * -------------------------------------------------
          * Tables
          * -------------------------------------------------
          */
         require_once dirname(__DIR__, 2) . '/config/tables.php';
-
         /*
          * -------------------------------------------------
          * Langue
          * -------------------------------------------------
          */
         $this->language = new Language('fr');
-
         /*
          * Chargement de la langue globale
          */
         $this->language->loadGlobal();
-
         /*
          * Disponible pour la fonction __()
          */
         $GLOBALS['belcms_language'] = $this->language;
-
         /*
          * -------------------------------------------------
          * Base de données
          * -------------------------------------------------
          */
         $this->db = new BDD();
-
         /*
          * -------------------------------------------------
          * Moteur de vues
          * -------------------------------------------------
          */
         $this->view = new View();
-
         /*
          * -------------------------------------------------
          * Gestion des assets
          * -------------------------------------------------
          */
         $this->assets = new Assets();
-
+        /*
+        * -------------------------------------------------
+        * Assets globaux Bel-CMS
+        * -------------------------------------------------
+        */
+        $this->assets->css('/assets/belcms.css');
+        $this->assets->js('/assets/plugins/jquery-4.0.0.min.js');
+        $this->assets->js('/assets/belcms.js');
         /*
          * -------------------------------------------------
          * Enregistrement des services
@@ -116,7 +115,6 @@ final class Application
             Language::class,
             $this->language
         );
-
         /*
          * -------------------------------------------------
          * Routeur
@@ -125,7 +123,6 @@ final class Application
         $this->router = new Router(
             $this->container
         );
-
         /*
          * -------------------------------------------------
          * Gestionnaire de modules
@@ -136,12 +133,10 @@ final class Application
             $this->assets,
             $this->language
         );
-
         /*
          * Chargement automatique des modules
          */
         $this->modules->loadAll();
-
         /*
          * -------------------------------------------------
          * Layout
@@ -151,7 +146,6 @@ final class Application
             $this->assets
         );
     }
-
     /**
      * Retourne le routeur
      */
@@ -159,7 +153,6 @@ final class Application
     {
         return $this->router;
     }
-
     /**
      * Retourne la configuration
      */
@@ -167,7 +160,6 @@ final class Application
     {
         return $this->config;
     }
-
     /**
      * Retourne la base de données
      */
@@ -175,7 +167,6 @@ final class Application
     {
         return $this->db;
     }
-
     /**
      * Retourne les modules
      */
@@ -183,7 +174,6 @@ final class Application
     {
         return $this->modules;
     }
-
     /**
      * Retourne le moteur de vues
      */
@@ -191,7 +181,6 @@ final class Application
     {
         return $this->view;
     }
-
     /**
      * Retourne les assets
      */
@@ -199,7 +188,6 @@ final class Application
     {
         return $this->assets;
     }
-
     /**
      * Retourne le gestionnaire de langues
      */
@@ -207,7 +195,6 @@ final class Application
     {
         return $this->language;
     }
-
     /**
      * Retourne le layout
      */
@@ -215,7 +202,6 @@ final class Application
     {
         return $this->layout;
     }
-
     /**
      * Retourne le Container
      */
@@ -223,7 +209,6 @@ final class Application
     {
         return $this->container;
     }
-
     /**
      * Lance l'application
      */
@@ -231,7 +216,6 @@ final class Application
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
-
         /*
          * Capture du contenu généré
          * par le contrôleur

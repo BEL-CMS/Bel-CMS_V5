@@ -8,15 +8,13 @@
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
 */
-
 declare(strict_types=1);
 ?>
-
-<article class="news-single">
-    <header class="news-header">
+<article class="belcms_module_news_single">
+    <header class="belcms_module_news_header">
         <h1><?= htmlspecialchars($article->name) ?></h1>
 
-        <div class="news-meta">
+        <div class="belcms_module_news_meta">
             <span><?= htmlspecialchars($article->date_create) ?></span>
 
             <?php if (!empty($article->author)): ?>
@@ -32,32 +30,29 @@ declare(strict_types=1);
     </header>
 
     <?php if (!empty($article->img) && $article->img !== '/uploads/news/UPLOAD_NONE'): ?>
-        <div class="news-image">
-            <img
-                src="<?= htmlspecialchars($article->img) ?>"
-                alt="<?= htmlspecialchars($article->name) ?>"
-            >
+        <div class="belcms_module_news_image">
+            <img src="<?= htmlspecialchars($article->img) ?>" alt="<?= htmlspecialchars($article->name) ?>">
         </div>
     <?php endif; ?>
 
-    <div class="news-article-content">
+    <div class="belcms_module_news_article-content">
         <?= $article->content ?>
     </div>
 
     <?php if (!empty($article->additionalcontent)): ?>
-        <div class="news-additional-content">
+        <div class="belcms_module_news_additional-content">
             <?= $article->additionalcontent ?>
         </div>
     <?php endif; ?>
 
     <?php if (!empty($article->tags)): ?>
-        <div class="news-tags">
+        <div class="belcms_module_news_tags">
             <strong>Tags :</strong>
             <?= htmlspecialchars($article->tags) ?>
         </div>
     <?php endif; ?>
 
-    <div class="news-footer">
-        <a href="/news" class="news-link">← Retour aux actualités</a>
+    <div class="belcms_module_news_footer">
+        <a href="/news" class="belcms_module_news_link">← Retour aux actualités</a>
     </div>
 </article>

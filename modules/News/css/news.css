@@ -1,15 +1,15 @@
-.news-page {
+.belcms_module_news_page {
     width: min(1200px, calc(100% - 40px));
     margin: 40px auto;
 }
 
-.news-header {
+.belcms_module_news_header {
     position: relative;
     margin-bottom: 35px;
     padding-bottom: 18px;
 }
 
-.news-header::after {
+.belcms_module_news_header::after {
     content: '';
     position: absolute;
     left: 0;
@@ -21,23 +21,23 @@
     box-shadow: 0 0 8px rgba(33, 150, 243, 0.8), 0 0 18px rgba(33, 150, 243, 0.4);
 }
 
-.news-header h1 {
+.belcms_module_news_header h1 {
     margin: 0;
     font-size: 34px;
     font-weight: 700;
 }
 
-.news-header p {
+.belcms_module_news_header p {
     margin: 8px 0 0;
     color: #8fa4b8;
 }
 
-.news-list {
+.belcms_module_news_list {
     display: grid;
     gap: 25px;
 }
 
-.news-card {
+.belcms_module_news_card {
     position: relative;
     display: flex;
     overflow: hidden;
@@ -48,19 +48,19 @@
     transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.news-card:hover {
+.belcms_module_news_card:hover {
     transform: translateY(-4px);
     border-color: rgba(33, 150, 243, 0.55);
     box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25), 0 0 25px rgba(33, 150, 243, 0.08);
 }
 
-.news-card .news-image {
+.belcms_module_news_card .belcms_module_news_image {
     flex: 0 0 280px;
     overflow: hidden;
     background: #07111f;
 }
 
-.news-card .news-image img {
+.belcms_module_news_card .belcms_module_news_image img {
     display: block;
     width: 100%;
     height: 100%;
@@ -69,22 +69,22 @@
     transition: transform 0.5s ease;
 }
 
-.news-card:hover .news-image img {
+.belcms_module_news_card:hover .belcms_module_news_image img {
     transform: scale(1.05);
 }
 
-.news-content {
+.belcms_module_news_content {
     flex: 1;
     padding: 25px;
 }
 
-.news-content h2 {
+.belcms_module_news_content h2 {
     margin: 0 0 12px;
     font-size: 23px;
     line-height: 1.3;
 }
 
-.news-meta {
+.belcms_module_news_meta {
     display: flex;
     flex-wrap: wrap;
     gap: 18px;
@@ -93,13 +93,13 @@
     font-size: 13px;
 }
 
-.news-excerpt {
+.belcms_module_news_excerpt {
     margin-bottom: 22px;
     color: #c5d1dc;
     line-height: 1.7;
 }
 
-.news-link {
+.belcms_module_news_link {
     display: inline-flex;
     align-items: center;
     padding: 9px 16px;
@@ -110,13 +110,13 @@
     transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.news-link:hover {
+.belcms_module_news_link:hover {
     border-color: #2196f3;
     background: rgba(33, 150, 243, 0.1);
     box-shadow: 0 0 15px rgba(33, 150, 243, 0.15);
 }
 
-.news-single {
+.belcms_module_news_single {
     width: min(1200px, calc(100% - 40px));
     margin: 40px auto;
     padding: 35px;
@@ -126,7 +126,7 @@
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
 }
 
-.news-single .news-image {
+.belcms_module_news_single .belcms_module_news_image {
     width: 100%;
     max-width: 900px;
     margin: 0 auto 30px;
@@ -134,27 +134,27 @@
     border-radius: 12px;
 }
 
-.news-single .news-image img {
+.belcms_module_news_single .belcms_module_news_image img {
     display: block;
     width: 100%;
     height: auto;
 }
 
-.news-article-content {
+.belcms_module_news_article-content {
     line-height: 1.8;
     color: #d5dee7;
 }
 
-.news-article-content img {
+.belcms_module_news_article-content img {
     max-width: 100%;
     height: auto;
 }
 
-.news-article-content a {
+.belcms_module_news_article-content a {
     color: #42a5f5;
 }
 
-.news-additional-content {
+.belcms_module_news_additional-content {
     margin-top: 25px;
     padding-top: 25px;
     border-top: 1px solid rgba(33, 150, 243, 0.12);
@@ -162,7 +162,7 @@
     line-height: 1.8;
 }
 
-.news-tags {
+.belcms_module_news_tags {
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -170,13 +170,13 @@
     font-size: 14px;
 }
 
-.news-footer {
+.belcms_module_news_footer {
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.news-pagination {
+.belcms_module_news_pagination {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -185,7 +185,7 @@
     margin-top: 35px;
 }
 
-.news-pagination-link {
+.belcms_module_news_pagination-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -199,14 +199,14 @@
     transition: 0.25s ease;
 }
 
-.news-pagination-link:hover,
-.news-pagination-link.active {
+.belcms_module_news_pagination-link:hover,
+.belcms_module_news_pagination-link.active {
     border-color: #2196f3;
     background: rgba(33, 150, 243, 0.12);
     box-shadow: 0 0 12px rgba(33, 150, 243, 0.15);
 }
 
-.news-empty {
+.belcms_module_news_empty {
     padding: 45px;
     border: 1px dashed rgba(33, 150, 243, 0.3);
     border-radius: 12px;
@@ -215,36 +215,36 @@
 }
 
 @media (max-width: 768px) {
-    .news-page,
-    .news-single {
+    .belcms_module_news_page,
+    .belcms_module_news_single {
         width: calc(100% - 25px);
         margin: 25px auto;
     }
 
-    .news-card {
+    .belcms_module_news_card {
         display: block;
     }
 
-    .news-card .news-image {
+    .belcms_module_news_card .belcms_module_news_image {
         width: 100%;
     }
 
-    .news-card .news-image img {
+    .belcms_module_news_card .belcms_module_news_image img {
         height: 220px;
     }
 
-    .news-content,
-    .news-single {
+    .belcms_module_news_content,
+    .belcms_module_news_single {
         padding: 20px;
     }
 
-    .news-header h1 {
+    .belcms_module_news_header h1 {
         font-size: 28px;
     }
 }
 
 
-.news-categories {
+.belcms_module_news_categories {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
@@ -252,7 +252,7 @@
     margin-bottom: 30px;
 }
 
-.news-category {
+.belcms_module_news_category {
     display: inline-flex;
     align-items: center;
 
@@ -271,8 +271,8 @@
         box-shadow 0.25s ease;
 }
 
-.news-category:hover,
-.news-category.active {
+.belcms_module_news_category:hover,
+.belcms_module_news_category.active {
     color: #e8f1fa;
 
     border-color: #2196f3;

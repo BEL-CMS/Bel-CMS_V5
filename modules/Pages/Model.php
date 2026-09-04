@@ -21,5 +21,16 @@ endif;
 
 final class Model
 {
-
+	public function getPages(): array
+	{
+		$bdd = new BDD();
+		$bdd->table('TABLE_PAGES');
+        $bdd->fields(['name','publish_date','id_page','description','author','access']);
+        $bdd->orderby([
+            ['name' => 'name', 'type' => 'DESC']
+        ]);
+        $bdd->limit(10);
+        $bdd->queryAll();
+        return $bdd->data;
+	}
 }

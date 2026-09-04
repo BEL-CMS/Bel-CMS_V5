@@ -12,6 +12,8 @@
 declare(strict_types=1);
 
 namespace BelCMS\system;
+use \IntlDateFormatter as IntlDateFormatter;
+use \DateTime as DateTime;
 
 if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
@@ -45,17 +47,7 @@ final class Common
             return date('Y-m-d');
         }
 
-        if ($_SESSION['CONFIG']['CMS_WEBSITE_LANG'] == constant('FRENCH')) {
-            $lg = 'fr_FR';
-        } else if ($_SESSION['CONFIG']['CMS_WEBSITE_LANG'] == constant('ENGLISH')) {
-            $lg = 'en_US';
-        } else if ($_SESSION['CONFIG']['CMS_WEBSITE_LANG'] == constant('NETHERLANDS')) {
-            $lg = 'nl_NL';
-        } else if ($_SESSION['CONFIG']['CMS_WEBSITE_LANG'] == constant('DEUTCH')) {
-            $lg = 'de_DE';
-        } else {
-            $lg = 'fr_FR';
-        }
+        $lg = 'fr_FR';
 
         $d    = strtoupper($d); $t = strtoupper($t);
         $date = str_replace('/', '-', $date);

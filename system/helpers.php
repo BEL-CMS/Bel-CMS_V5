@@ -12,20 +12,32 @@
 declare(strict_types=1);
 
 use BelCMS\Core\Debug;
+use BelCMS\Core\Language;
 
 if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
 	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
 endif;
 
-function debug(
-    mixed $data,
-    bool $exitAfter = true,
-    bool $collapse = false
-): void {
-    Debug::dump(
-        $data,
-        $exitAfter,
-        $collapse
+function debug(mixed $data, bool $exitAfter = true, bool $collapse = false): void 
+{
+    Debug::dump($data, $exitAfter, $collapse);
+}
+
+function __(string $key, ?string $default = null): string 
+{
+    if (!isset($GLOBALS['belcms_language'])) {
+        return $default ?? $key;
+    }
+
+    $language = $GLOBALS['belcms_language'];
+
+    if (!$language instanceof Language) {
+        return $default ?? $key;
+    }
+
+    return $language->get(
+        $key,
+        $default
     );
 }

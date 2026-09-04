@@ -8,7 +8,6 @@
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
 */
-
 declare(strict_types=1);
 
 return [

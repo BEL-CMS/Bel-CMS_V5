@@ -1,0 +1,15 @@
+@import url(belcms.notification.css);
+code, pre {
+	word-wrap:break-word !important;
+}
+.belcms_text_justify {
+	text-align: justify !important;
+}
+.belcms_upper_text {
+	text-transform: uppercase !important;
+}
+.belcms_width_center {
+	width: 100%;
+	text-align: center;
+	margin: auto;
+}
