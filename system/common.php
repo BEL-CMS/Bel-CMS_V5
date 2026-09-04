@@ -11,6 +11,8 @@
 
 declare(strict_types=1);
 
+namespace BelCMS\system;
+
 if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
 	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
@@ -292,5 +294,77 @@ final class Common
         }
 
         return $clean($data);
+    }
+
+    public static function GetMaximumFileUploadSize()
+    {
+        return min(self::ConvertPHPSizeToBytes(ini_get('post_max_size')), self::ConvertPHPSizeToBytes(ini_get('upload_max_filesize')));
+    }
+
+    public static function ConvertPHPSizeToBytes ($s)
+    {
+        if (is_numeric($s)) {
+            return $s;
+        }
+        $suffix = substr($s, -1);
+        $r = substr($s, 0, -1);
+        switch(strtoupper($suffix)) {
+            case 'P':
+                $r *= 1024;
+            case 'T':
+                $r *= 1024;
+            case 'G':
+                $r *= 1024;
+            case 'M':
+                $r *= 1024;
+            case 'K':
+                $r *= 1024;
+            break;
+        }
+        return $r;
+    }
+
+    public static function cleanFileName(string $fileName): string
+    {
+        // Sépare le nom et l'extension
+        $info = pathinfo($fileName);
+
+        $name = $info['filename'];
+        $extension = isset($info['extension']) ? strtolower($info['extension']) : '';
+
+        // Suppression des accents
+        $name = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
+
+        // Mise en minuscules
+        $name = strtolower($name);
+
+        // Remplace les espaces par des tirets
+        $name = preg_replace('/\s+/', '-', $name);
+
+        // Supprime tous les caractères spéciaux
+        $name = preg_replace('/[^a-z0-9\-_]/', '', $name);
+
+        // Remplace plusieurs tirets par un seul
+        $name = preg_replace('/-+/', '-', $name);
+
+        // Supprime les tirets en début et fin
+        $name = trim($name, '-_');
+
+        // Nom vide ?
+        if ($name === '') {
+            $name = 'file';
+        }
+
+        return $extension !== ''
+            ? $name.'.'.$extension
+            : $name;
+    }
+
+    public static function randomString($length) {
+        $str = random_bytes($length);
+        $str = base64_encode($str);
+        $str = str_replace(["+", "/", "="], "", $str);
+        $str = substr($str, 0, $length);
+        return $str;
     }
 }
