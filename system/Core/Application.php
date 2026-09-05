@@ -28,6 +28,7 @@ final class Application
     private Assets $assets;
     private Container $container;
     private Language $language;
+    private User $user;
 
     public function __construct()
     {
@@ -71,6 +72,12 @@ final class Application
          * -------------------------------------------------
          */
         $this->db = new BDD();
+
+        $this->user = new User($this->db);
+        $this->view = new View();
+        $this->assets = new Assets();
+        $this->container->set(User::class, $this->user);
+
         /*
          * -------------------------------------------------
          * Moteur de vues
@@ -211,6 +218,7 @@ final class Application
      */
     public function container(): Container
     {
+        $this->container->set(User::class, $this->user);
         return $this->container;
     }
     /**
@@ -236,5 +244,10 @@ final class Application
             $content,
             $moduleName
         );
+    }
+
+    public function user(): User
+    {
+        return $this->user;
     }
 }
