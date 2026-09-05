@@ -36,12 +36,14 @@ class Router
      */
     public function get(
         string $path,
-        array|callable $handler
+        array|callable $handler,
+        ?string $module = null
     ): void {
         $this->add(
             'GET',
             $path,
-            $handler
+            $handler,
+            $module
         );
     }
 
@@ -50,12 +52,14 @@ class Router
      */
     public function post(
         string $path,
-        array|callable $handler
+        array|callable $handler,
+        ?string $module = null
     ): void {
         $this->add(
             'POST',
             $path,
-            $handler
+            $handler,
+            $module
         );
     }
 
@@ -65,12 +69,14 @@ class Router
     private function add(
         string $method,
         string $path,
-        array|callable $handler
+        array|callable $handler,
+        ?string $module = null
     ): void {
         $this->routes[] = [
             'method'  => strtoupper($method),
             'path'    => $path,
             'handler' => $handler,
+            'module'  => $module,
         ];
     }
 
@@ -113,6 +119,10 @@ class Router
             if ($params === false) {
                 continue;
             }
+
+            $this->loadRouteAssets(
+                $route['module'] ?? null
+            );
 
             return $this->callHandler(
                 $route['handler'],
@@ -448,4 +458,54 @@ class Router
     {
         return $this->routes;
     }
+
+private function loadRouteAssets(
+    ?string $module
+): void {
+    if ($module === null) {
+        return;
+    }
+
+    $moduleManager = $this->container->get(
+        ModuleManager::class
+    );
+
+    if (!$moduleManager instanceof ModuleManager) {
+        return;
+    }
+
+    $config = $moduleManager->get(
+        $module
+    );
+
+    if ($config === null) {
+        return;
+    }
+
+    $assets = $config['assets'] ?? [];
+
+    if (
+        ($assets['css'] ?? false) === true
+    ) {
+        $assetsService = $this->container->get(
+            Assets::class
+        );
+
+        $assetsService->moduleCss(
+            $module
+        );
+    }
+
+    if (
+        ($assets['js'] ?? false) === true
+    ) {
+        $assetsService = $this->container->get(
+            Assets::class
+        );
+
+        $assetsService->moduleJs(
+            $module
+        );
+    }
+}
 }

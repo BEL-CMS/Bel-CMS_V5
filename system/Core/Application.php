@@ -133,6 +133,10 @@ final class Application
             $this->assets,
             $this->language
         );
+        $this->container->set(
+            ModuleManager::class,
+            $this->modules
+        );
         /*
          * Chargement automatique des modules
          */

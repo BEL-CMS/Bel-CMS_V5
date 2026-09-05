@@ -1,21 +1,8 @@
 <?php
-/**
- * Bel-CMS [Content management system]
- * @version 5.0.0 [PHP8.5]
- * @link https://bel-cms.dev
- * @link https://determe.be
- * @license Apache-2.0 license
- * @copyright 2015-2026 Bel-CMS
- * @author as Stive - stive@determe.be
-*/
 
 declare(strict_types=1);
-namespace BelCMS\Core;
 
-if (!defined('CHECK_INDEX')):
-	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
-	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
-endif;
+namespace BelCMS\Core;
 
 use RuntimeException;
 
@@ -31,16 +18,22 @@ final class ModuleManager
 
     private array $modules = [];
 
-    public function __construct(Router $router, Assets $assets, Language $language, ?string $modulesPath = null) 
-    {
+    public function __construct(
+        Router $router,
+        Assets $assets,
+        Language $language,
+        ?string $modulesPath = null
+    ) {
         $this->router = $router;
         $this->assets = $assets;
         $this->language = $language;
+
         $this->modulesPath = $modulesPath
             ?? dirname(__DIR__, 2) . '/modules';
     }
+
     /**
-     * Découvre les modules disponibles
+     * Découvre les modules
      */
     public function discover(): array
     {
@@ -76,11 +69,16 @@ final class ModuleManager
             $this->modules[$directory] = [
                 'name' => $directory,
                 'path' => $path,
+                'assets' => [
+                    'css' => false,
+                    'js' => false,
+                ],
             ];
         }
 
         return $this->modules;
     }
+
     /**
      * Charge un module
      */
@@ -95,6 +93,7 @@ final class ModuleManager
                 "Le module {$name} n'existe pas."
             );
         }
+
         /*
          * -------------------------------------------------
          * Configuration du module
@@ -103,9 +102,13 @@ final class ModuleManager
         $moduleFile = $path
             . DIRECTORY_SEPARATOR
             . 'module.php';
+
         $moduleConfig = [];
+
         if (is_file($moduleFile)) {
+
             $moduleConfig = require $moduleFile;
+
             if (!is_array($moduleConfig)) {
                 throw new RuntimeException(
                     "Le fichier module.php du module {$name} "
@@ -113,48 +116,49 @@ final class ModuleManager
                 );
             }
         }
+
         /*
          * -------------------------------------------------
          * Langue du module
          * -------------------------------------------------
          */
         $this->language->loadModule($name);
+
         /*
          * -------------------------------------------------
-         * Assets du module
+         * Mémorisation des assets
+         *
+         * IMPORTANT :
+         * ils ne sont PAS chargés ici.
          * -------------------------------------------------
          */
+        $assets = [
+            'css' => false,
+            'js'  => false,
+        ];
+
         if (
             isset($moduleConfig['assets'])
             && is_array($moduleConfig['assets'])
         ) {
-            /*
-             * CSS
-             */
-            if (
-                isset($moduleConfig['assets']['css'])
-                && $moduleConfig['assets']['css'] === true
-            ) {
-                $this->assets->moduleCss($name);
-            }
-            /*
-             * JavaScript
-             */
-            if (
-                isset($moduleConfig['assets']['js'])
-                && $moduleConfig['assets']['js'] === true
-            ) {
-                $this->assets->moduleJs($name);
-            }
+            $assets['css'] =
+                ($moduleConfig['assets']['css'] ?? false) === true;
+
+            $assets['js'] =
+                ($moduleConfig['assets']['js'] ?? false) === true;
         }
+
+        $this->modules[$name]['assets'] = $assets;
+
         /*
          * -------------------------------------------------
-         * Routes du module
+         * Routes
          * -------------------------------------------------
          */
         $routesFile = $path
             . DIRECTORY_SEPARATOR
             . 'routes.php';
+
         if (is_file($routesFile)) {
 
             $routes = require $routesFile;
@@ -166,16 +170,21 @@ final class ModuleManager
                 );
             }
 
-            $this->registerRoutes($routes);
+            $this->registerRoutes(
+                $routes,
+                $name
+            );
         }
+
         return true;
     }
 
     /**
-     * Enregistre les routes du module
+     * Enregistre les routes d'un module
      */
     private function registerRoutes(
-        array $routes
+        array $routes,
+        string $module
     ): void {
         foreach ($routes as $route => $handler) {
 
@@ -186,13 +195,15 @@ final class ModuleManager
             [$method, $path] = $this->parseRoute(
                 $route
             );
+
             switch ($method) {
 
                 case 'GET':
 
                     $this->router->get(
                         $path,
-                        $handler
+                        $handler,
+                        $module
                     );
 
                     break;
@@ -201,7 +212,8 @@ final class ModuleManager
 
                     $this->router->post(
                         $path,
-                        $handler
+                        $handler,
+                        $module
                     );
 
                     break;
@@ -214,13 +226,9 @@ final class ModuleManager
             }
         }
     }
+
     /**
      * Analyse une route
-     *
-     * Exemple :
-     *
-     * GET /news
-     * POST /news
      */
     private function parseRoute(
         string $route
@@ -247,32 +255,41 @@ final class ModuleManager
             $parts[1]
         ];
     }
+
     /**
      * Charge tous les modules
      */
     public function loadAll(): void
     {
-        $modules = $this->discover();
+        $this->discover();
 
-        foreach ($modules as $module) {
-
+        foreach ($this->modules as $module) {
             $this->load(
                 $module['name']
             );
         }
     }
+
+    /**
+     * Retourne la configuration d'un module
+     */
+    public function get(string $name): ?array
+    {
+        return $this->modules[$name] ?? null;
+    }
+
     /**
      * Vérifie si un module existe
      */
-    public function exists(
-        string $name
-    ): bool {
+    public function exists(string $name): bool
+    {
         return is_dir(
             $this->modulesPath
             . DIRECTORY_SEPARATOR
             . $name
         );
     }
+
     /**
      * Retourne tous les modules
      */
@@ -280,6 +297,7 @@ final class ModuleManager
     {
         return $this->modules;
     }
+
     /**
      * Retourne le chemin des modules
      */
