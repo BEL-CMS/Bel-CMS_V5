@@ -1,0 +1,49 @@
+#belcms_module_pages {
+    width: min(1200px, calc(100% - 40px));
+    margin: 40px auto;
+}
+
+.belcms_module_pages_header {
+    position: relative;
+    margin-bottom: 35px;
+    padding-bottom: 18px;
+}
+
+.belcms_module_pages_header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 70px;
+    height: 3px;
+    border-radius: 10px;
+    background: #2196f3;
+    box-shadow: 0 0 8px rgba(33, 150, 243, 0.8), 0 0 18px rgba(33, 150, 243, 0.4);
+}
+
+#belcms_module_pages_list {
+    background-color: var(--BelCMS-table);
+    color: var(--BelCMS-gray-900);
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+#belcms_module_pages_list th {
+    background-color: var(--BelCMS-table-title-bg);
+    color: var(--BelCMS-table-title);
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid var(--BelCMS-table-border);
+    padding: 10px;
+}
+#belcms_module_pages_list td {
+    padding: 10px;
+    border-bottom: 1px solid var(--BelCMS-table-border);
+}
+#belcms_module_pages_list td:nth-child(odd) {
+    background-color: var(--BelCMS-table-stripe);
+}
+#belcms_module_pages_list tr:hover {
+    background-color: var(--BelCMS-table-hover);
+}

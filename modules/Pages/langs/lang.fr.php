@@ -12,6 +12,7 @@
 declare(strict_types=1);
 
 return [
+    'PAGES_TITLE'    => 'Pages',
     'NEWS_READ_MORE' => 'Lire la suite',
     'NEWS_NO_RESULT' => 'Aucun résultat trouvé.',
 ];

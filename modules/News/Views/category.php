@@ -10,7 +10,7 @@
 */
 declare(strict_types=1);
 ?>
-<div class="belcms_module_news_page">
+<div id="belcms_module_news_page">
     <header class="belcms_module_news_header">
         <h1>Actualités : <?= htmlspecialchars($categoryName) ?></h1>
         <p>Les actualités de cette catégorie.</p>

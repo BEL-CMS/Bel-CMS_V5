@@ -15,12 +15,13 @@ return [
     /*
      * Général
      */
-    'SITE_NAME' => 'Bel-CMS',
-    'BTN_SAVE' => 'Enregistrer',
+    'SITE_NAME'  => 'Bel-CMS',
+    'BTN_SAVE'   => 'Enregistrer',
     'BTN_CANCEL' => 'Annuler',
     'BTN_DELETE' => 'Supprimer',
-    'BTN_EDIT' => 'Modifier',
-    'BTN_BACK' => 'Retour',
+    'BTN_EDIT'   => 'Modifier',
+    'BTN_BACK'   => 'Retour',
+    'ENTER'      => 'Entrer',
     /*
      * Erreurs
      */

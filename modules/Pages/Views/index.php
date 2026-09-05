@@ -14,34 +14,41 @@ declare(strict_types=1);
 use BelCMS\system\Common;
 
 ?>
-<div class="forum-page">
-    <header class="news-header">
-        <h1><?= __('NEWS_TITLE') ?></h1>
+<div id="belcms_module_news">
+    <header class="belcms_module_pages_header">
+        <h1><?= __('PAGES_TITLE') ?></h1>
         <p>Liste des pages.</p>
     </header>
-    <?php if (empty($pages)): ?>
-        <div class="news-empty">
+    <?php if (empty($pages)):?>
+        <div class="belcms_module_pages_empty">
             <?= __('NEWS_NO_RESULT') ?>
         </div>
     <?php else: ?>
-        <div class="news-list">
+        <table id="belcms_module_pages_list">
+            <thead>
+                <tr>
+                <th>Nom</th>
+                <th>Publié</th>
+                <th class="belcms_center">Nombre de pages</th>
+                <th class="belcms_center">Nombre de vu</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
             <?php foreach ($pages as $page): ?>
-                <article class="news-card">
-                    <div class="news-content">
-                        <h2><?= htmlspecialchars($page->name) ?></h2>
-                        <div class="news-meta">
-                            <span><?= Common::TransformDate(htmlspecialchars($page->publish_date), 'MEDIUM', 'MEDIUM'); ?></span>
-                            <?php if (!empty($page->author)): ?>
-                                <span>Par <?= htmlspecialchars($page->author) ?></span>
-                            <?php endif; ?>
-                        </div>
-                        <div class="news-excerpt">
-                            <?= $page->description ?>
-                        </div>
-                        <a href="/pages/<?= urlencode($page->id_page) ?>" class="news-link"><?= __('NEWS_READ_MORE') ?> →</a>
-                    </div>
-                </article>
+                <tr class="belcms_module_pages_card">
+                    <td class="belcms_module__pages_content">
+                        <?= htmlspecialchars($page->name) ?>
+                    </td>
+                    <td><?= Common::TransformDate(htmlspecialchars($page->publish_date), 'MEDIUM', 'MEDIUM'); ?></td>
+                    <td class="belcms_center">0</td>
+                    <td class="belcms_center">0</td>
+                    <td>
+                        <a href="/pages/<?= urlencode($page->id_page) ?>" class="belcms_module__pages_link"><?= __('ENTER') ?> →</a>
+                    </td>
+                </tr>
             <?php endforeach; ?>
-        </div>
+            </tbody>
+        </table>
     <?php endif; ?>
 </div>

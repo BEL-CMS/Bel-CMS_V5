@@ -1,4 +1,5 @@
-@import url(belcms.notification.css);
+@import url(belcms_notification.css);
+@import url(belcms_color.css);
 code, pre {
 	word-wrap:break-word !important;
 }
@@ -8,8 +9,7 @@ code, pre {
 .belcms_upper_text {
 	text-transform: uppercase !important;
 }
-.belcms_width_center {
-	width: 100%;
-	text-align: center;
-	margin: auto;
+.belcms_center {
+	text-align: center !important;
+	margin: auto !important;
 }

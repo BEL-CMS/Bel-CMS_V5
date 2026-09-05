@@ -22,9 +22,9 @@ use RuntimeException;
 class Router
 {
     private array $routes = [];
-
     private Container $container;
-
+    private ?string $currentModule = null;
+    
     public function __construct(
         Container $container
     ) {
@@ -124,13 +124,25 @@ class Router
                 $route['module'] ?? null
             );
 
+            $this->currentModule = $route['module'] ?? null;
+
+            $this->loadRouteAssets(
+                $this->currentModule
+            );
+
             return $this->callHandler(
                 $route['handler'],
                 $params
             );
+
         }
 
         return $this->notFound();
+    }
+
+    public function getCurrentModule(): ?string
+    {
+        return $this->currentModule;
     }
 
     /**
@@ -437,7 +449,6 @@ class Router
             $arguments
         );
     }
-
     /**
      * 404
      */
@@ -450,7 +461,6 @@ class Router
 
         exit;
     }
-
     /**
      * Retourne les routes
      */
@@ -458,54 +468,53 @@ class Router
     {
         return $this->routes;
     }
+    private function loadRouteAssets(
+        ?string $module
+    ): void {
+        if ($module === null) {
+            return;
+        }
 
-private function loadRouteAssets(
-    ?string $module
-): void {
-    if ($module === null) {
-        return;
-    }
-
-    $moduleManager = $this->container->get(
-        ModuleManager::class
-    );
-
-    if (!$moduleManager instanceof ModuleManager) {
-        return;
-    }
-
-    $config = $moduleManager->get(
-        $module
-    );
-
-    if ($config === null) {
-        return;
-    }
-
-    $assets = $config['assets'] ?? [];
-
-    if (
-        ($assets['css'] ?? false) === true
-    ) {
-        $assetsService = $this->container->get(
-            Assets::class
+        $moduleManager = $this->container->get(
+            ModuleManager::class
         );
 
-        $assetsService->moduleCss(
+        if (!$moduleManager instanceof ModuleManager) {
+            return;
+        }
+
+        $config = $moduleManager->get(
             $module
         );
-    }
 
-    if (
-        ($assets['js'] ?? false) === true
-    ) {
-        $assetsService = $this->container->get(
-            Assets::class
-        );
+        if ($config === null) {
+            return;
+        }
 
-        $assetsService->moduleJs(
-            $module
-        );
+        $assets = $config['assets'] ?? [];
+
+        if (
+            ($assets['css'] ?? false) === true
+        ) {
+            $assetsService = $this->container->get(
+                Assets::class
+            );
+
+            $assetsService->moduleCss(
+                $module
+            );
+        }
+
+        if (
+            ($assets['js'] ?? false) === true
+        ) {
+            $assetsService = $this->container->get(
+                Assets::class
+            );
+
+            $assetsService->moduleJs(
+                $module
+            );
+        }
     }
-}
 }

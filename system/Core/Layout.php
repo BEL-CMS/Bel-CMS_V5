@@ -26,8 +26,10 @@ final class Layout
         $this->assets = $assets;
     }
 
-    public function render(string $content): void
-    {
+    public function render(
+        string $content,
+        ?string $moduleName = null
+    ): void {
         $title = 'Bel-CMS V5';
 
         require dirname(__DIR__, 2)

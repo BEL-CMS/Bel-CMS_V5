@@ -220,10 +220,7 @@ final class Application
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
-        /*
-         * Capture du contenu généré
-         * par le contrôleur
-         */
+
         ob_start();
 
         $this->router->dispatch(
@@ -233,11 +230,11 @@ final class Application
 
         $content = ob_get_clean();
 
-        /*
-         * Envoi vers le Layout
-         */
+        $moduleName = $this->router->getCurrentModule();
+
         $this->layout->render(
-            $content
+            $content,
+            $moduleName
         );
     }
 }
