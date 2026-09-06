@@ -7,8 +7,7 @@ declare(strict_types=1);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($title) ?></title>
-
+    <title><?=htmlspecialchars($title);?> - <?=htmlspecialchars($moduleName);?></title>
     <link rel="stylesheet" href="/themes/default/css/style.css">
 
 <?= $this->assets->renderCss() ?>
@@ -23,13 +22,19 @@ declare(strict_types=1);
         </nav>
     </div>
 </header>
+<main class="site-main site-container">
+    <?php if ($moduleName !== null): ?>
 
-<main class="site-main">
+        <div class="current-module">
+            <?= htmlspecialchars($moduleName) ?>
+        </div>
+
+    <?php endif; ?>
     <?= $content ?>
 </main>
 
 <footer class="site-footer">
-    <div class="site-container">Bel-CMS V5</div>
+    <div class="site-container">© Bel-CMS V5 @ <?= date('Y'); ?></div>
 </footer>
 
 <?= $this->assets->renderJs() ?>

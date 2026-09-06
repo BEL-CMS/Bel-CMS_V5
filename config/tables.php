@@ -24,6 +24,8 @@ $tables = [
     'TABLE_NEWS_CAT'          => $prefix . 'news_cat',
     'TABLE_PAGES'             => $prefix . 'pages',
     'TABLE_PAGES_CONTENT'     => $prefix . 'pages_content',
+    'TABLE_USER'              => $prefix . 'user',
+    'TABLE_RECOVERY'          => $prefix . 'user_recovery',
 ];
 
 foreach ($tables as $name => $value) {

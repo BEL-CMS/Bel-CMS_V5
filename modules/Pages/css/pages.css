@@ -22,8 +22,6 @@
 }
 
 #belcms_module_pages_list {
-    background-color: var(--BelCMS-table);
-    color: var(--BelCMS-gray-900);
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
@@ -37,13 +35,16 @@
     border-bottom: 1px solid var(--BelCMS-table-border);
     padding: 10px;
 }
-#belcms_module_pages_list td {
-    padding: 10px;
+tr.belcms_module_pages_card {
     border-bottom: 1px solid var(--BelCMS-table-border);
+    background-color:var(--BelCMS-table-td-bg);
 }
-#belcms_module_pages_list td:nth-child(odd) {
-    background-color: var(--BelCMS-table-stripe);
-}
-#belcms_module_pages_list tr:hover {
+tr.belcms_module_pages_card:hover {
     background-color: var(--BelCMS-table-hover);
+    color: var(--BelCMS-table-color);
+}
+.belcms_module_pages_card td {
+    color: var(--BelCMS-table-td-color);
+    line-height: 30px;
+    padding: 0 15px;
 }

@@ -29,83 +29,70 @@ final class Application
     private Container $container;
     private Language $language;
     private User $user;
+    private Session $session;
 
     public function __construct()
     {
-        /*
-         * -------------------------------------------------
-         * Container
-         * -------------------------------------------------
-         */
         $this->container = new Container();
-        /*
-         * -------------------------------------------------
-         * Configuration
-         * -------------------------------------------------
-         */
+
         $this->config = new Config(
             dirname(__DIR__, 2) . '/config/app.php'
         );
-        /*
-         * -------------------------------------------------
-         * Tables
-         * -------------------------------------------------
-         */
+
         require_once dirname(__DIR__, 2) . '/config/tables.php';
+
         /*
-         * -------------------------------------------------
-         * Langue
-         * -------------------------------------------------
-         */
+        * Langue globale
+        */
         $this->language = new Language('fr');
-        /*
-         * Chargement de la langue globale
-         */
+
         $this->language->loadGlobal();
-        /*
-         * Disponible pour la fonction __()
-         */
+
         $GLOBALS['belcms_language'] = $this->language;
+
         /*
-         * -------------------------------------------------
-         * Base de données
-         * -------------------------------------------------
-         */
+        * Services principaux
+        */
+        $this->session = new Session();
+
         $this->db = new BDD();
 
-        $this->user = new User($this->db);
+        $this->user = new User(
+            $this->db,
+            $this->session
+        );
+
         $this->view = new View();
+
         $this->assets = new Assets();
-        $this->container->set(User::class, $this->user);
 
         /*
-         * -------------------------------------------------
-         * Moteur de vues
-         * -------------------------------------------------
-         */
-        $this->view = new View();
-        /*
-         * -------------------------------------------------
-         * Gestion des assets
-         * -------------------------------------------------
-         */
-        $this->assets = new Assets();
-        /*
-        * -------------------------------------------------
-        * Assets globaux Bel-CMS
-        * -------------------------------------------------
+        * Assets globaux
         */
-        $this->assets->css('/assets/belcms.css');
-        $this->assets->js('/assets/plugins/jquery-4.0.0.min.js');
-        $this->assets->js('/assets/belcms.js');
+        $this->assets->css(
+            '/assets/belcms.css'
+        );
+
+        $this->assets->js(
+            '/assets/belcms.js'
+        );
+
         /*
-         * -------------------------------------------------
-         * Enregistrement des services
-         * -------------------------------------------------
-         */
+        * Enregistrement dans le Container
+        */
+        $this->container->set(
+            Session::class,
+            $this->session
+        );
+
         $this->container->set(
             BDD::class,
             $this->db
+        );
+
+        $this->container->set(
+            User::class,
+            $this->user
         );
 
         $this->container->set(
@@ -122,37 +109,39 @@ final class Application
             Language::class,
             $this->language
         );
+
         /*
-         * -------------------------------------------------
-         * Routeur
-         * -------------------------------------------------
-         */
+        * Router
+        */
         $this->router = new Router(
             $this->container
         );
+
         /*
-         * -------------------------------------------------
-         * Gestionnaire de modules
-         * -------------------------------------------------
-         */
+        * Modules
+        */
         $this->modules = new ModuleManager(
             $this->router,
             $this->assets,
             $this->language
         );
+
+        /*
+        * ModuleManager disponible dans le Container
+        */
         $this->container->set(
             ModuleManager::class,
             $this->modules
         );
+
         /*
-         * Chargement automatique des modules
-         */
+        * Chargement des modules
+        */
         $this->modules->loadAll();
+
         /*
-         * -------------------------------------------------
-         * Layout
-         * -------------------------------------------------
-         */
+        * Layout
+        */
         $this->layout = new Layout(
             $this->assets
         );
@@ -249,5 +238,10 @@ final class Application
     public function user(): User
     {
         return $this->user;
+    }
+
+    public function session(): Session
+    {
+        return $this->session;
     }
 }

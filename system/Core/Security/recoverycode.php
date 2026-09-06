@@ -1,13 +1,8 @@
 <?php
-/**
- * Bel-CMS [Content management system]
- * @version 4.2.0 [PHP8.5]
- * @link https://bel-cms.dev
- * @link https://determe.be
- * @license MIT License
- * @copyright 2015-2026 Bel-CMS
- * @author as Stive - stive@determe.be
-*/
+
+declare(strict_types=1);
+
+namespace BelCMS\Core\Security;
 
 final class RecoveryCode
 {
@@ -17,7 +12,7 @@ final class RecoveryCode
     private const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
     /**
-     * Génère un code
+     * Génère un code.
      */
     public static function generate(int $length = 12): string
     {
@@ -38,7 +33,7 @@ final class RecoveryCode
     }
 
     /**
-     * Génère plusieurs codes
+     * Génère plusieurs codes uniques.
      */
     public static function generateList(int $number = 10): array
     {
@@ -48,7 +43,7 @@ final class RecoveryCode
 
             $code = self::generate();
 
-            $codes[$code] = true; // évite les doublons
+            $codes[$code] = true;
         }
 
         return array_keys($codes);

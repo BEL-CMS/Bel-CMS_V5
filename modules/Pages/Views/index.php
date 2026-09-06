@@ -37,7 +37,7 @@ use BelCMS\system\Common;
             <tbody>
             <?php foreach ($pages as $page): ?>
                 <tr class="belcms_module_pages_card">
-                    <td class="belcms_module__pages_content">
+                    <td>
                         <?= htmlspecialchars($page->name) ?>
                     </td>
                     <td><?= Common::TransformDate(htmlspecialchars($page->publish_date), 'MEDIUM', 'MEDIUM'); ?></td>

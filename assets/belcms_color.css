@@ -36,14 +36,17 @@
     --BelCMS-link-visited: rgb(0, 255, 255);
     --BelCMS-link-focus: rgb(0, 255, 255);
     --BelCMS-link-disabled: rgb(0, 255, 255);
-    --BelCMS-table:#e2e2e2;
-    --BelCMS-table-title: #6c757d;
+    --BelCMS-table:#505050;
+    --BelCMS-table-title: #505050;
     --BelCMS-table-title-bg: #212529;
-    --BelCMS-table-border: #343a40
-    --BelCMS-table-title: #343a40;
+    --BelCMS-table-color: #f8f9fa;
+    --BelCMS-table-border: #343a40;
+    --BelCMS-table-title: #f0e9e9;
+    --BelCMS-table-td-bg: #ced4da;
+    --BelCMS-table-td-color: #505050;
     --BelCMS-table-hover: #f8f9fa;
     --BelCMS-table-active: #dee2e6;
-    --BelCMS-table-striped: #f8f9fa;
+    --BelCMS-table-striped: #d7dce1;
     --BelCMS-table-bordered: #dee2e6;
     --BelCMS-table-borderless: #dee2e6;
     --BelCMS-table-responsive: #dee2e6;
