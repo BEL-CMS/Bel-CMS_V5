@@ -30,122 +30,159 @@ final class Application
     private Language $language;
     private User $user;
     private Session $session;
+    private UserSession $userSession;
 
-    public function __construct()
-    {
-        $this->container = new Container();
+public function __construct()
+{
+    /*
+     * Container
+     */
+    $this->container = new Container();
 
-        $this->config = new Config(
-            dirname(__DIR__, 2) . '/config/app.php'
-        );
 
-        require_once dirname(__DIR__, 2) . '/config/tables.php';
+    /*
+     * Configuration
+     */
+    $this->config = new Config(
+        dirname(__DIR__, 2) . '/config/app.php'
+    );
 
-        /*
-        * Langue globale
-        */
-        $this->language = new Language('fr');
 
-        $this->language->loadGlobal();
+    /*
+     * Tables
+     */
+    require_once dirname(__DIR__, 2) . '/config/tables.php';
 
-        $GLOBALS['belcms_language'] = $this->language;
 
-        /*
-        * Services principaux
-        */
-        $this->session = new Session();
+    /*
+     * Langue
+     */
+    $this->language = new Language('fr');
+    $this->language->loadGlobal();
 
-        $this->db = new BDD();
+    $GLOBALS['belcms_language'] = $this->language;
 
-        $this->user = new User(
-            $this->db,
-            $this->session
-        );
 
-        $this->view = new View();
+    /*
+     * Session
+     */
+    $this->session = new Session();
 
-        $this->assets = new Assets();
 
-        /*
-        * Assets globaux
-        */
-        $this->assets->css(
-            '/assets/belcms.css'
-        );
+    /*
+     * Base de données
+     */
+    $this->db = new BDD();
 
-        $this->assets->js(
-            '/assets/belcms.js'
-        );
 
-        /*
-        * Enregistrement dans le Container
-        */
-        $this->container->set(
-            Session::class,
-            $this->session
-        );
+    /*
+     * Sessions utilisateur
+     */
+    $this->userSession = new UserSession(
+        $this->db
+    );
 
-        $this->container->set(
-            BDD::class,
-            $this->db
-        );
 
-        $this->container->set(
-            User::class,
-            $this->user
-        );
+    /*
+     * Utilisateur
+     */
+    $this->user = new User(
+        $this->db,
+        $this->session,
+        $this->userSession
+    );
 
-        $this->container->set(
-            View::class,
-            $this->view
-        );
 
-        $this->container->set(
-            Assets::class,
-            $this->assets
-        );
+    /*
+     * View
+     */
+    $this->view = new View();
 
-        $this->container->set(
-            Language::class,
-            $this->language
-        );
 
-        /*
-        * Router
-        */
-        $this->router = new Router(
-            $this->container
-        );
+    /*
+     * Assets
+     */
+    $this->assets = new Assets();
 
-        /*
-        * Modules
-        */
-        $this->modules = new ModuleManager(
-            $this->router,
-            $this->assets,
-            $this->language
-        );
+    /*
+     * Plugins globaux
+     */
+    $this->assets->css('/assets/plugins/fontawesome/all.min.css');
+    $this->assets->css('/assets/belcms.css');
+    $this->assets->js('/assets/belcms.js');
+    $this->assets->js('/assets/plugins/fontawesome/all.min.js');
 
-        /*
-        * ModuleManager disponible dans le Container
-        */
-        $this->container->set(
-            ModuleManager::class,
-            $this->modules
-        );
+    /*
+     * Enregistrement des services
+     */
+    $this->container->set(
+        Session::class,
+        $this->session
+    );
 
-        /*
-        * Chargement des modules
-        */
-        $this->modules->loadAll();
+    $this->container->set(
+        BDD::class,
+        $this->db
+    );
 
-        /*
-        * Layout
-        */
-        $this->layout = new Layout(
-            $this->assets
-        );
-    }
+    $this->container->set(
+        UserSession::class,
+        $this->userSession
+    );
+
+    $this->container->set(
+        User::class,
+        $this->user
+    );
+
+    $this->container->set(
+        View::class,
+        $this->view
+    );
+
+    $this->container->set(
+        Assets::class,
+        $this->assets
+    );
+
+    $this->container->set(
+        Language::class,
+        $this->language
+    );
+
+
+    /*
+     * Router
+     */
+    $this->router = new Router(
+        $this->container
+    );
+
+
+    /*
+     * Modules
+     */
+    $this->modules = new ModuleManager(
+        $this->router,
+        $this->assets,
+        $this->language
+    );
+
+    $this->container->set(
+        ModuleManager::class,
+        $this->modules
+    );
+
+    $this->modules->loadAll();
+
+
+    /*
+     * Layout
+     */
+    $this->layout = new Layout(
+        $this->assets
+    );
+}
     /**
      * Retourne le routeur
      */
@@ -243,5 +280,10 @@ final class Application
     public function session(): Session
     {
         return $this->session;
+    }
+
+    public function userSession(): UserSession
+    {
+        return $this->userSession;
     }
 }

@@ -1,4 +1,13 @@
 <?php
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @link https://determe.be
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ * @author as Stive - stive@determe.be
+*/
 
 declare(strict_types=1);
 
@@ -6,21 +15,25 @@ namespace BelCMS\Modules\User;
 
 use BelCMS\Core\User;
 use BelCMS\Core\View;
+use BelCMS\Core\UserSession;
 
 final class Controller
 {
     private User $user;
     private View $view;
     private Model $model;
+    private UserSession $userSession;
 
     public function __construct(
         User $user,
         View $view,
-        Model $model
+        Model $model,
+        UserSession $userSession
     ) {
-        $this->user  = $user;
-        $this->view  = $view;
-        $this->model = $model;
+        $this->user        = $user;
+        $this->view        = $view;
+        $this->model       = $model;
+        $this->userSession = $userSession;
     }
 
     /**
@@ -402,172 +415,140 @@ final class Controller
             ]
         );
     }
-    public function twoFactor(): void
-    {
-        if (!$this->user->isLogged()) {
-            header('Location: /user/login');
-            exit;
+public function twoFactor(): void
+{
+    if (!$this->user->isLogged()) {
+        header('Location: /user/login');
+        exit;
+    }
+
+    $error = null;
+    $success = null;
+
+    /*
+     * Désactivation de la 2FA
+     */
+    if (
+        ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
+        && isset($_POST['action'])
+        && $_POST['action'] === 'disable'
+    ) {
+        $password = (string)($_POST['password'] ?? '');
+
+        if ($password === '') {
+            $error = 'Veuillez saisir votre mot de passe.';
+        } elseif (!$this->user->verifyPassword($password)) {
+            $error = 'Mot de passe incorrect.';
+        } elseif (!$this->user->disableTwoFactor()) {
+            $error = 'Impossible de désactiver l’authentification à deux facteurs.';
+        } else {
+            $success = 'L’authentification à deux facteurs a été désactivée.';
         }
-
-        /**
-         * Si le 2FA est déjà activé.
-         */
-if ($this->user->isTwoFactorEnabled()) {
-
-    echo $this->view->render(
-        'User',
-        '2fa',
-        [
-            'enabled' => true,
-        ]
-    );
-
-    return;
-}
-
-        $error = null;
-        $success = null;
-
-        /**
-         * ---------------------------------------------------------
-         * POST : validation du code TOTP
-         * ---------------------------------------------------------
-         */
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            $code = trim(
-                (string) ($_POST['code'] ?? '')
-            );
-
-            /**
-             * Le secret doit venir de la session
-             * et non du formulaire.
-             */
-            $secret = $_SESSION[
-                'BELCMS_2FA_SETUP_SECRET'
-            ] ?? null;
-
-            if (
-                !is_string($secret) ||
-                $secret === ''
-            ) {
-
-                $error =
-                    'La configuration 2FA a expiré. '
-                    . 'Veuillez recommencer.';
-
-            } elseif (
-                !preg_match(
-                    '/^[0-9]{6}$/',
-                    $code
-                )
-            ) {
-
-                $error =
-                    'Veuillez saisir un code à 6 chiffres.';
-
-            } elseif (
-                !$this->user->verifyTwoFactorCode(
-                    $code,
-                    $secret
-                )
-            ) {
-
-                $error =
-                    'Le code de vérification est incorrect.';
-
-            } else {
-
-                /**
-                 * Code valide :
-                 * enregistrement définitif du secret.
-                 */
-                if (
-                    $this->user->enableTwoFactor(
-                        $secret,
-                        $code
-                    )
-                ) {
-
-                    /**
-                     * Génération des codes de récupération.
-                     */
-                    $recoveryCodes =
-                        $this->user->generateRecoveryCodes(10);
-
-                    /**
-                     * Le secret temporaire n'est plus nécessaire.
-                     */
-                    unset(
-                        $_SESSION[
-                            'BELCMS_2FA_SETUP_SECRET'
-                        ]
-                    );
-
-                    $success =
-                        'L’authentification à deux facteurs '
-                        . 'est maintenant activée.';
-
-                    echo $this->view->render(
-                        'User',
-                        '2fa',
-                        [
-                            'enabled'       => true,
-                            'success'       => $success,
-                            'recoveryCodes' => $recoveryCodes,
-                            'showRecovery'  => true,
-                        ]
-                    );
-
-                    return;
-                }
-
-                $error =
-                    'Impossible d’activer '
-                    . 'l’authentification à deux facteurs.';
-            }
-        }
-
-        /**
-         * ---------------------------------------------------------
-         * GET : création/récupération du secret temporaire
-         * ---------------------------------------------------------
-         */
-
-        $secret = $_SESSION[
-            'BELCMS_2FA_SETUP_SECRET'
-        ] ?? null;
-
-        if (
-            !is_string($secret) ||
-            $secret === ''
-        ) {
-
-            $secret =
-                $this->user->generateTwoFactorSecret();
-
-            $_SESSION[
-                'BELCMS_2FA_SETUP_SECRET'
-            ] = $secret;
-        }
-
-        $uri = $this->user->getTwoFactorUri(
-            $this->user->email(),
-            $secret
-        );
 
         echo $this->view->render(
             'User',
             '2fa',
             [
-                'enabled' => false,
-                'secret'  => $secret,
-                'uri'     => $uri,
+                'enabled' => $this->user->isTwoFactorEnabled(),
+                'secret'  => null,
+                'uri'     => null,
                 'error'   => $error,
-                'success' => $success,
+                'success' => $success
             ]
         );
+
+        return;
     }
+
+    /*
+     * Déjà activée
+     */
+    if ($this->user->isTwoFactorEnabled()) {
+
+        echo $this->view->render(
+            'User',
+            '2fa',
+            [
+                'enabled' => true,
+                'secret'  => null,
+                'uri'     => null,
+                'error'   => null,
+                'success' => null
+            ]
+        );
+
+        return;
+    }
+
+    /*
+     * Activation
+     */
+    if (
+        ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
+        && !isset($_POST['action'])
+    ) {
+        $secret = $this->user->getTwoFactorSetupSecret();
+
+        $code = trim(
+            (string)($_POST['code'] ?? '')
+        );
+
+        if ($secret === '') {
+            $error = 'La configuration de la 2FA a expiré. Veuillez recommencer.';
+        } elseif (!preg_match('/^[0-9]{6}$/', $code)) {
+            $error = 'Veuillez saisir un code à 6 chiffres.';
+        } elseif (!$this->user->verifyTwoFactorCode($secret, $code)) {
+            $error = 'Le code de vérification est incorrect.';
+        } elseif (!$this->user->enableTwoFactor($secret, $code)) {
+            $error = 'Impossible d’activer l’authentification à deux facteurs.';
+        } else {
+            $this->user->clearTwoFactorSetupSecret();
+
+            $success = 'L’authentification à deux facteurs a été activée.';
+        }
+    }
+
+    /*
+     * Génération du secret
+     */
+    $secret = $this->user->getTwoFactorSetupSecret();
+
+    if (
+        !$this->user->isTwoFactorEnabled()
+        && (
+            !is_string($secret)
+            || $secret === ''
+        )
+    ) {
+        $secret = $this->user->generateTwoFactorSecret();
+
+        $this->user->setTwoFactorSetupSecret($secret);
+    }
+
+    $uri = null;
+
+    if (
+        !$this->user->isTwoFactorEnabled()
+        && is_string($secret)
+        && $secret !== ''
+    ) {
+        $uri = $this->user->getTwoFactorUri(
+            $secret
+        );
+    }
+
+    echo $this->view->render(
+        'User',
+        '2fa',
+        [
+            'enabled' => $this->user->isTwoFactorEnabled(),
+            'secret'  => $secret,
+            'uri'     => $uri,
+            'error'   => $error,
+            'success' => $success
+        ]
+    );
+}
     /**
      * Validation du 2FA lors de la connexion.
      */
@@ -827,4 +808,131 @@ if ($this->user->isTwoFactorEnabled()) {
             ]
         );
     }
+    public function sessions(): void
+    {
+        if (!$this->user->isLogged()) {
+            header('Location: /user/login');
+            exit;
+        }
+
+        $hashKey = $this->user->hashKey();
+
+        if ($hashKey === null || $hashKey === '') {
+            header('Location: /user/security');
+            exit;
+        }
+
+        $success = null;
+        $error = null;
+
+        $currentSessionId = session_id();
+
+        /*
+        * Déconnexion de toutes les autres sessions
+        */
+        if (
+            ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
+            && isset($_POST['action'])
+            && $_POST['action'] === 'logout-others'
+        ) {
+            $deleted = $this->userSession->deleteOthers(
+                $hashKey,
+                $currentSessionId
+            );
+
+            $success = $deleted > 0
+                ? $deleted . ' session(s) ont été déconnectée(s).'
+                : 'Aucune autre session active.';
+        }
+
+        /*
+        * Récupération des sessions
+        */
+        $sessions = $this->userSession->getByHashKey($hashKey);
+
+        /*
+        * Nettoyage des données destinées à la vue
+        */
+        foreach ($sessions as $session) {
+            $session->is_current = (
+                isset($session->session_id)
+                && $session->session_id === $currentSessionId
+            );
+        }
+
+        echo $this->view->render(
+            'User',
+            'sessions',
+            [
+                'sessions'          => $sessions,
+                'currentSessionId'  => $currentSessionId,
+                'success'           => $success,
+                'error'             => $error,
+            ]
+        );
+    }
+    public function verifyPassword(string $password): bool
+    {
+        if (!$this->isLogged()) {
+            return false;
+        }
+
+        $user = $this->current();
+
+        if (!$user || empty($user->password)) {
+            return false;
+        }
+
+        return password_verify(
+            $password,
+            (string)$user->password
+        );
+    }
+    public function disableTwoFactor(): bool
+    {
+        if (!$this->isLogged()) {
+            return false;
+        }
+
+        $hashKey = $this->hashKey();
+
+        if ($hashKey === null || $hashKey === '') {
+            return false;
+        }
+
+        $this->db->table('belcms_user');
+
+        $this->db->where([
+            'name'  => 'hash_key',
+            'value' => $hashKey
+        ]);
+
+        $updated = $this->db->update([
+            'two_factor_enabled' => 0,
+            'two_factor_secret'  => null
+        ]);
+
+        if (!$updated) {
+            return false;
+        }
+
+        $this->reload();
+
+        return true;
+    }
+
+    public function setTwoFactorSetupSecret(string $secret): void
+    {
+        $secret = trim($secret);
+
+        if ($secret === '') {
+            return;
+        }
+
+        $this->session->set(
+            self::TWO_FACTOR_SETUP_KEY,
+            $secret
+        );
+    }
+
 }

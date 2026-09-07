@@ -10,7 +10,6 @@
 */
 
 declare(strict_types=1);
-
 #######################################################
 # Demarre une $_SESSION                               #
 #######################################################
@@ -36,14 +35,14 @@ if (is_file(__DIR__.'/INSTALL/index.php')) {          #
 #######################################################
 define('CHECK_INDEX', true);                          #
 #######################################################
-require_once __DIR__ . '/system/helpers.php';
-require_once __DIR__ . '/system/common.php';
-require_once __DIR__ . '/system/Autoloader.php';
+require_once __DIR__ . '/system/helpers.php';         #
+require_once __DIR__ . '/system/common.php';          #
+require_once __DIR__ . '/system/Autoloader.php';      #
 #######################################################
 #                Autoloader                           #
 #######################################################
-BelCMS\Autoloader::register();
+BelCMS\Autoloader::register();                        #
 #######################################################
-$app = new BelCMS\Core\Application();                 #
+$app = new BelCMS\Core\Application();
 $app->run();                                          #
 #######################################################

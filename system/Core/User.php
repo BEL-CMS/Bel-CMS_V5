@@ -1,4 +1,13 @@
 <?php
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @link https://determe.be
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ * @author as Stive - stive@determe.be
+*/
 
 declare(strict_types=1);
 
@@ -12,42 +21,27 @@ final class User
 {
     private BDD $db;
     private Session $session;
+    private UserSession $userSession;
 
-    /**
-     * Utilisateur actuellement connecté.
-     */
     private ?object $currentUser = null;
-
-    /**
-     * Indique si nous avons déjà tenté de charger l'utilisateur.
-     */
     private bool $loaded = false;
 
-    /**
-     * Clé de session de l'utilisateur connecté.
-     */
     private const SESSION_KEY = 'BELCMS_USER_HASH_KEY';
-
-    /**
-     * Clé de session utilisée lorsque le 2FA est en attente.
-     */
     private const TWO_FACTOR_PENDING_KEY = 'BELCMS_2FA_PENDING';
-
-    /**
-     * Clé temporaire utilisée pendant la configuration du 2FA.
-     */
     private const TWO_FACTOR_SETUP_KEY = 'BELCMS_2FA_SETUP_SECRET';
 
     public function __construct(
         BDD $db,
-        Session $session
+        Session $session,
+        UserSession $userSession
     ) {
-        $this->db      = $db;
+        $this->db = $db;
         $this->session = $session;
+        $this->userSession = $userSession;
     }
 
     /**
-     * Retourne l'utilisateur actuellement connecté.
+     * Return the currently authenticated user.
      */
     public function current(): ?object
     {
@@ -56,195 +50,130 @@ final class User
         }
 
         $this->loaded = true;
+        $this->currentUser = null;
 
-        /*
-         * Récupération du hash_key depuis la session.
-         */
-        $hashKey = $this->session->get(
-            self::SESSION_KEY
-        );
+        $hashKey = $this->session->get(self::SESSION_KEY);
 
-        if (
-            !is_string($hashKey) ||
-            $hashKey === ''
-        ) {
+        if (!is_string($hashKey) || trim($hashKey) === '') {
             return null;
         }
 
-        /*
-         * Recherche de l'utilisateur par hash_key.
-         */
-        $this->db->table('belcms_user');
+        $hashKey = trim($hashKey);
 
+        $this->db->table('belcms_user');
         $this->db->where([
             'name'  => 'hash_key',
-            'value' => $hashKey
+            'value' => $hashKey,
         ]);
-
         $this->db->queryOne();
 
-        $this->currentUser = $this->db->data ?? null;
-
-        /*
-         * Si l'utilisateur n'existe plus,
-         * on nettoie la session.
-         */
-        if ($this->currentUser === null) {
-            $this->session->remove(
-                self::SESSION_KEY
-            );
+        if (is_object($this->db->data)) {
+            $this->currentUser = $this->db->data;
         }
 
         return $this->currentUser;
     }
 
-    /**
-     * Vérifie si un utilisateur est connecté.
-     */
     public function isLogged(): bool
     {
         return $this->current() !== null;
     }
 
     /**
-     * Retourne l'ID technique AUTO_INCREMENT.
-     *
-     * Conservé pour les opérations internes BDD.
+     * Technical database ID.
      */
     public function id(): ?int
     {
         $user = $this->current();
 
-        if (
-            !$user ||
-            !isset($user->id)
-        ) {
+        if (!$user || !isset($user->id)) {
             return null;
         }
 
-        return (int) $user->id;
+        return (int)$user->id;
     }
 
     /**
-     * Retourne le hash_key de l'utilisateur.
-     *
-     * Identifiant métier Bel-CMS.
+     * Business/user identifier.
      */
     public function hashKey(): ?string
     {
-        $hashKey = $this->get('hash_key');
+        $user = $this->current();
 
-        if (
-            !is_string($hashKey) ||
-            $hashKey === ''
-        ) {
+        if (!$user || !isset($user->hash_key)) {
             return null;
         }
 
-        return $hashKey;
+        return (string)$user->hash_key;
     }
 
-    /**
-     * Retourne le nom d'utilisateur.
-     */
     public function username(): ?string
     {
-        $username = $this->get('username');
+        $user = $this->current();
 
-        if (!is_string($username)) {
+        if (!$user || !isset($user->username)) {
             return null;
         }
 
-        return $username;
+        return (string)$user->username;
     }
 
-    /**
-     * Retourne l'adresse email.
-     */
     public function email(): ?string
     {
-        $email = $this->get('email');
+        $user = $this->current();
 
-        if (!is_string($email)) {
+        if (!$user || !isset($user->email)) {
             return null;
         }
 
-        return $email;
+        return (string)$user->email;
     }
 
-    /**
-     * Vérifie si le compte est validé.
-     */
     public function valid(): bool
     {
-        return (bool) $this->get(
-            'valid',
-            false
-        );
+        $user = $this->current();
+
+        return $user !== null && !empty($user->valid);
     }
 
-    /**
-     * Retourne l'IP enregistrée.
-     */
     public function ip(): ?string
     {
-        $ip = $this->get('ip');
+        $user = $this->current();
 
-        if (
-            $ip === null ||
-            $ip === ''
-        ) {
+        if (!$user || !isset($user->ip)) {
             return null;
         }
 
-        return (string) $ip;
+        return $user->ip !== null ? (string)$user->ip : null;
     }
 
-    /**
-     * Retourne le token de sécurité.
-     */
     public function token(): ?string
     {
-        $token = $this->get('token');
+        $user = $this->current();
 
-        if (
-            !is_string($token) ||
-            $token === ''
-        ) {
+        if (!$user || !isset($user->token)) {
             return null;
         }
 
-        return $token;
+        return $user->token !== null ? (string)$user->token : null;
     }
 
-    /**
-     * Retourne toutes les données
-     * de l'utilisateur connecté.
-     */
     public function data(): ?object
     {
         return $this->current();
     }
 
-    /**
-     * Retourne une propriété de l'utilisateur.
-     */
-    public function get(
-        string $property,
-        mixed $default = null
-    ): mixed {
+    public function get(string $key, mixed $default = null): mixed
+    {
         $user = $this->current();
 
-        if (!$user) {
+        if (!$user || !property_exists($user, $key)) {
             return $default;
         }
 
-        return $user->{$property} ?? $default;
+        return $user->{$key};
     }
 
-    /**
-     * Recharge les données de l'utilisateur.
-     */
     public function reload(): ?object
     {
         $this->loaded = false;
@@ -253,413 +182,324 @@ final class User
         return $this->current();
     }
 
-    /**
-     * Vérifie si l'utilisateur est administrateur.
-     */
     public function isAdmin(): bool
     {
-        return (bool) $this->get(
-            'admin',
-            false
-        );
+        $user = $this->current();
+
+        if (!$user) {
+            return false;
+        }
+
+        if (isset($user->admin)) {
+            return (bool)$user->admin;
+        }
+
+        if (isset($user->is_admin)) {
+            return (bool)$user->is_admin;
+        }
+
+        return false;
     }
 
-    /**
-     * Vérifie si l'utilisateur est root.
-     */
     public function isRoot(): bool
     {
-        return (bool) $this->get(
-            'root',
-            false
-        );
+        $user = $this->current();
+
+        if (!$user) {
+            return false;
+        }
+
+        if (isset($user->root)) {
+            return (bool)$user->root;
+        }
+
+        if (isset($user->is_root)) {
+            return (bool)$user->is_root;
+        }
+
+        return false;
     }
 
-    /*
-     * =========================================================
-     * AUTHENTIFICATION
-     * =========================================================
-     */
-
     /**
-     * Authentifie un utilisateur.
+     * Authenticate with email or username.
+     *
+     * Returns true when the first authentication step succeeds.
+     * When 2FA is enabled, a pending 2FA session is created instead
+     * of logging the user in directly.
      */
-    public function login(
-        string $identifier,
-        string $password
-    ): bool {
+    public function login(string $identifier, string $password): bool
+    {
         $identifier = trim($identifier);
 
-        if (
-            $identifier === '' ||
-            $password === ''
-        ) {
+        if ($identifier === '' || $password === '') {
             return false;
         }
 
-        /*
-         * Recherche par email.
-         */
-        $this->db->table('belcms_user');
+        $user = $this->findForLogin($identifier);
 
-        $this->db->where([
-            'name'  => 'email',
-            'value' => $identifier
-        ]);
-
-        $this->db->queryOne();
-
-        $user = $this->db->data ?? null;
-
-        /*
-         * Recherche par username.
-         */
-        if (!$user) {
-
-            $this->db->table('belcms_user');
-
-            $this->db->where([
-                'name'  => 'username',
-                'value' => $identifier
-            ]);
-
-            $this->db->queryOne();
-
-            $user = $this->db->data ?? null;
-        }
-
-        /*
-         * Utilisateur introuvable.
-         */
         if (!$user) {
             return false;
         }
 
-        /*
-         * Vérification du mot de passe.
-         */
-        if (
-            !isset($user->password) ||
-            !password_verify(
-                $password,
-                $user->password
-            )
-        ) {
+        if (empty($user->valid)) {
             return false;
         }
 
-        /*
-         * Compte non validé.
-         */
-        if (
-            !isset($user->valid) ||
-            !(bool) $user->valid
-        ) {
+        if (!isset($user->password) || !password_verify($password, (string)$user->password)) {
             return false;
         }
 
-        /*
-         * Le hash_key doit exister.
-         */
-        if (
-            !isset($user->hash_key) ||
-            !is_string($user->hash_key) ||
-            $user->hash_key === ''
-        ) {
+        if (!isset($user->hash_key) || trim((string)$user->hash_key) === '') {
             return false;
         }
 
-        /*
-         * Nouvelle session.
-         */
-        if (!$this->session->regenerate(true)) {
-            return false;
-        }
+        $hashKey = trim((string)$user->hash_key);
 
-        /*
-         * 2FA activé :
-         * aucune connexion complète pour l'instant.
-         */
-        if (
-            isset($user->two_factor_enabled) &&
-            (bool) $user->two_factor_enabled
-        ) {
+        $this->session->regenerate(true);
 
-            $this->setTwoFactorPending(
-                $user->hash_key
-            );
+        if (!empty($user->two_factor_enabled) && !empty($user->two_factor_secret)) {
+            $this->setTwoFactorPending($hashKey);
+            $this->clearTwoFactorSetupSecret();
+
+            $this->loaded = false;
+            $this->currentUser = null;
 
             return true;
         }
 
-        /*
-         * Connexion classique.
-         */
-        $this->session->set(
-            self::SESSION_KEY,
-            $user->hash_key
-        );
-
-        /*
-         * Nettoyage d'une éventuelle attente 2FA.
-         */
+        $this->session->set(self::SESSION_KEY, $hashKey);
         $this->clearTwoFactorPending();
+        $this->clearTwoFactorSetupSecret();
 
         $this->loaded = false;
         $this->currentUser = null;
-
         $this->current();
+
+        $this->registerCurrentUserSession();
 
         return true;
     }
 
-    /**
-     * Finalise la connexion après validation du 2FA.
-     */
-    public function completeTwoFactorLogin(): bool
+    private function findForLogin(string $identifier): ?object
     {
-        $hashKey = $this->getTwoFactorPendingHashKey();
+        $user = null;
 
-        if (
-            $hashKey === null ||
-            $hashKey === ''
-        ) {
-            return false;
-        }
-
-        /*
-         * Vérification que l'utilisateur existe toujours.
-         */
         $this->db->table('belcms_user');
-
         $this->db->where([
-            'name'  => 'hash_key',
-            'value' => $hashKey
+            'name'  => 'email',
+            'value' => $identifier,
         ]);
-
         $this->db->queryOne();
 
-        $user = $this->db->data ?? null;
+        if (is_object($this->db->data)) {
+            $user = $this->db->data;
+        }
 
-        if (!$user) {
+        if ($user !== null) {
+            return $user;
+        }
+
+        $this->db->table('belcms_user');
+        $this->db->where([
+            'name'  => 'username',
+            'value' => $identifier,
+        ]);
+        $this->db->queryOne();
+
+        return is_object($this->db->data) ? $this->db->data : null;
+    }
+
+    public function completeTwoFactorLogin(): bool
+    {
+        if (!$this->isTwoFactorPending()) {
+            return false;
+        }
+
+        $hashKey = $this->getTwoFactorPendingHashKey();
+
+        if ($hashKey === null || $hashKey === '') {
+            return false;
+        }
+
+        $this->db->table('belcms_user');
+        $this->db->where([
+            'name'  => 'hash_key',
+            'value' => $hashKey,
+        ]);
+        $this->db->queryOne();
+
+        $user = $this->db->data;
+
+        if (!is_object($user) || empty($user->valid)) {
             $this->clearTwoFactorPending();
-
             return false;
         }
 
-        /*
-         * Nouvelle rotation de session.
-         */
-        if (!$this->session->regenerate(true)) {
+        if (empty($user->two_factor_enabled) || empty($user->two_factor_secret)) {
+            $this->clearTwoFactorPending();
             return false;
         }
 
-        /*
-         * Connexion définitive.
-         */
-        $this->session->set(
-            self::SESSION_KEY,
-            $hashKey
-        );
-
-        /*
-         * Suppression de l'attente.
-         */
+        $this->session->regenerate(true);
+        $this->session->set(self::SESSION_KEY, $hashKey);
         $this->clearTwoFactorPending();
+        $this->clearTwoFactorSetupSecret();
 
-        /*
-         * Recharge l'utilisateur.
-         */
         $this->loaded = false;
         $this->currentUser = null;
+        $this->current();
+
+        $this->registerCurrentUserSession();
 
         return $this->current() !== null;
     }
 
-    /**
-     * Déconnecte l'utilisateur.
-     */
     public function logout(): void
     {
-        if (!$this->session->isStarted()) {
-            return;
+        $sessionId = session_id();
+
+        if ($sessionId !== '') {
+            $this->userSession->delete($sessionId);
         }
 
-        $this->session->remove(
-            self::SESSION_KEY
-        );
-
+        $this->session->remove(self::SESSION_KEY);
         $this->clearTwoFactorPending();
+        $this->clearTwoFactorSetupSecret();
 
-        $this->session->remove(
-            self::TWO_FACTOR_SETUP_KEY
-        );
-
-        $this->loaded = true;
+        $this->loaded = false;
         $this->currentUser = null;
     }
 
-    /**
-     * Exige un utilisateur connecté.
-     */
-    public function requireLogin(): bool
+    private function registerCurrentUserSession(): void
     {
-        return $this->isLogged();
+        $hashKey = $this->hashKey();
+
+        if ($hashKey === null || $hashKey === '') {
+            return;
+        }
+
+        $this->userSession->current($hashKey);
     }
 
-    /*
-     * =========================================================
-     * 2FA
-     * =========================================================
-     */
-
-    /**
-     * Vérifie si le 2FA est activé.
-     */
     public function isTwoFactorEnabled(): bool
     {
-        return (bool) $this->get(
-            'two_factor_enabled',
-            false
-        );
+        $user = $this->current();
+
+        return $user !== null && !empty($user->two_factor_enabled) && !empty($user->two_factor_secret);
     }
 
-    /**
-     * Retourne le secret 2FA.
-     */
     public function getTwoFactorSecret(): ?string
     {
-        $secret = $this->get(
-            'two_factor_secret'
-        );
+        $user = $this->current();
 
-        if (
-            !is_string($secret) ||
-            $secret === ''
-        ) {
+        if (!$user || !isset($user->two_factor_secret)) {
             return null;
         }
+
+        $secret = trim((string)$user->two_factor_secret);
+
+        return $secret !== '' ? $secret : null;
+    }
+
+    public function generateTwoFactorSecret(): string
+    {
+        $secret = TOTP::generateSecret();
+
+        $this->session->set(self::TWO_FACTOR_SETUP_KEY, $secret);
 
         return $secret;
     }
 
-    /**
-     * Génère un nouveau secret TOTP.
-     */
-    public function generateTwoFactorSecret(): string
+    public function getTwoFactorSetupSecret(): ?string
     {
-        return TOTP::generateSecret();
-    }
+        $secret = $this->session->get(self::TWO_FACTOR_SETUP_KEY);
 
-    /**
-     * Génère l'URI TOTP.
-     */
-    public function getTwoFactorUri(
-        string $account,
-        ?string $secret = null
-    ): ?string {
-        $secret ??= $this->getTwoFactorSecret();
-
-        if (
-            $secret === null ||
-            $secret === ''
-        ) {
+        if (!is_string($secret)) {
             return null;
         }
+
+        $secret = trim($secret);
+
+        return $secret !== '' ? $secret : null;
+    }
+
+    public function clearTwoFactorSetupSecret(): void
+    {
+        $this->session->remove(self::TWO_FACTOR_SETUP_KEY);
+    }
+
+    public function getTwoFactorUri(?string $secret = null): ?string
+    {
+        if ($secret === null || trim($secret) === '') {
+            $secret = $this->getTwoFactorSecret();
+        }
+
+        if ($secret === null || $secret === '') {
+            return null;
+        }
+
+        $account = $this->email() ?? $this->username() ?? 'user';
+        $issuer = 'Bel-CMS';
 
         return ProvisioningUri::create(
             $secret,
             $account,
-            'Bel-CMS'
+            $issuer
         );
     }
 
-    /**
-     * Vérifie un code TOTP.
-     */
-    public function verifyTwoFactorCode(
-        string $code,
-        ?string $secret = null
-    ): bool {
-        $secret ??= $this->getTwoFactorSecret();
-
-        if (
-            $secret === null ||
-            $secret === ''
-        ) {
-            return false;
-        }
-
+    public function verifyTwoFactorCode(string $secret, string $code): bool
+    {
+        $secret = trim($secret);
         $code = trim($code);
 
-        if ($code === '') {
+        if ($secret === '' || !preg_match('/^\d{6}$/', $code)) {
             return false;
         }
 
-        return TOTP::verify(
-            $secret,
-            $code
-        );
+        return TOTP::verify($secret, $code);
     }
 
-    /**
-     * Active le 2FA après validation du code.
-     */
-    public function enableTwoFactor(
-        string $secret,
-        string $code
-    ): bool {
+    public function enableTwoFactor(string $secret, string $code): bool
+    {
         if (!$this->isLogged()) {
             return false;
         }
 
         $secret = trim($secret);
-        $code   = trim($code);
+        $code = trim($code);
 
-        if (
-            $secret === '' ||
-            $code === ''
-        ) {
-            return false;
-        }
-
-        if (!TOTP::verify($secret, $code)) {
+        if ($secret === '' || !$this->verifyTwoFactorCode($secret, $code)) {
             return false;
         }
 
         $hashKey = $this->hashKey();
 
-        if ($hashKey === null) {
+        if ($hashKey === null || $hashKey === '') {
             return false;
         }
 
         $this->db->table('belcms_user');
-
         $this->db->where([
             'name'  => 'hash_key',
-            'value' => $hashKey
+            'value' => $hashKey,
         ]);
 
-        $result = $this->db->update([
+        $updated = $this->db->update([
+            'two_factor_enabled' => 1,
             'two_factor_secret'  => $secret,
-            'two_factor_enabled' => 1
         ]);
 
-        if (!$result) {
+        if (!$updated) {
             return false;
         }
 
-        if ($this->currentUser !== null) {
-            $this->currentUser->two_factor_secret  = $secret;
-            $this->currentUser->two_factor_enabled = 1;
-        }
+        $this->clearTwoFactorSetupSecret();
+        $this->reload();
 
-        return true;
+        return $this->isTwoFactorEnabled();
     }
 
-    /**
-     * Désactive le 2FA.
-     */
     public function disableTwoFactor(): bool
     {
         if (!$this->isLogged()) {
@@ -668,180 +508,130 @@ final class User
 
         $hashKey = $this->hashKey();
 
-        if ($hashKey === null) {
+        if ($hashKey === null || $hashKey === '') {
             return false;
         }
 
         $this->db->table('belcms_user');
-
         $this->db->where([
             'name'  => 'hash_key',
-            'value' => $hashKey
+            'value' => $hashKey,
         ]);
 
-        $result = $this->db->update([
+        $updated = $this->db->update([
             'two_factor_enabled' => 0,
-            'two_factor_secret'  => null
+            'two_factor_secret'  => null,
         ]);
 
-        if (!$result) {
+        if (!$updated) {
             return false;
         }
 
-        if ($this->currentUser !== null) {
-            $this->currentUser->two_factor_enabled = 0;
-            $this->currentUser->two_factor_secret  = null;
-        }
+        $this->clearTwoFactorSetupSecret();
+        $this->reload();
 
-        return true;
+        return !$this->isTwoFactorEnabled();
     }
 
-    /*
-     * =========================================================
-     * 2FA PENDING
-     * =========================================================
-     */
-
-    /**
-     * Indique si une authentification 2FA est en attente.
-     */
     public function isTwoFactorPending(): bool
     {
-        return $this->session->has(
-            self::TWO_FACTOR_PENDING_KEY
-        );
+        $hashKey = $this->session->get(self::TWO_FACTOR_PENDING_KEY);
+
+        return is_string($hashKey) && trim($hashKey) !== '';
     }
 
-    /**
-     * Place un utilisateur en attente 2FA.
-     */
-    public function setTwoFactorPending(
-        string $hashKey
-    ): void {
+    public function setTwoFactorPending(string $hashKey): void
+    {
         $hashKey = trim($hashKey);
 
         if ($hashKey === '') {
+            $this->clearTwoFactorPending();
             return;
         }
 
-        $this->session->set(
-            self::TWO_FACTOR_PENDING_KEY,
-            $hashKey
-        );
+        $this->session->set(self::TWO_FACTOR_PENDING_KEY, $hashKey);
+        $this->session->remove(self::SESSION_KEY);
+
+        $this->loaded = false;
+        $this->currentUser = null;
     }
 
-    /**
-     * Retourne le hash_key de l'utilisateur
-     * en attente de validation 2FA.
-     */
     public function getTwoFactorPendingHashKey(): ?string
     {
-        $hashKey = $this->session->get(
-            self::TWO_FACTOR_PENDING_KEY
-        );
+        $hashKey = $this->session->get(self::TWO_FACTOR_PENDING_KEY);
 
-        if (
-            !is_string($hashKey) ||
-            $hashKey === ''
-        ) {
+        if (!is_string($hashKey)) {
             return null;
         }
 
-        return $hashKey;
+        $hashKey = trim($hashKey);
+
+        return $hashKey !== '' ? $hashKey : null;
     }
 
-    /**
-     * Supprime l'état d'attente 2FA.
-     */
     public function clearTwoFactorPending(): void
     {
-        $this->session->remove(
-            self::TWO_FACTOR_PENDING_KEY
-        );
+        $this->session->remove(self::TWO_FACTOR_PENDING_KEY);
     }
 
-    /*
-     * =========================================================
-     * RECOVERY CODES
-     * =========================================================
-     */
+    public function canManageRecoveryCodes(): bool
+    {
+        return $this->isLogged() && $this->isTwoFactorEnabled();
+    }
 
-    /**
-     * Génère les codes de récupération.
-     *
-     * Les codes en clair ne sont retournés qu'une seule fois.
-     * Seuls leurs hashes sont conservés en BDD.
-     */
-    public function generateRecoveryCodes(
-        int $number = 10
-    ): array {
+    public function generateRecoveryCodes(int $number = 10): array
+    {
         if (!$this->isLogged()) {
             return [];
         }
 
+        if (!$this->isTwoFactorEnabled()) {
+            return [];
+        }
+
+        $number = max(1, min(50, $number));
         $hashKey = $this->hashKey();
 
-        if ($hashKey === null) {
+        if ($hashKey === null || $hashKey === '') {
             return [];
         }
 
-        if ($number <= 0) {
+        $codes = RecoveryCode::generateList($number);
+
+        if (count($codes) !== $number) {
             return [];
         }
 
-        /*
-         * Génération des codes.
-         */
-        $codes = RecoveryCode::generateList(
-            $number
-        );
-
-        /*
-         * Suppression des anciens codes.
-         */
-        $this->db->table(
-            'belcms_user_recovery'
-        );
-
+        $this->db->table('belcms_user_recovery');
         $this->db->where([
             'name'  => 'hash_key',
-            'value' => $hashKey
+            'value' => $hashKey,
         ]);
-
         $this->db->delete();
 
-        /*
-         * Enregistrement des hashes.
-         */
+        $inserted = 0;
+
         foreach ($codes as $code) {
+            $this->db->table('belcms_user_recovery');
 
-            $hash = password_hash(
-                $code,
-                PASSWORD_DEFAULT
-            );
-
-            if ($hash === false) {
-                continue;
-            }
-
-            $this->db->table(
-                'belcms_user_recovery'
-            );
-
-            $this->db->insert([
-                'hash_key'  => $hashKey,
-                'code_hash' => $hash,
-                'used'      => 0
+            $ok = $this->db->insert([
+                'hash_key'   => $hashKey,
+                'code_hash'  => password_hash($code, PASSWORD_DEFAULT),
+                'used'       => 0,
             ]);
+
+            if ($ok) {
+                $inserted++;
+            }
+        }
+
+        if ($inserted !== $number) {
+            return [];
         }
 
         return $codes;
     }
 
-    /**
-     * Retourne le nombre de codes de récupération
-     * encore disponibles.
-     */
     public function getRecoveryCodeCount(): int
     {
         if (!$this->isLogged()) {
@@ -850,132 +640,95 @@ final class User
 
         $hashKey = $this->hashKey();
 
-        if ($hashKey === null) {
+        if ($hashKey === null || $hashKey === '') {
             return 0;
         }
 
-        $this->db->table(
-            'belcms_user_recovery'
-        );
-
+        $this->db->table('belcms_user_recovery');
         $this->db->where([
             'name'  => 'hash_key',
-            'value' => $hashKey
+            'value' => $hashKey,
         ]);
-
         $this->db->where([
             'name'  => 'used',
-            'value' => 0
+            'value' => 0,
         ]);
+        $this->db->queryAll();
 
-        return $this->db->count();
+        return is_array($this->db->data) ? count($this->db->data) : 0;
     }
-    /**
-     * Vérifie et consomme un code de récupération.
-     *
-     * Un code ne peut être utilisé qu'une seule fois.
-     */
-    public function verifyRecoveryCode(
-        string $code
-    ): bool {
+
+    public function verifyRecoveryCode(string $code): bool
+    {
         $code = trim($code);
 
-        if ($code === '') {
-            return false;
-        }
-
-        /*
-        * Il faut être dans une authentification 2FA
-        * en attente.
-        */
-        if (!$this->isTwoFactorPending()) {
+        if ($code === '' || !$this->isTwoFactorPending()) {
             return false;
         }
 
         $hashKey = $this->getTwoFactorPendingHashKey();
 
-        if (
-            $hashKey === null ||
-            $hashKey === ''
-        ) {
+        if ($hashKey === null || $hashKey === '') {
             return false;
         }
 
-        /*
-        * Récupération des codes encore disponibles.
-        */
-        $this->db->table(
-            'belcms_user_recovery'
-        );
-
+        $this->db->table('belcms_user_recovery');
         $this->db->where([
             'name'  => 'hash_key',
-            'value' => $hashKey
+            'value' => $hashKey,
         ]);
-
         $this->db->where([
             'name'  => 'used',
-            'value' => 0
+            'value' => 0,
         ]);
-
         $this->db->queryAll();
 
-        $recoveryCodes = $this->db->data ?? [];
+        $recoveryCodes = $this->db->data;
 
         if (!is_array($recoveryCodes)) {
             return false;
         }
 
-        /*
-        * Vérification de chaque hash.
-        */
         foreach ($recoveryCodes as $recovery) {
-
-            if (
-                !isset($recovery->id) ||
-                !isset($recovery->code_hash)
-            ) {
+            if (!is_object($recovery)) {
                 continue;
             }
 
-            if (!password_verify(
-                $code,
-                $recovery->code_hash
-            )) {
+            if (!isset($recovery->id, $recovery->code_hash)) {
                 continue;
             }
 
-            /*
-            * Le code est valide.
-            *
-            * On le consomme immédiatement.
-            */
-            $this->db->table(
-                'belcms_user_recovery'
-            );
+            if (!password_verify($code, (string)$recovery->code_hash)) {
+                continue;
+            }
 
+            $this->db->table('belcms_user_recovery');
             $this->db->where([
                 'name'  => 'id',
-                'value' => (int) $recovery->id
+                'value' => (int)$recovery->id,
             ]);
 
-            $updated = $this->db->update([
+            return (bool)$this->db->update([
                 'used'    => 1,
-                'used_at' => date('Y-m-d H:i:s')
+                'used_at' => date('Y-m-d H:i:s'),
             ]);
-
-            return (bool) $updated;
         }
 
         return false;
     }
-    /**
-     * Vérifie si les codes de récupération
-     * peuvent être gérés.
-     */
-    public function canManageRecoveryCodes(): bool
+
+    public function verifyPassword(string $password): bool
     {
-        return $this->isLogged()
-            && $this->isTwoFactorEnabled();
+        if (!$this->isLogged()) {
+            return false;
+        }
+
+        $user = $this->current();
+
+        if (!$user || !isset($user->password) || (string)$user->password === '') {
+            return false;
+        }
+
+        return password_verify($password, (string)$user->password);
     }
 }

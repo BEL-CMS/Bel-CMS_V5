@@ -837,12 +837,22 @@
 
 .user-security-card-header {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 18px;
 
-    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
 
-    margin-bottom: 25px;
+    padding: 24px 26px;
+    margin: 0;
+
+    border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+}
+
+.user-security-card-header > div:last-child {
+    flex: 1;
+    min-width: 0;
 }
 
 .user-security-card-header h2 {
@@ -1271,4 +1281,719 @@
     letter-spacing: 1px;
 
     opacity: 0.45;
+}
+
+/* =========================================================
+   Sessions
+   ========================================================= */
+
+.user-sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.user-session-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+    transition: 0.2s ease;
+}
+
+.user-session-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+.user-session-item.current {
+    border-color: #2563eb;
+    background: #f8fbff;
+}
+
+.user-session-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.user-session-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-session-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.user-session-title strong {
+    font-size: 15px;
+    color: #111827;
+}
+
+.user-session-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.user-session-badge i {
+    font-size: 7px;
+}
+
+.user-session-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.user-session-details span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-session-details i,
+.user-session-agent i {
+    color: #94a3b8;
+}
+
+.user-session-agent {
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.user-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.user-alert-success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #047857;
+}
+
+.user-alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.user-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.user-empty i {
+    margin-right: 8px;
+}
+/* =========================================================
+   SECURITY PAGE
+   ========================================================= */
+
+.user-security-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 22px;
+    padding: 0;
+    overflow: hidden;
+
+    background: linear-gradient(
+        145deg,
+        rgba(14, 28, 45, 0.98),
+        rgba(9, 20, 34, 0.98)
+    );
+
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 16px;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.user-security-card:hover {
+    transform: translateY(-2px);
+
+    border-color: rgba(96, 165, 250, 0.28);
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.24),
+        0 0 25px rgba(37, 99, 235, 0.05);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.user-security-card-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    padding: 24px 26px;
+
+    border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+}
+
+
+/* Icône */
+
+.user-security-card-icon {
+    flex: 0 0 52px;
+
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: linear-gradient(
+        145deg,
+        rgba(37, 99, 235, 0.22),
+        rgba(30, 64, 175, 0.12)
+    );
+
+    border: 1px solid rgba(96, 165, 250, 0.18);
+
+    color: #60a5fa;
+
+    font-size: 20px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 4px 15px rgba(37, 99, 235, 0.08);
+}
+
+
+/* Titre */
+
+.user-security-card-header h3 {
+    margin: 0 0 5px 0;
+
+    font-size: 18px;
+    line-height: 1.4;
+
+    font-weight: 700;
+
+    color: #f1f5f9;
+}
+
+
+/* Description */
+
+.user-security-card-header p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   CONTENU
+   ========================================================= */
+
+.user-security-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    padding: 22px 26px 24px;
+}
+
+
+/* Description supplémentaire */
+
+.user-security-description {
+    margin: 0;
+
+    color: #cbd5e1;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.user-security-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    width: fit-content;
+
+    padding: 9px 13px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* Activé */
+
+.user-security-status-success {
+    color: #86efac;
+
+    background: rgba(34, 197, 94, 0.10);
+
+    border: 1px solid rgba(34, 197, 94, 0.18);
+}
+
+
+/* Désactivé */
+
+.user-security-status-warning {
+    color: #fbbf24;
+
+    background: rgba(245, 158, 11, 0.10);
+
+    border: 1px solid rgba(245, 158, 11, 0.18);
+}
+
+
+/* Information */
+
+.user-security-status-info {
+    color: #93c5fd;
+
+    background: rgba(59, 130, 246, 0.10);
+
+    border: 1px solid rgba(59, 130, 246, 0.18);
+}
+
+
+/* =========================================================
+   LIENS D'ACTION
+   ========================================================= */
+
+.user-security-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    width: 100%;
+
+    padding: 16px 18px;
+
+    box-sizing: border-box;
+
+    text-decoration: none;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    border: 1px solid rgba(148, 163, 184, 0.10);
+    border-radius: 12px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.user-security-link:hover {
+    background: rgba(59, 130, 246, 0.08);
+
+    border-color: rgba(96, 165, 250, 0.22);
+
+    transform: translateX(2px);
+}
+
+
+/* Bloc texte du lien */
+
+.user-security-link span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    min-width: 0;
+}
+
+
+/* Titre */
+
+.user-security-link strong {
+    color: #f8fafc;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* Description */
+
+.user-security-link small {
+    color: #94a3b8;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+
+/* Flèche */
+
+.user-security-link > i {
+    flex: 0 0 auto;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.user-security-link:hover > i {
+    color: #60a5fa;
+
+    transform: translateX(3px);
+}
+
+
+/* =========================================================
+   BOUTONS DE SÉCURITÉ
+   ========================================================= */
+
+.user-security-card .user-btn {
+    margin-top: 2px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .user-security-card-header {
+        align-items: flex-start;
+
+        padding: 20px;
+    }
+
+    .user-security-card-content {
+        padding: 18px 20px 20px;
+    }
+
+    .user-security-card-icon {
+        flex-basis: 46px;
+
+        width: 46px;
+        height: 46px;
+
+        font-size: 18px;
+    }
+
+    .user-security-card-header h3 {
+        font-size: 16px;
+    }
+
+    .user-security-link {
+        padding: 14px;
+    }
+}
+
+/* =========================================================
+   SECURITY PAGE HEADER
+   ========================================================= */
+
+.user-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 24px;
+    padding: 4px 0;
+}
+
+.user-page-header h1 {
+    margin: 0 0 6px 0;
+
+    color: #f1f5f9;
+
+    font-size: 28px;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+.user-page-header h1 i {
+    margin-right: 10px;
+
+    color: #60a5fa;
+}
+
+.user-page-header p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+.user-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    color: #cbd5e1;
+
+    background: rgba(255, 255, 255, 0.035);
+
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+.user-btn-secondary:hover {
+    color: #ffffff;
+
+    background: rgba(59, 130, 246, 0.10);
+
+    border-color: rgba(96, 165, 250, 0.25);
+}
+
+/* =========================================================
+   2FA ENABLED
+   ========================================================= */
+
+.user-2fa-enabled-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 18px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.user-2fa-enabled-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: rgba(30, 144, 255, 0.12);
+
+    color: #5eb0ff;
+
+    font-size: 18px;
+}
+
+.user-2fa-enabled-box strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.user-2fa-enabled-box p {
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    opacity: 0.6;
+}
+
+
+/* =========================================================
+   2FA DISABLE
+   ========================================================= */
+
+.user-2fa-disable {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    margin-top: 10px;
+    padding-top: 25px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.user-2fa-disable > div:first-child {
+    flex: 1;
+}
+
+.user-2fa-disable strong {
+    display: block;
+    margin-bottom: 6px;
+
+    font-size: 14px;
+}
+
+.user-2fa-disable p {
+    margin: 0;
+
+    max-width: 650px;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    opacity: 0.6;
+}
+
+.user-2fa-disable form {
+    min-width: 230px;
+}
+
+.user-2fa-disable .user-form-group {
+    margin-bottom: 12px;
+}
+
+
+/* =========================================================
+   2FA STEPS
+   ========================================================= */
+
+.user-2fa-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    margin-bottom: 25px;
+}
+
+.user-2fa-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.user-2fa-step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: rgba(30, 144, 255, 0.15);
+
+    color: #5eb0ff;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.user-2fa-step strong {
+    display: block;
+    margin-bottom: 4px;
+
+    font-size: 14px;
+}
+
+.user-2fa-step p {
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    opacity: 0.6;
+}
+
+
+/* =========================================================
+   DANGER BUTTON
+   ========================================================= */
+
+.user-button-danger {
+    border: 1px solid rgba(255, 80, 80, 0.35);
+
+    background: rgba(255, 80, 80, 0.10);
+
+    color: #ff8f8f;
+}
+
+.user-button-danger:hover {
+    border-color: rgba(255, 80, 80, 0.60);
+
+    background: rgba(255, 80, 80, 0.16);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .user-2fa-disable {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .user-2fa-disable form {
+        width: 100%;
+        min-width: 0;
+    }
 }

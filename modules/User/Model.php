@@ -295,5 +295,74 @@ public function verifyPassword(
 
         return $sql->data;
     }
-    
+
+    /**
+     * Enregistre une nouvelle session utilisateur.
+     */
+    public function createSession(
+        string $hashKey,
+        string $sessionToken,
+        string $ip,
+        string $userAgent,
+        string $createdAt,
+        string $lastActivity,
+        string $expiresAt
+    ): bool {
+        if (
+            $hashKey === '' ||
+            $sessionToken === ''
+        ) {
+            return false;
+        }
+
+        $sql = new BDD();
+
+        $sql->table('belcms_user_sessions');
+
+        return $sql->insert([
+            'hash_key'       => $hashKey,
+            'session_token'  => $sessionToken,
+            'ip'             => $ip,
+            'user_agent'     => $userAgent,
+            'created_at'     => $createdAt,
+            'last_activity'  => $lastActivity,
+            'expires_at'     => $expiresAt,
+        ]);
+    }
+    /**
+     * Retourne une session utilisateur par son token.
+     */
+    public function getSessionByToken(
+        string $sessionToken
+    ): mixed {
+        $sql = new BDD();
+
+        $sql->table('belcms_user_sessions');
+
+        $sql->where([
+            'name'  => 'session_token',
+            'value' => $sessionToken
+        ]);
+
+        $sql->queryOne();
+
+        return $sql->data;
+    }
+    /**
+     * Supprime une session par son token.
+     */
+    public function deleteSessionByToken(
+        string $sessionToken
+    ): bool {
+        $sql = new BDD();
+
+        $sql->table('belcms_user_sessions');
+
+        $sql->where([
+            'name'  => 'session_token',
+            'value' => $sessionToken
+        ]);
+
+        return $sql->delete();
+    }
 }

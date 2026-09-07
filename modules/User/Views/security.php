@@ -1,286 +1,180 @@
 <?php
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @link https://determe.be
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ * @author as Stive - stive@determe.be
+*/
 
 declare(strict_types=1);
+
+/**
+ * @var object $user
+ * @var int $recoveryCount
+ */
 ?>
 
-<div class="user-security">
+<div class="user-page">
 
-    <div class="user-edit-header">
-
-        <a
-            href="/user"
-            class="user-profile-back"
-        >
-            ← Retour au centre utilisateur
-        </a>
-
-        <span class="user-profile-label">
-            Sécurité
-        </span>
-
+<div class="user-page-header">
+    <div>
         <h1>
-            Sécurité du compte
+            <i class="fa-solid fa-shield-halved"></i>
+            Sécurité
         </h1>
 
         <p>
-            Gérez les protections et les paramètres de sécurité
-            de votre compte.
+            Gérez les paramètres de sécurité de votre compte.
         </p>
+    </div>
+
+    <a href="/user" class="user-btn user-btn-secondary">
+        <i class="fa-solid fa-arrow-left"></i>
+        Retour
+    </a>
+</div>
+
+
+<!-- =====================================================
+     Authentification à deux facteurs
+     ===================================================== -->
+
+<section class="user-security-card">
+
+    <div class="user-security-card-header">
+
+        <div class="user-security-card-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div>
+            <h3>Authentification à deux facteurs</h3>
+
+            <p>
+                Renforcez la sécurité de votre compte avec une authentification supplémentaire.
+            </p>
+        </div>
 
     </div>
 
 
-    <!-- État général -->
+    <div class="user-security-card-content">
 
-    <section class="user-security-card">
+        <?php if (!empty($user->two_factor_enabled)): ?>
 
-        <div class="user-security-card-header">
-
-            <div>
-
-                <span class="user-profile-card-label">
-                    État du compte
-                </span>
-
-                <h2>
-                    Protection générale
-                </h2>
-
+            <div class="user-security-status user-security-status-success">
+                <i class="fa-solid fa-circle-check"></i>
+                Authentification à deux facteurs activée
             </div>
 
-            <span class="user-status user-status-valid">
-                Compte connecté
-            </span>
+            <a
+                href="/user/security/2fa"
+                class="user-security-link"
+            >
+                <span>
+                    <strong>Gérer la double authentification</strong>
 
+                    <small>
+                        Modifier ou désactiver la protection 2FA
+                    </small>
+                </span>
+
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+        <?php else: ?>
+
+            <div class="user-security-status user-security-status-warning">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Authentification à deux facteurs désactivée
+            </div>
+
+            <a
+                href="/user/security/2fa"
+                class="user-security-link"
+            >
+                <span>
+                    <strong>Activer la double authentification</strong>
+
+                    <small>
+                        Protéger votre compte avec Google Authenticator
+                    </small>
+                </span>
+
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+
+        <?php endif; ?>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     Codes de récupération
+     ===================================================== -->
+
+<section class="user-security-card">
+
+    <div class="user-security-card-header">
+
+        <div class="user-security-card-icon">
+            <i class="fa-solid fa-key"></i>
         </div>
 
+        <div>
+            <h3>Codes de récupération</h3>
 
-        <div class="user-security-grid">
-
-            <div class="user-security-item">
-
-                <div class="user-security-item-icon">
-                    ✓
-                </div>
-
-                <div>
-
-                    <strong>
-                        Compte
-                    </strong>
-
-                    <span>
-                        <?php if (!empty($user->valid)): ?>
-                            Compte validé
-                        <?php else: ?>
-                            Compte non validé
-                        <?php endif; ?>
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            <div class="user-security-item">
-
-                <div class="user-security-item-icon">
-                    🔑
-                </div>
-
-                <div>
-
-                    <strong>
-                        Mot de passe
-                    </strong>
-
-                    <span>
-                        Protégé par un mot de passe sécurisé
-                    </span>
-
-                </div>
-
-            </div>
-
+            <p>
+                Utilisez un code de récupération si vous ne pouvez plus accéder à votre application d'authentification.
+            </p>
         </div>
 
-    </section>
+    </div>
 
 
-    <!-- 2FA -->
+    <div class="user-security-card-content">
 
-    <section class="user-security-card">
+        <div class="user-security-status user-security-status-info">
 
-        <div class="user-security-card-header">
+            <i class="fa-solid fa-circle-info"></i>
 
-            <div>
+            <?php if ((int)$recoveryCount > 0): ?>
 
-                <span class="user-profile-card-label">
-                    Authentification
-                </span>
-
-                <h2>
-                    Authentification à deux facteurs
-                </h2>
-
-            </div>
-
-            <?php if (
-                !empty($user->two_factor_enabled)
-            ): ?>
-
-                <span class="user-status user-status-valid">
-                    Activée
-                </span>
+                <?= (int)$recoveryCount ?>
+                code(s) de récupération disponible(s)
 
             <?php else: ?>
 
-                <span class="user-status user-status-warning">
-                    Désactivée
-                </span>
+                Aucun code de récupération disponible
 
             <?php endif; ?>
 
         </div>
 
 
-        <div class="user-security-2fa">
-
-            <div class="user-security-item-icon">
-                🔐
-            </div>
-
-            <div class="user-security-2fa-content">
-
-                <strong>
-                    Protection supplémentaire
-                </strong>
-
-                <p>
-                    L'authentification à deux facteurs ajoute
-                    une protection supplémentaire lors de votre
-                    connexion.
-                </p>
-
-                <?php if (
-                    !empty($user->two_factor_enabled)
-                ): ?>
-
-                    <a
-                        href="#"
-                        class="user-button user-button-secondary"
-                    >
-                        Gérer le 2FA
-                    </a>
-
-                <?php else: ?>
-
-                    <a
-                        href="/user/security/2fa"
-                        class="user-button user-button-primary"
-                    >
-                        Activer le 2FA
-                    </a>
-
-                <?php endif; ?>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- Mot de passe -->
-
-    <section class="user-security-card">
-
-        <div class="user-security-card-header">
-
-            <div>
-
-                <span class="user-profile-card-label">
-                    Mot de passe
-                </span>
-
-                <h2>
-                    Protection du compte
-                </h2>
-
-            </div>
-
-        </div>
-
-
-        <div class="user-security-action">
-
-            <div>
-
-                <strong>
-                    Modifier votre mot de passe
-                </strong>
-
-                <p>
-                    Utilisez un mot de passe unique et suffisamment
-                    robuste pour protéger votre compte.
-                </p>
-
-            </div>
-
-            <a
-                href="/user/password"
-                class="user-button user-button-secondary"
-            >
-                Modifier
-            </a>
-
-        </div>
-
-    </section>
-
-<section class="user-security-card">
-
-    <div class="user-security-card-header">
-
-        <div>
-
-            <span class="user-profile-card-label">
-                Récupération
-            </span>
-
-            <h2>
-                Codes de récupération
-            </h2>
-
-        </div>
-
-        <span class="user-status user-status-valid">
-            <?= (int) $recoveryCount ?> disponible(s)
-        </span>
-
-    </div>
-
-
-    <div class="user-security-action">
-
-        <div>
-
-            <strong>
-                Codes de secours
-            </strong>
-
-            <p>
-                Utilisez ces codes lorsque votre application
-                d'authentification n'est pas disponible.
-            </p>
-
-        </div>
-
         <a
             href="/user/security/recovery"
-            class="user-button user-button-secondary"
+            class="user-security-link"
         >
-            Gérer mes codes
+            <span>
+
+                <strong>
+                    Gérer les codes de récupération
+                </strong>
+
+                <small>
+                    Générer 10 nouveaux codes de récupération
+                </small>
+
+            </span>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
         </a>
 
     </div>
@@ -288,14 +182,108 @@ declare(strict_types=1);
 </section>
 
 
-    <!-- Retour -->
+<!-- =====================================================
+     Sessions actives
+     ===================================================== -->
 
-    <div class="user-security-footer">
+<section class="user-security-card">
 
-        <a href="/user">
-            ← Retour au centre utilisateur
+    <div class="user-security-card-header">
+
+        <div class="user-security-card-icon">
+            <i class="fa-solid fa-laptop"></i>
+        </div>
+
+        <div>
+            <h3>Sessions actives</h3>
+
+            <p>
+                Gérez les appareils actuellement connectés à votre compte.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="user-security-card-content">
+
+        <p class="user-security-description">
+            Consultez les sessions ouvertes sur votre compte et déconnectez les appareils que vous ne reconnaissez pas.
+        </p>
+
+
+        <a
+            href="/user/security/sessions"
+            class="user-security-link"
+        >
+            <span>
+
+                <strong>
+                    Voir les sessions
+                </strong>
+
+                <small>
+                    Afficher les appareils connectés
+                </small>
+
+            </span>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
         </a>
 
     </div>
+
+</section>
+
+
+<!-- =====================================================
+     Mot de passe
+     ===================================================== -->
+
+<section class="user-security-card">
+
+    <div class="user-security-card-header">
+
+        <div class="user-security-card-icon">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+
+        <div>
+            <h3>Mot de passe</h3>
+
+            <p>
+                Modifiez régulièrement votre mot de passe pour protéger votre compte.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="user-security-card-content">
+
+        <a
+            href="/user/password"
+            class="user-security-link"
+        >
+            <span>
+
+                <strong>
+                    Modifier mon mot de passe
+                </strong>
+
+                <small>
+                    Choisir un nouveau mot de passe
+                </small>
+
+            </span>
+
+            <i class="fa-solid fa-chevron-right"></i>
+
+        </a>
+
+    </div>
+
+</section>
 
 </div>

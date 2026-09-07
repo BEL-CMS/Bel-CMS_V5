@@ -97,4 +97,7 @@ return [
         Controller::class,
         'recovery'
     ],
+
+    'GET /user/security/sessions' => [Controller::class, 'sessions'],
+    'POST /user/security/sessions' => [Controller::class, 'sessions'],
 ];
