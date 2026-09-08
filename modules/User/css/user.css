@@ -1289,7 +1289,7 @@
 
 .user-sessions-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: inherit;
     gap: 15px;
 }
 
