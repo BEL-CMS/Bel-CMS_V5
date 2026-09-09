@@ -129,14 +129,22 @@ declare(strict_types=1);
         <div class="user-profile-session-info">
             <div>
                 <span>Identifiant utilisateur</span>
-                <strong>#<?= (int) ($user->id ?? 0) ?></strong>
+                <strong>#
+                <?= htmlspecialchars(
+                    (string)($user->hash_key ?? '-'),
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+                </strong>
             </div>
             <div>
                 <span>Adresse IP</span>
                 <strong>
-                    <?= htmlspecialchars(
-                        $user->ip ?? 'Non enregistrée'
-                    ) ?>
+                <?= htmlspecialchars(
+                    (string)($user->ip ?? '-'),
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
                 </strong>
             </div>
         </div>

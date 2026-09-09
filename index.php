@@ -43,6 +43,7 @@ require_once __DIR__ . '/system/Autoloader.php';      #
 #######################################################
 BelCMS\Autoloader::register();                        #
 #######################################################
-$app = new BelCMS\Core\Application();
+$app = new BelCMS\Core\Application();                 #
+$GLOBALS['belcms_app'] = $app;                        #
 $app->run();                                          #
 #######################################################

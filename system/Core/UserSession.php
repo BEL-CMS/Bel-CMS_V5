@@ -32,19 +32,31 @@ final class UserSession
         ?string $userAgent = null,
         ?string $expiresAt = null
     ): bool {
-        $hashKey   = trim($hashKey);
+
+        $hashKey = trim($hashKey);
         $sessionId = trim($sessionId);
 
-        if (
-            $hashKey === '' ||
-            $sessionId === ''
-        ) {
+        if ($hashKey === '' || $sessionId === '') {
             return false;
         }
 
-        $this->db->table(
-            'belcms_user_sessions'
-        );
+        /*
+        * Expiration par défaut : 30 jours
+        */
+        if ($expiresAt === null) {
+            $expiresAt = date(
+                'Y-m-d H:i:s',
+                strtotime('+30 days')
+            );
+        }
+
+        $existing = $this->getBySessionId($sessionId);
+
+        if ($existing) {
+            return $this->updateActivity($sessionId);
+        }
+
+        $this->db->table('belcms_user_sessions');
 
         return $this->db->insert([
             'hash_key'      => $hashKey,
@@ -246,9 +258,10 @@ final class UserSession
     /**
      * Retourne ou initialise la session PHP actuelle.
      */
-    public function current(
-        ?string $hashKey = null
-    ): mixed {
+    public function current(?string $hashKey = null): mixed
+    {
+        $this->cleanup(30);
+
         $sessionId = session_id();
 
         if ($sessionId === '') {
@@ -256,50 +269,104 @@ final class UserSession
         }
 
         /*
-        * Recherche de la session en BDD.
+        * Recherche de la session actuelle
         */
-        $session = $this->getBySessionId(
-            $sessionId
-        );
+        $session = $this->getBySessionId($sessionId);
 
-        /*
-        * La session existe déjà.
-        */
         if ($session) {
 
-            $this->updateActivity(
-                $sessionId
-            );
+            /*
+            * Vérification de l'expiration
+            */
+            if ($this->isExpired($session)) {
 
-            return $this->getBySessionId(
-                $sessionId
-            );
+                $this->delete($sessionId);
+
+                return null;
+            }
+
+            /*
+            * Session encore valide
+            */
+            $this->updateActivity($sessionId);
+
+            return $this->getBySessionId($sessionId);
         }
 
         /*
-        * Impossible de créer une session
-        * sans hash_key utilisateur.
+        * Aucune session trouvée en BDD
+        *
+        * On en crée une si on connaît
+        * l'utilisateur courant.
         */
         if (
-            $hashKey === null ||
-            trim($hashKey) === ''
+            $hashKey === null
+            || trim($hashKey) === ''
         ) {
             return null;
         }
 
-        /*
-        * Création de la session.
-        */
-        $this->create(
+        $created = $this->create(
             $hashKey,
             $sessionId,
             $_SERVER['REMOTE_ADDR'] ?? null,
             $_SERVER['HTTP_USER_AGENT'] ?? null
         );
 
-        return $this->getBySessionId(
-            $sessionId
+        if (!$created) {
+            return null;
+        }
+
+        return $this->getBySessionId($sessionId);
+    }
+    public function cleanup(int $days = 30): int
+    {
+        $deleted = 0;
+        /*
+        * Sessions sans activité depuis X jours
+        */
+        $lastActivity = date(
+            'Y-m-d H:i:s',
+            strtotime("-{$days} days")
         );
+        $this->db->table('belcms_user_sessions');
+
+        $this->db->where([
+            'name'     => 'last_activity',
+            'value'    => $lastActivity,
+            'operator' => '<'
+        ]);
+
+        $deleted += (int)$this->db->delete();
+        /*
+        * Sessions dont la date d'expiration est dépassée
+        */
+        $now = date('Y-m-d H:i:s');
+
+        $this->db->table('belcms_user_sessions');
+
+        $this->db->where([
+            'name'     => 'expires_at',
+            'value'    => $now,
+            'operator' => '<'
+        ]);
+
+        $deleted += (int)$this->db->delete();
+
+
+        return $deleted;
     }
 
+    public function isExpired(object $session): bool
+    {
+        if (
+            !isset($session->expires_at)
+            || $session->expires_at === null
+            || $session->expires_at === ''
+        ) {
+            return false;
+        }
+
+        return strtotime((string)$session->expires_at) <= time();
+    }
 }

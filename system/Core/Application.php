@@ -31,6 +31,7 @@ final class Application
     private User $user;
     private Session $session;
     private UserSession $userSession;
+    private Csrf $csrf;
 
 public function __construct()
 {
@@ -68,6 +69,9 @@ public function __construct()
      */
     $this->session = new Session();
 
+    $this->csrf = new Csrf(
+        $this->session
+    );
 
     /*
      * Base de données
@@ -148,6 +152,11 @@ public function __construct()
     $this->container->set(
         Language::class,
         $this->language
+    );
+
+    $this->container->set(
+        Csrf::class,
+        $this->csrf
     );
 
 

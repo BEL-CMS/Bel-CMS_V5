@@ -37,7 +37,8 @@ declare(strict_types=1);
                 <h2>Mon profil</h2>
             </div>
         </div>
-        <form method="post" action="/user/edit" class="user-edit-form">
+        <form method="post" action="/user/edit" class="user-edit-form" >
+            <?= csrf_field() ?>
             <div class="user-form-group">
                 <label for="username">Nom d'utilisateur</label>
                 <input type="text" id="username" name="username" value="<?= htmlspecialchars($username) ?>" maxlength="100" autocomplete="username" required>

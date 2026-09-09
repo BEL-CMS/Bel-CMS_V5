@@ -153,34 +153,43 @@ final class Controller
     /**
      * Modification du profil
      */
-    public function edit(): void
-    {
-        if (!$this->user->isLogged()) {
-            header('Location: /user/login');
-            exit;
-        }
+public function edit(): void
+{
+    if (!$this->user->isLogged()) {
+        header('Location: /user/login');
+        exit;
+    }
 
-        $currentUser = $this->user->data();
+    $currentUser = $this->user->data();
 
-        $error = null;
-        $success = null;
+    $error = null;
+    $success = null;
 
-        $username = (string) ($currentUser->username ?? '');
-        $email    = (string) ($currentUser->email ?? '');
+    $username = (string)($currentUser->username ?? '');
+    $email    = (string)($currentUser->email ?? '');
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+
+        /*
+         * Vérification CSRF
+         */
+        if (!csrf_verify($_POST['csrf_token'] ?? null)) {
+
+            $error = 'Votre session de sécurité a expiré. Veuillez réessayer.';
+
+        } else {
 
             $username = trim(
-                (string) ($_POST['username'] ?? '')
+                (string)($_POST['username'] ?? '')
             );
 
             $email = trim(
-                (string) ($_POST['email'] ?? '')
+                (string)($_POST['email'] ?? '')
             );
 
             /*
-            * Validation du username
-            */
+             * Validation du username
+             */
             if ($username === '') {
 
                 $error = 'Le nom d’utilisateur est obligatoire.';
@@ -193,8 +202,8 @@ final class Controller
                 $error = 'Le nom d’utilisateur doit contenir entre 3 et 100 caractères.';
 
             /*
-            * Validation de l'email
-            */
+             * Validation de l'email
+             */
             } elseif (
                 $email === '' ||
                 !filter_var(
@@ -208,23 +217,24 @@ final class Controller
             } else {
 
                 /*
-                * Vérification d'un username déjà utilisé.
-                */
+                 * Vérification d'un username déjà utilisé
+                 */
                 $existingUsername = $this->model->getByUsername(
                     $username
                 );
 
                 if (
                     $existingUsername &&
-                    (int) $existingUsername->id !== $this->user->id()
+                    (int)$existingUsername->id !== $this->user->id()
                 ) {
 
                     $error = 'Ce nom d’utilisateur est déjà utilisé.';
                 }
 
+
                 /*
-                * Vérification d'un email déjà utilisé.
-                */
+                 * Vérification d'un email déjà utilisé
+                 */
                 if ($error === null) {
 
                     $existingEmail = $this->model->getByEmail(
@@ -233,16 +243,17 @@ final class Controller
 
                     if (
                         $existingEmail &&
-                        (int) $existingEmail->id !== $this->user->id()
+                        (int)$existingEmail->id !== $this->user->id()
                     ) {
 
                         $error = 'Cette adresse email est déjà utilisée.';
                     }
                 }
 
+
                 /*
-                * Mise à jour.
-                */
+                 * Mise à jour
+                 */
                 if ($error === null) {
 
                     $updated = $this->model->update(
@@ -258,20 +269,17 @@ final class Controller
                         $success = 'Votre profil a été mis à jour.';
 
                         /*
-                        * On recharge l'utilisateur
-                        * présent en mémoire afin que
-                        * User::data() soit immédiatement
-                        * à jour.
-                        */
+                         * Recharge l'utilisateur
+                         */
                         $this->user->reload();
 
                         $currentUser = $this->user->data();
 
-                        $username = (string) (
+                        $username = (string)(
                             $currentUser->username ?? ''
                         );
 
-                        $email = (string) (
+                        $email = (string)(
                             $currentUser->email ?? ''
                         );
 
@@ -282,19 +290,20 @@ final class Controller
                 }
             }
         }
-
-        echo $this->view->render(
-            'User',
-            'edit',
-            [
-                'user'     => $currentUser,
-                'username' => $username,
-                'email'    => $email,
-                'error'    => $error,
-                'success'  => $success,
-            ]
-        );
     }
+
+    echo $this->view->render(
+        'User',
+        'edit',
+        [
+            'user'     => $currentUser,
+            'username' => $username,
+            'email'    => $email,
+            'error'    => $error,
+            'success'  => $success,
+        ]
+    );
+}
     /**
      * Modification du mot de passe
      */

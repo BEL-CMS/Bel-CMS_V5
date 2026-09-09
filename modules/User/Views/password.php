@@ -35,6 +35,7 @@ declare(strict_types=1);
             <h2>Nouveau mot de passe</h2>
         </div>
         <form method="post" action="/user/password" class="user-edit-form">
+            <?= csrf_field() ?>
             <div class="user-form-group">
                 <label for="current_password">Mot de passe actuel</label>
                 <input type="password" id="current_password" name="current_password" autocomplete="current-password" required>

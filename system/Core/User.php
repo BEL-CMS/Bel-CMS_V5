@@ -255,6 +255,8 @@ final class User
 
         $hashKey = trim((string)$user->hash_key);
 
+        $this->updateIp($hashKey);
+
         $this->session->regenerate(true);
 
         if (!empty($user->two_factor_enabled) && !empty($user->two_factor_secret)) {
@@ -412,20 +414,36 @@ final class User
 
     public function getTwoFactorSetupSecret(): ?string
     {
-        $secret = $this->session->get(self::TWO_FACTOR_SETUP_KEY);
+        $secret = $this->session->get(
+            self::TWO_FACTOR_SETUP_KEY
+        );
 
-        if (!is_string($secret)) {
+        if (!is_string($secret) || $secret === '') {
             return null;
         }
 
+        return $secret;
+    }
+
+    public function setTwoFactorSetupSecret(string $secret): void
+    {
         $secret = trim($secret);
 
-        return $secret !== '' ? $secret : null;
+        if ($secret === '') {
+            return;
+        }
+
+        $this->session->set(
+            self::TWO_FACTOR_SETUP_KEY,
+            $secret
+        );
     }
 
     public function clearTwoFactorSetupSecret(): void
     {
-        $this->session->remove(self::TWO_FACTOR_SETUP_KEY);
+        $this->session->remove(
+            self::TWO_FACTOR_SETUP_KEY
+        );
     }
 
     public function getTwoFactorUri(?string $secret = null): ?string
@@ -731,4 +749,61 @@ final class User
 
         return password_verify($password, (string)$user->password);
     }
+
+    public function updateCurrentIp(): bool
+    {
+        if (!$this->isLogged()) {
+            return false;
+        }
+
+        $hashKey = $this->hashKey();
+
+        if ($hashKey === null || $hashKey === '') {
+            return false;
+        }
+
+        $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+        if ($ip === null || $ip === '') {
+            return false;
+        }
+
+        $this->db->table('belcms_user');
+
+        $this->db->where([
+            'name'  => 'hash_key',
+            'value' => $hashKey
+        ]);
+
+        return (bool)$this->db->update([
+            'ip' => $ip
+        ]);
+    }
+    public function updateIp(string $hashKey): bool
+    {
+        $hashKey = trim($hashKey);
+
+        if ($hashKey === '') {
+            return false;
+        }
+
+        $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+        if ($ip === null || $ip === '') {
+            return false;
+        }
+
+        $this->db->table('belcms_user');
+
+        $this->db->where([
+            'name'  => 'hash_key',
+            'value' => $hashKey,
+        ]);
+
+        return (bool)$this->db->update([
+            'ip' => $ip,
+        ]);
+    }
+
+
 }
