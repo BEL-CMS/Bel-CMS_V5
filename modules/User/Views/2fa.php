@@ -78,6 +78,7 @@ declare(strict_types=1);
                         <p>La désactivation supprimera la clé de sécurité actuellement enregistrée.</p>
                     </div>
                     <form method="post" action="/user/security/2fa" onsubmit="return confirm('Êtes-vous certain de vouloir désactiver l’authentification à deux facteurs ?');">
+                        <?= csrf_field() ?>
                         <input type="hidden" name="action" value="disable">
                         <div class="user-form-group">
                             <label for="disable-password">Mot de passe actuel</label>

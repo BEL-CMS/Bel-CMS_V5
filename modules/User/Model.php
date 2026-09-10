@@ -295,7 +295,95 @@ public function verifyPassword(
 
         return $sql->data;
     }
+/*
+ * Supprime une inscription temporaire.
+ */
+public function deleteTemporary(
+    string $validationKey
+): bool {
+    $validationKey = trim($validationKey);
 
+    if ($validationKey === '') {
+        return false;
+    }
+
+    $sql = new BDD();
+
+    $sql->table('belcms_user_temp');
+
+    $sql->where([
+        'name'  => 'validation_key',
+        'value' => $validationKey
+    ]);
+
+    return $sql->delete();
+}
+
+
+/**
+ * Crée un utilisateur définitif
+ * à partir d'une inscription temporaire.
+ */
+public function createFromTemporary(
+    object $temporaryUser
+): bool {
+    if (
+        empty($temporaryUser->username) ||
+        empty($temporaryUser->hash_key) ||
+        empty($temporaryUser->email) ||
+        empty($temporaryUser->password)
+    ) {
+        return false;
+    }
+
+    /*
+     * Vérification de l'expiration.
+     */
+    if (
+        !empty($temporaryUser->expires_at)
+        && strtotime((string)$temporaryUser->expires_at) <= time()
+    ) {
+        return false;
+    }
+
+    /*
+     * Vérifie que le compte définitif
+     * n'existe pas déjà.
+     */
+    if (
+        $this->getByUsername(
+            (string)$temporaryUser->username
+        )
+    ) {
+        return false;
+    }
+
+    if (
+        $this->getByEmail(
+            (string)$temporaryUser->email
+        )
+    ) {
+        return false;
+    }
+
+    /*
+     * Création du compte définitif.
+     */
+    $sql = new BDD();
+
+    $sql->table('belcms_user');
+
+    return $sql->insert([
+        'username'           => $temporaryUser->username,
+        'hash_key'           => $temporaryUser->hash_key,
+        'password'           => $temporaryUser->password,
+        'email'              => $temporaryUser->email,
+        'ip'                 => $temporaryUser->ip,
+        'valid'              => 1,
+        'two_factor_enabled' => 0,
+        'two_factor_secret'  => null,
+    ]);
+}
     /**
      * Enregistre une nouvelle session utilisateur.
      */
@@ -361,6 +449,249 @@ public function verifyPassword(
         $sql->where([
             'name'  => 'session_token',
             'value' => $sessionToken
+        ]);
+
+        return $sql->delete();
+    }
+    /**
+     * Crée un nouvel utilisateur.
+     *
+     * @param array<string, mixed> $data
+     */
+    public function create(array $data): bool
+    {
+        /*
+        * Données obligatoires
+        */
+        $username = trim((string)($data['username'] ?? ''));
+        $email    = trim((string)($data['email'] ?? ''));
+        $password = (string)($data['password'] ?? '');
+
+        if (
+            $username === '' ||
+            $email === '' ||
+            $password === ''
+        ) {
+            return false;
+        }
+
+        /*
+        * Validation du username
+        */
+        if (
+            mb_strlen($username) < 3 ||
+            mb_strlen($username) > 100
+        ) {
+            return false;
+        }
+
+        /*
+        * Validation de l'adresse email
+        */
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+
+        /*
+        * Vérifie qu'un username
+        * n'existe pas déjà.
+        */
+        if ($this->getByUsername($username)) {
+            return false;
+        }
+
+        /*
+        * Vérifie qu'un email
+        * n'existe pas déjà.
+        */
+        if ($this->getByEmail($email)) {
+            return false;
+        }
+
+        /*
+        * Création du hash utilisateur.
+        *
+        * 32 caractères hexadécimaux.
+        */
+        $hashKey = bin2hex(random_bytes(16));
+
+        /*
+        * Hash sécurisé du mot de passe.
+        */
+        $passwordHash = password_hash(
+            $password,
+            PASSWORD_DEFAULT
+        );
+
+        if ($passwordHash === false) {
+            return false;
+        }
+
+        /*
+        * IP de création du compte.
+        */
+        $ip = $data['ip'] ?? null;
+
+        if (
+            $ip !== null &&
+            !is_string($ip)
+        ) {
+            $ip = null;
+        }
+
+        /*
+        * Création du compte.
+        *
+        * valid = 1
+        * pour le moment.
+        *
+        * Nous pourrons ensuite passer
+        * à une validation par email.
+        */
+        $sql = new BDD();
+
+        $sql->table('belcms_user');
+
+        return $sql->insert([
+            'username'           => $username,
+            'hash_key'           => $hashKey,
+            'password'           => $passwordHash,
+            'email'              => $email,
+            'ip'                 => $ip,
+            'valid'              => 1,
+            'two_factor_enabled' => 0,
+            'two_factor_secret'  => null,
+        ]);
+    }
+    public function createTemporary(
+        string $username,
+        string $hashKey,
+        string $email,
+        string $passwordHash,
+        ?string $ip,
+        string $validationKey,
+        string $expiresAt
+    ): bool {
+        $username      = trim($username);
+        $hashKey       = trim($hashKey);
+        $email         = trim($email);
+        $passwordHash  = trim($passwordHash);
+        $validationKey = trim($validationKey);
+        $expiresAt     = trim($expiresAt);
+
+        if (
+            $username === '' ||
+            $hashKey === '' ||
+            $email === '' ||
+            $passwordHash === '' ||
+            $validationKey === '' ||
+            $expiresAt === ''
+        ) {
+            return false;
+        }
+
+        $sql = new BDD();
+
+        $sql->table('belcms_user_temp');
+
+        return $sql->insert([
+            'username'       => $username,
+            'hash_key'       => $hashKey,
+            'email'          => $email,
+            'password'       => $passwordHash,
+            'ip'             => $ip,
+            'validation_key' => $validationKey,
+            'expires_at'     => $expiresAt,
+        ]);
+    }
+    /**
+     * Retourne une inscription temporaire
+     * grâce à sa clé de validation.
+     */
+    public function getTemporaryByValidationKey(
+        string $validationKey
+    ): mixed {
+        $validationKey = trim($validationKey);
+
+        if ($validationKey === '') {
+            return null;
+        }
+
+        $sql = new BDD();
+
+        $sql->table('belcms_user_temp');
+
+        $sql->where([
+            'name'  => 'validation_key',
+            'value' => $validationKey
+        ]);
+
+        $sql->queryOne();
+
+        return $sql->data;
+    }
+    /**
+     * Retourne une inscription temporaire
+     * par username.
+     */
+    public function getTemporaryByUsername(
+        string $username
+    ): mixed {
+        $username = trim($username);
+
+        if ($username === '') {
+            return null;
+        }
+
+        $sql = new BDD();
+
+        $sql->table('belcms_user_temp');
+
+        $sql->where([
+            'name'  => 'username',
+            'value' => $username
+        ]);
+
+        $sql->queryOne();
+
+        return $sql->data;
+    }
+    /**
+     * Retourne une inscription temporaire
+     * par email.
+     */
+    public function getTemporaryByEmail(
+        string $email
+    ): mixed {
+        $email = trim($email);
+
+        if ($email === '') {
+            return null;
+        }
+
+        $sql = new BDD();
+
+        $sql->table('belcms_user_temp');
+
+        $sql->where([
+            'name'  => 'email',
+            'value' => $email
+        ]);
+
+        $sql->queryOne();
+
+        return $sql->data;
+    } 
+
+    public function cleanupTemporary(): bool
+    {
+        $sql = new BDD();
+
+        $sql->table('belcms_user_temp');
+
+        $sql->where([
+            'name'  => 'expires_at',
+            'value' => date('Y-m-d H:i:s')
         ]);
 
         return $sql->delete();

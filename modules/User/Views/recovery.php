@@ -79,6 +79,7 @@ declare(strict_types=1);
                     <p>Un nouveau jeu de 10 codes remplacera immédiatement les codes actuellement enregistrés.</p>
                 </div>
                 <form method="post" action="/user/security/recovery">
+                    <?= csrf_field() ?>
                     <button type="submit" class="user-button user-button-primary">Générer 10 nouveaux codes</button>
                 </form>
             </div>
