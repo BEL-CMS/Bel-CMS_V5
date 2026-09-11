@@ -16,6 +16,7 @@ namespace BelCMS\Modules\User;
 use BelCMS\Core\User;
 use BelCMS\Core\View;
 use BelCMS\Core\UserSession;
+use BelCMS\Core\Captcha;
 
 final class Controller
 {
@@ -671,129 +672,17 @@ final class Controller
         );
     }
     /**
-     * Gestion des codes de récupération.
+     * Inscription utilisateur avec CAPTCHA.
      */
-    public function recovery(): void
-    {
-        if (!$this->user->isLogged()) {
-            header('Location: /user/login');
-            exit;
-        }
-        /*
-        * Les codes de récupération nécessitent
-        * que le 2FA soit activé.
-        */
-        if (!$this->user->canManageRecoveryCodes()) {
-            header('Location: /user/security');
-            exit;
-        }
-        $error = null;
-        $success = null;
-        $recoveryCodes = [];
-        /*
-        * Nombre de codes actuellement disponibles.
-        */
-        $count = $this->user->getRecoveryCodeCount();
-        /*
-        * Génération d'un nouveau jeu de codes.
-        */
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-            if (!csrf_verify($_POST['csrf_token'] ?? null)) {
-                $error = 'Votre session de sécurité a expiré. Veuillez réessayer.';
-            } else {
-                $recoveryCodes =
-                    $this->user->generateRecoveryCodes(10);
-
-                if (count($recoveryCodes) === 10) {
-
-                    $success =
-                        '10 nouveaux codes de récupération ont été générés. '
-                        . 'Les anciens codes ne sont désormais plus valides.';
-
-                    $count = 10;
-
-                } else {
-
-                    $error =
-                        'Impossible de générer les codes de récupération.';
-                }
-            }
-        }
-
-        echo $this->view->render(
-            'User',
-            'recovery',
-            [
-                'count'         => $count,
-                'error'         => $error,
-                'success'       => $success,
-                'recoveryCodes' => $recoveryCodes,
-            ]
-        );
-    }
-    public function sessions(): void
-    {
-        if (!$this->user->isLogged()) {
-            header('Location: /user/login');
-            exit;
-        }
-        $hashKey = $this->user->hashKey();
-
-        if ($hashKey === null || $hashKey === '') {
-            header('Location: /user/security');
-            exit;
-        }
-        $success = null;
-        $error   = null;
-        $currentSessionId = session_id();
-        /*
-        * Déconnexion de toutes les autres sessions
-        */
-        if (
-            ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
-            && isset($_POST['action'])
-            && $_POST['action'] === 'logout-others'
-        ) {
-            $deleted = $this->userSession->deleteOthers(
-                $hashKey,
-                $currentSessionId
-            );
-            $success = $deleted > 0
-                ? $deleted . ' session(s) ont été déconnectée(s).'
-                : 'Aucune autre session active.';
-        }
-
-        /*
-        * Récupération des sessions
-        */
-        $sessions = $this->userSession->getByHashKey($hashKey);
-        /*
-        * Nettoyage des données destinées à la vue
-        */
-        foreach ($sessions as $session) {
-            $session->is_current = (
-                isset($session->session_id)
-                && $session->session_id === $currentSessionId
-            );
-        }
-
-        echo $this->view->render(
-            'User',
-            'sessions',
-            [
-                'sessions'          => $sessions,
-                'currentSessionId'  => $currentSessionId,
-                'success'           => $success,
-                'error'             => $error,
-            ]
-        );
-    }
-public function register(): void
+    public function register(): void
     {
         if ($this->user->isLogged()) {
             header('Location: /user');
             exit;
         }
+
+        $captcha = new Captcha();
+        $captchaData = $_SESSION['CAPTCHA'] ?? null;
 
         $errors = [];
         $success = null;
@@ -802,16 +691,47 @@ public function register(): void
         $email = '';
         $validationLink = null;
 
+        /*
+         * Génération uniquement lors de l'affichage initial.
+         * Ne jamais recréer le CAPTCHA avant verify() sur un POST.
+         */
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            $captchaData = $captcha->createCaptcha();
+        }
+
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
-            /*
-             * =========================================================
+            /* =========================================================
              * CSRF
              * =========================================================
              */
             if (!csrf_verify($_POST['csrf_token'] ?? null)) {
                 $errors[] =
                     'La session de sécurité a expiré. Veuillez réessayer.';
+            } else {
+
+                /* =====================================================
+                 * CAPTCHA
+                 * =====================================================
+                 */
+                if (!Captcha::verify()) {
+                    $captchaError = Captcha::getLastError();
+                    $captchaMessage = is_array($captchaError)
+                        ? (string)($captchaError['message'] ?? '')
+                        : '';
+
+                    if ($captchaMessage !== '') {
+                        $errors[] = $captchaMessage;
+                    } else {
+                        $errors[] = 'La vérification CAPTCHA a échoué.';
+                    }
+
+                    /* Nouveau CAPTCHA uniquement après un échec. */
+                    $captchaData = $captcha->createCaptcha();
+                } else {
+                    /* Le CAPTCHA est consommé par verify(). */
+                    $captchaData = null;
+                }
             }
 
             $username = trim(
@@ -830,14 +750,12 @@ public function register(): void
                 $_POST['password_confirm'] ?? ''
             );
 
-            /*
-             * =========================================================
-             * VALIDATION
+            /* =========================================================
+             * VALIDATION DES CHAMPS
              * =========================================================
              */
             if ($username === '') {
-                $errors[] =
-                    'Le nom d’utilisateur est obligatoire.';
+                $errors[] = 'Le nom d’utilisateur est obligatoire.';
             } elseif (mb_strlen($username) < 3) {
                 $errors[] =
                     'Le nom d’utilisateur doit contenir au moins 3 caractères.';
@@ -850,28 +768,23 @@ public function register(): void
             }
 
             if ($email === '') {
-                $errors[] =
-                    'L’adresse e-mail est obligatoire.';
+                $errors[] = 'L’adresse e-mail est obligatoire.';
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $errors[] =
-                    'L’adresse e-mail est invalide.';
+                $errors[] = 'L’adresse e-mail est invalide.';
             }
 
             if ($password === '') {
-                $errors[] =
-                    'Le mot de passe est obligatoire.';
+                $errors[] = 'Le mot de passe est obligatoire.';
             } elseif (strlen($password) < 8) {
                 $errors[] =
                     'Le mot de passe doit contenir au moins 8 caractères.';
             }
 
             if ($password !== $passwordConfirm) {
-                $errors[] =
-                    'Les deux mots de passe ne correspondent pas.';
+                $errors[] = 'Les deux mots de passe ne correspondent pas.';
             }
 
-            /*
-             * =========================================================
+            /* =========================================================
              * DOUBLONS
              * =========================================================
              */
@@ -886,7 +799,6 @@ public function register(): void
                 }
 
                 if (empty($errors)) {
-
                     $existingEmail =
                         $this->model->getByEmail($email);
 
@@ -897,7 +809,6 @@ public function register(): void
                 }
 
                 if (empty($errors)) {
-
                     $temporaryUsername =
                         $this->model->getTemporaryByUsername($username);
 
@@ -908,7 +819,6 @@ public function register(): void
                 }
 
                 if (empty($errors)) {
-
                     $temporaryEmail =
                         $this->model->getTemporaryByEmail($email);
 
@@ -919,20 +829,14 @@ public function register(): void
                 }
             }
 
-            /*
-             * =========================================================
+            /* =========================================================
              * CRÉATION DANS belcms_user_temp
              * =========================================================
              */
             if (empty($errors)) {
 
-                $hashKey = bin2hex(
-                    random_bytes(16)
-                );
-
-                $validationKey = bin2hex(
-                    random_bytes(32)
-                );
+                $hashKey = bin2hex(random_bytes(16));
+                $validationKey = bin2hex(random_bytes(32));
 
                 $passwordHash = password_hash(
                     $password,
@@ -940,12 +844,9 @@ public function register(): void
                 );
 
                 if ($passwordHash === false) {
-
                     $errors[] =
                         'Impossible de sécuriser le mot de passe.';
-
                 } else {
-
                     $expiresAt = date(
                         'Y-m-d H:i:s',
                         strtotime('+24 hours')
@@ -964,17 +865,10 @@ public function register(): void
                     );
 
                     if (!$created) {
-
                         $errors[] =
                             'Impossible d’enregistrer votre inscription.';
-
                     } else {
 
-                        /*
-                         * =================================================
-                         * LIEN DE VALIDATION
-                         * =================================================
-                         */
                         $scheme = (
                             (
                                 !empty($_SERVER['HTTPS'])
@@ -996,15 +890,6 @@ public function register(): void
                             . '/user/verify?key='
                             . urlencode($validationKey);
 
-                        /*
-                         * =================================================
-                         * E-MAIL DE VALIDATION
-                         *
-                         * Le compte reste TOUJOURS dans belcms_user_temp
-                         * tant que le lien n'a pas été validé.
-                         * Un échec de mail ne supprime donc PAS l'inscription.
-                         * =================================================
-                         */
                         $subject =
                             'Validez votre inscription sur Bel-CMS';
 
@@ -1043,56 +928,27 @@ MAIL;
 
                         $isLocalhost = in_array(
                             strtolower($host),
-                            [
-                                'localhost',
-                                '127.0.0.1',
-                                '::1',
-                            ],
+                            ['localhost', '127.0.0.1', '::1'],
                             true
                         );
 
                         if ($mailSent) {
-
                             $success =
                                 'Votre inscription est en attente de validation. '
                                 . 'Un e-mail de validation vient de vous être envoyé.';
 
-                            /*
-                             * Le lien ne doit plus être affiché une fois
-                             * que l'e-mail a bien été envoyé.
-                             */
                             $validationLink = null;
-
                             $username = '';
                             $email = '';
-
                         } elseif ($isLocalhost) {
-
-                            /*
-                             * =================================================
-                             * MODE LOCALHOST
-                             *
-                             * Aucun SMTP n'est configuré : on garde
-                             * l'inscription en attente et on affiche le lien
-                             * pour permettre le test de la validation.
-                             * =================================================
-                             */
                             $success =
                                 'Inscription enregistrée en attente de validation. '
                                 . 'Mode développement : utilisez le lien ci-dessous pour valider le compte.';
-
                         } else {
-
-                            /*
-                             * En production, le compte reste également
-                             * en attente afin qu'un administrateur puisse
-                             * intervenir manuellement si nécessaire.
-                             */
                             $errors[] =
                                 'Votre inscription est enregistrée, mais '
                                 . 'l’e-mail de validation n’a pas pu être envoyé. '
                                 . 'Un administrateur pourra valider le compte manuellement.';
-
                             $success = null;
                         }
                     }
@@ -1109,6 +965,7 @@ MAIL;
                 'username'       => $username,
                 'email'          => $email,
                 'validationLink' => $validationLink,
+                'captcha'        => $captchaData,
             ]
         );
     }

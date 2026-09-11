@@ -2976,20 +2976,46 @@
         1px solid rgba(37, 199, 139, 0.17);
 }
 
-@media (max-width: 500px) {
+    @media (max-width: 500px) {
 
-    .user-auth-wrapper {
-        padding: 15px 0;
-    }
+        .user-auth-wrapper {
+            padding: 15px 0;
+        }
 
-    .user-auth-card {
-        padding: 25px 20px;
+        .user-auth-card {
+            padding: 25px 20px;
 
-        border-radius: 14px;
-    }
+            border-radius: 14px;
+        }
 
-    .user-auth-header h1 {
-        font-size: 24px;
+        .user-auth-header h1 {
+            font-size: 24px;
+        }
     }
 }
+.user-register-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.user-register-input > i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.user-register-input input,
+.user-register-input select,
+.user-register-input textarea {
+    width: 100%;
+    padding-left: 46px;
+}
+.user-register-input > i {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
 }
