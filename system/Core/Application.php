@@ -23,6 +23,7 @@ final class Application
     private Config $config;
     private BDD $db;
     private ModuleManager $modules;
+    private Groups $groups;
     private View $view;
     private Layout $layout;
     private Assets $assets;
@@ -32,166 +33,153 @@ final class Application
     private Session $session;
     private UserSession $userSession;
     private Csrf $csrf;
+    private Profils $profils;
 
-public function __construct()
-{
-    /*
-     * Container
-     */
-    $this->container = new Container();
+    public function __construct()
+    {
+        /*
+        * Container
+        */
+        $this->container = new Container();
+        /*
+        * Configuration
+        */
+        $this->config = new Config(
+            dirname(__DIR__, 2) . '/config/app.php'
+        );
+        /*
+        * Tables
+        */
+        require_once dirname(__DIR__, 2) . '/config/tables.php';
+        /*
+        * Groupes
+        */
+        $this->groups = new Groups;
+        /*
+        * Langue
+        */
+        $this->language = new Language('fr');
+        $this->language->loadGlobal();
+        $GLOBALS['belcms_language'] = $this->language;
+        /*
+        * Session
+        */
+        $this->session = new Session();
 
+        $this->csrf = new Csrf(
+            $this->session
+        );
+        /*
+        * Base de données
+        */
+        $this->db = new BDD();
+        /*
+        * Sessions utilisateur
+        */
+        $this->userSession = new UserSession(
+            $this->db
+        );
+        /*
+        * Utilisateur
+        */
+        $this->user = new User(
+            $this->db,
+            $this->session,
+            $this->userSession
+        );
+        /*
+        * Profils
+        */
+        $this->profils = new Profils();
+        /*
+        * View
+        */
+        $this->view = new View();
+        /*
+        * Assets
+        */
+        $this->assets = new Assets();
 
-    /*
-     * Configuration
-     */
-    $this->config = new Config(
-        dirname(__DIR__, 2) . '/config/app.php'
-    );
+        /*
+        * Plugins globaux
+        */
+        $this->assets->css('/assets/plugins/fontawesome/all.min.css');
+        $this->assets->css('/assets/belcms.css');
+        $this->assets->js('/assets/plugins/jquery-4.0.0.min.js');
+        $this->assets->js('/assets/belcms.js');
+        $this->assets->js('/assets/plugins/fontawesome/all.min.js');
+        /*
+        * Enregistrement des services
+        */
+        $this->container->set(
+            Session::class,
+            $this->session
+        );
 
+        $this->container->set(
+            BDD::class,
+            $this->db
+        );
 
-    /*
-     * Tables
-     */
-    require_once dirname(__DIR__, 2) . '/config/tables.php';
+        $this->container->set(
+            UserSession::class,
+            $this->userSession
+        );
 
+        $this->container->set(
+            User::class,
+            $this->user
+        );
 
-    /*
-     * Langue
-     */
-    $this->language = new Language('fr');
-    $this->language->loadGlobal();
+        $this->container->set(
+            View::class,
+            $this->view
+        );
 
-    $GLOBALS['belcms_language'] = $this->language;
+        $this->container->set(
+            Assets::class,
+            $this->assets
+        );
 
+        $this->container->set(
+            Language::class,
+            $this->language
+        );
 
-    /*
-     * Session
-     */
-    $this->session = new Session();
-
-    $this->csrf = new Csrf(
-        $this->session
-    );
-
-    /*
-     * Base de données
-     */
-    $this->db = new BDD();
-
-
-    /*
-     * Sessions utilisateur
-     */
-    $this->userSession = new UserSession(
-        $this->db
-    );
-
-
-    /*
-     * Utilisateur
-     */
-    $this->user = new User(
-        $this->db,
-        $this->session,
-        $this->userSession
-    );
-
-
-    /*
-     * View
-     */
-    $this->view = new View();
-
-
-    /*
-     * Assets
-     */
-    $this->assets = new Assets();
-
-    /*
-     * Plugins globaux
-     */
-    $this->assets->css('/assets/plugins/fontawesome/all.min.css');
-    $this->assets->css('/assets/belcms.css');
-    $this->assets->js('/assets/belcms.js');
-    $this->assets->js('/assets/plugins/fontawesome/all.min.js');
-
-    /*
-     * Enregistrement des services
-     */
-    $this->container->set(
-        Session::class,
-        $this->session
-    );
-
-    $this->container->set(
-        BDD::class,
-        $this->db
-    );
-
-    $this->container->set(
-        UserSession::class,
-        $this->userSession
-    );
-
-    $this->container->set(
-        User::class,
-        $this->user
-    );
-
-    $this->container->set(
-        View::class,
-        $this->view
-    );
-
-    $this->container->set(
-        Assets::class,
-        $this->assets
-    );
-
-    $this->container->set(
-        Language::class,
-        $this->language
-    );
-
-    $this->container->set(
-        Csrf::class,
-        $this->csrf
-    );
-
-
-    /*
-     * Router
-     */
-    $this->router = new Router(
-        $this->container
-    );
-
-
-    /*
-     * Modules
-     */
-    $this->modules = new ModuleManager(
-        $this->router,
-        $this->assets,
-        $this->language
-    );
-
-    $this->container->set(
-        ModuleManager::class,
-        $this->modules
-    );
-
-    $this->modules->loadAll();
-
-
-    /*
-     * Layout
-     */
-    $this->layout = new Layout(
-        $this->assets
-    );
-}
+        $this->container->set(
+            Csrf::class,
+            $this->csrf
+        );
+        $this->container->set(
+            Profils::class,
+            $this->profils
+        );
+        /*
+        * Router
+        */
+        $this->router = new Router(
+            $this->container
+        );
+        /*
+        * Modules
+        */
+        $this->modules = new ModuleManager(
+            $this->router,
+            $this->assets,
+            $this->language
+        );
+        $this->container->set(
+            ModuleManager::class,
+            $this->modules
+        );
+        $this->modules->loadAll();
+        /*
+        * Layout
+        */
+        $this->layout = new Layout(
+            $this->assets
+        );
+    }
     /**
      * Retourne le routeur
      */

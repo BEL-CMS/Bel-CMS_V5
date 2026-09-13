@@ -220,13 +220,6 @@ final class User
         return false;
     }
 
-    /**
-     * Authenticate with email or username.
-     *
-     * Returns true when the first authentication step succeeds.
-     * When 2FA is enabled, a pending 2FA session is created instead
-     * of logging the user in directly.
-     */
     public function login(string $identifier, string $password): bool
     {
         $identifier = trim($identifier);

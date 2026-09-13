@@ -10,19 +10,21 @@
 */
 
 declare(strict_types=1);
+
 namespace BelCMS\Core;
 
 if (!defined('CHECK_INDEX')):
-	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
-	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
+    header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
+    exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin:20px auto;text-align:center;color:red;}p{text-align:center;font-weight:bold;}</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on the server.</p></body></html>');
 endif;
 
 final class Assets
 {
     private array $css = [];
     private array $js = [];
+
     /**
-     * Ajoute un fichier CSS
+     * Ajoute un fichier CSS.
      */
     public function css(string $file): void
     {
@@ -30,18 +32,21 @@ final class Assets
             $this->css[] = $file;
         }
     }
+
     /**
-    * Ajoute un fichier JavaScript
-    */
+     * Ajoute un fichier JavaScript.
+     */
     public function js(string $file): void
     {
         if (!in_array($file, $this->js, true)) {
             $this->js[] = $file;
         }
     }
+
     /**
-     * Ajoute le CSS d'un module
-    */
+     * Ajoute le CSS principal d'un module.
+     * Exemple : /modules/Profils/css/profils.css
+     */
     public function moduleCss(string $module): void
     {
         $file = '/modules/'
@@ -52,9 +57,11 @@ final class Assets
 
         $this->css($file);
     }
+
     /**
-    * Ajoute le JavaScript d'un module
-    */
+     * Ajoute le JavaScript principal d'un module.
+     * Exemple : /modules/Profils/js/profils.js
+     */
     public function moduleJs(string $module): void
     {
         $file = '/modules/'
@@ -65,45 +72,73 @@ final class Assets
 
         $this->js($file);
     }
+
     /**
-     * Ajoute un plugin CSS
-     *
-     * Exemple :
-     * pluginCss('fontawesome/css/all.min.css')
+     * Ajoute un fichier CSS spécifique à un module.
+     * Exemple : /modules/Profils/css/edit.css
+     */
+    public function moduleCssFile(string $module, string $file): void
+    {
+        $path = '/modules/'
+            . trim($module, '/')
+            . '/css/'
+            . ltrim($file, '/');
+
+        $this->css($path);
+    }
+
+    /**
+     * Ajoute un fichier JavaScript spécifique à un module.
+     * Exemple : /modules/Profils/js/edit.js
+     */
+    public function moduleJsFile(string $module, string $file): void
+    {
+        $path = '/modules/'
+            . trim($module, '/')
+            . '/js/'
+            . ltrim($file, '/');
+
+        $this->js($path);
+    }
+
+    /**
+     * Ajoute un plugin CSS.
      */
     public function pluginCss(string $file): void
     {
         $this->css(
-            '/assets/plugins/'
-            . ltrim($file, '/')
+            '/assets/plugins/' . ltrim($file, '/')
         );
     }
-     /**
-     * Ajoute un plugin JavaScript
-     *
-     * Exemple :
-     * pluginJs('jquery-4.0.0.min.js')
+
+    /**
+     * Ajoute un plugin JavaScript.
      */
     public function pluginJs(string $file): void
     {
-        $this->js('/assets/plugins/'. ltrim($file, '/'));
+        $this->js(
+            '/assets/plugins/' . ltrim($file, '/')
+        );
     }
+
     /**
-     * Retourne les fichiers CSS
+     * Retourne les fichiers CSS.
      */
     public function getCss(): array
     {
         return $this->css;
     }
+
     /**
-     * Retourne les fichiers JavaScript
+     * Retourne les fichiers JavaScript.
      */
     public function getJs(): array
     {
         return $this->js;
     }
+
     /**
-     * Génère les balises CSS
+     * Génère les balises CSS.
      */
     public function renderCss(): string
     {
@@ -111,16 +146,16 @@ final class Assets
 
         foreach ($this->css as $file) {
             $html .= sprintf(
-                '<link rel="stylesheet" href="%s">'
-                . PHP_EOL,
-                htmlspecialchars($file)
+                '<link rel="stylesheet" href="%s">' . PHP_EOL,
+                htmlspecialchars($file, ENT_QUOTES, 'UTF-8')
             );
         }
 
         return $html;
     }
+
     /**
-     * Génère les balises JavaScript
+     * Génère les balises JavaScript.
      */
     public function renderJs(): string
     {
@@ -128,9 +163,8 @@ final class Assets
 
         foreach ($this->js as $file) {
             $html .= sprintf(
-                '<script src="%s"></script>'
-                . PHP_EOL,
-                htmlspecialchars($file)
+                '<script src="%s"></script>' . PHP_EOL,
+                htmlspecialchars($file, ENT_QUOTES, 'UTF-8')
             );
         }
 
