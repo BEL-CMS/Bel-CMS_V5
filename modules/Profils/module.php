@@ -18,4 +18,5 @@ return [
         'css' => true,
         'js' => true,
     ],
+    $this->assets->moduleCssFile('Profils', 'social.css')
 ];

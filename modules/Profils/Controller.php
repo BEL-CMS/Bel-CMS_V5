@@ -273,4 +273,96 @@ final class Controller
             ]
         );
     }
+
+public function social(): void
+{
+    if (!$this->user->isLogged()) {
+        header('Location: /user/login');
+        exit;
+    }
+
+    $hashKey = $this->user->hashKey();
+
+    if ($hashKey === null || $hashKey === '') {
+        header('Location: /profils');
+        exit;
+    }
+
+
+    echo $this->view->render(
+        'Profils',
+        'social',
+        [
+            'social' => $this->model->getSocialByHashKey($hashKey),
+            'profile' => $this->user->data()?->profile ?? null,
+            'language' => $this->language,
+        ]
+    );
+}
+
+public function editsocial(): void
+{
+    if (!$this->user->isLogged()) {
+        header('Location: /user/login');
+        exit;
+    }
+
+    $hashKey = $this->user->hashKey();
+
+    if ($hashKey === null || $hashKey === '') {
+        header('Location: /profils');
+        exit;
+    }
+
+    $errors = [];
+    $success = null;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        /*
+         * Utilise ici la méthode CSRF déjà employée par ton Controller Profils.
+         * Exemple selon ton Core : $this->csrf->validate($_POST['csrf_token'] ?? '')
+         */
+        $data = [
+            'facebook' => $_POST['facebook'] ?? '',
+            'youtube' => $_POST['youtube'] ?? '',
+            'whatsapp' => $_POST['whatsapp'] ?? '',
+            'instagram' => $_POST['instagram'] ?? '',
+            'messenger' => $_POST['messenger'] ?? '',
+            'tiktok' => $_POST['tiktok'] ?? '',
+            'snapchat' => $_POST['snapchat'] ?? '',
+            'telegram' => $_POST['telegram'] ?? '',
+            'pinterest' => $_POST['pinterest'] ?? '',
+            'x_twitter' => $_POST['x_twitter'] ?? '',
+            'reddit' => $_POST['reddit'] ?? '',
+            'linkedIn' => $_POST['linkedIn'] ?? '',
+            'skype' => $_POST['skype'] ?? '',
+            'viber' => $_POST['viber'] ?? '',
+            'teams_ms' => $_POST['teams_ms'] ?? '',
+            'discord' => $_POST['discord'] ?? '',
+            'twitch' => $_POST['twitch'] ?? '',
+        ];
+
+        foreach ($data as $field => $value) {
+            $data[$field] = trim((string)$value);
+        }
+
+        if ($this->model->saveSocial($hashKey, $data)) {
+            $success = 'Vos réseaux sociaux ont été enregistrés.';
+        } else {
+            $errors[] = 'Impossible d\'enregistrer vos réseaux sociaux.';
+        }
+    }
+
+    echo $this->view->render(
+        'Profils',
+        'editsocial',
+        [
+            'social' => $this->model->getSocialByHashKey($hashKey),
+            'errors' => $errors,
+            'success' => $success,
+            'language' => $this->language,
+        ]
+    );
+}
+
 }

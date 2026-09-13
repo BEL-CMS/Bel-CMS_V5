@@ -1,0 +1,742 @@
+/* =========================================================
+   BEL-CMS V5
+   PROFILS - RESEAUX SOCIAUX
+   ========================================================= */
+
+.social-page {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.social-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 25px;
+    padding: 25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 31, 54, 0.98),
+            rgba(6, 17, 31, 0.98)
+        );
+
+    border: 1px solid rgba(22, 140, 255, 0.18);
+    border-radius: 16px;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.25),
+        inset 0 0 30px rgba(22, 140, 255, 0.025);
+}
+
+.social-header .profile-header-content {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.social-header .profile-user-info h1 {
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #ffffff;
+
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.social-header .profile-user-info h1 i {
+    color: #168cff;
+}
+
+.social-header .profile-user-info p {
+    margin: 6px 0 0;
+
+    color: #7f91aa;
+    font-size: 14px;
+}
+
+/* =========================================================
+   AVATAR
+   ========================================================= */
+
+.social-header .profile-avatar {
+    width: 65px;
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #12385d,
+            #08192c
+        );
+
+    border: 2px solid rgba(22, 140, 255, 0.45);
+
+    color: #168cff;
+
+    font-size: 25px;
+
+    box-shadow:
+        0 0 20px rgba(22, 140, 255, 0.08);
+}
+
+.social-header .profile-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+/* =========================================================
+   BOUTON RETOUR / ACTION
+   ========================================================= */
+
+.social-header .profile-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.social-page .profile-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 42px;
+
+    padding: 0 17px;
+
+    color: #dcecff;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(24, 77, 125, 0.45),
+            rgba(11, 34, 59, 0.75)
+        );
+
+    border: 1px solid rgba(22, 140, 255, 0.25);
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    transition:
+        all 0.2s ease;
+}
+
+.social-page .profile-button:hover {
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(28, 106, 176, 0.55),
+            rgba(13, 48, 82, 0.85)
+        );
+
+    border-color: rgba(22, 140, 255, 0.55);
+
+    box-shadow:
+        0 0 18px rgba(22, 140, 255, 0.12);
+
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   CONTENU
+   ========================================================= */
+
+.social-content {
+    width: 100%;
+}
+
+/* =========================================================
+   INTRODUCTION
+   ========================================================= */
+
+.social-intro {
+    margin-bottom: 20px;
+}
+
+.social-description {
+    margin: 8px 0 0;
+
+    color: #8492a7;
+
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* =========================================================
+   GRILLE
+   ========================================================= */
+
+.social-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+/* =========================================================
+   CARTE
+   ========================================================= */
+
+.social-card {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    min-height: 88px;
+
+    padding: 18px;
+
+    gap: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14, 31, 52, 0.98),
+            rgba(7, 18, 32, 0.98)
+        );
+
+    border: 1px solid rgba(41, 105, 160, 0.20);
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.20),
+        inset 0 0 20px rgba(255, 255, 255, 0.01);
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.social-card:hover {
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(22, 140, 255, 0.45);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15, 40, 68, 0.98),
+            rgba(7, 20, 36, 0.98)
+        );
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.30),
+        0 0 20px rgba(22, 140, 255, 0.07);
+}
+
+/* =========================================================
+   ICONE
+   ========================================================= */
+
+.social-card-icon {
+    width: 55px;
+    height: 55px;
+
+    min-width: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.07),
+            rgba(255, 255, 255, 0.025)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    color: var(--social-color, #168cff);
+
+    font-size: 23px;
+
+    box-shadow:
+        inset 0 0 16px rgba(255, 255, 255, 0.015);
+}
+
+/* =========================================================
+   INFORMATIONS
+   ========================================================= */
+
+.social-card-content {
+    min-width: 0;
+
+    flex: 1;
+}
+
+.social-card-title {
+    margin-bottom: 5px;
+
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.social-card-value {
+    overflow: hidden;
+
+    color: #7f8ea6;
+
+    font-size: 13px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   BOUTON OUVRIR
+   ========================================================= */
+
+.social-card-action {
+    flex: 0 0 auto;
+
+    margin-left: auto;
+}
+
+.social-open {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #7d8ea7;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    transition:
+        all 0.2s ease;
+}
+
+.social-open:hover {
+    color: #ffffff;
+
+    background:
+        rgba(22, 140, 255, 0.14);
+
+    border-color:
+        rgba(22, 140, 255, 0.40);
+
+    box-shadow:
+        0 0 12px rgba(22, 140, 255, 0.08);
+}
+
+/* =========================================================
+   PAGE VIDE
+   ========================================================= */
+
+.social-empty {
+    text-align: center;
+
+    padding: 60px 25px;
+}
+
+.social-empty-icon {
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(22, 140, 255, 0.07);
+
+    border: 1px solid rgba(22, 140, 255, 0.18);
+
+    color: #168cff;
+
+    font-size: 26px;
+
+    box-shadow:
+        0 0 25px rgba(22, 140, 255, 0.06);
+}
+
+.social-empty h3 {
+    margin: 0 0 8px;
+
+    color: #ffffff;
+
+    font-size: 18px;
+}
+
+.social-empty p {
+    margin: 0;
+
+    color: #7d8ba2;
+
+    font-size: 14px;
+}
+
+/* =========================================================
+   EDITION DES RESEAUX SOCIAUX
+   ========================================================= */
+
+.social-edit-page {
+    width: 100%;
+}
+
+.social-edit-page .profile-section {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.social-edit-form {
+    width: 100%;
+}
+
+.social-edit-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    width: 100% !important;
+}
+
+/* Chaque réseau */
+.social-edit-item {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Libellé */
+.social-edit-item > label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    width: 100% !important;
+    margin: 0 0 8px 0 !important;
+    color: #dcecff !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+}
+
+.social-edit-item > label i {
+    width: 20px !important;
+    min-width: 20px !important;
+    color: #dcecff !important;
+    text-align: center !important;
+}
+
+/* Conteneur du champ */
+.social-edit-input {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* VRAI input : le problème venait d'ici.
+   Le HTML contient le <input> DANS .social-edit-input. */
+.social-edit-input > input,
+.social-edit-page input[type="text"] {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 46px !important;
+    margin: 0 !important;
+    padding: 0 14px !important;
+    box-sizing: border-box !important;
+
+    color: #e8f3ff !important;
+    background: rgba(3, 12, 23, 0.95) !important;
+
+    border: 1px solid rgba(47, 101, 150, 0.32) !important;
+    border-radius: 9px !important;
+
+    outline: none !important;
+    font-family: inherit !important;
+    font-size: 14px !important;
+    line-height: 46px !important;
+
+    appearance: none !important;
+    -webkit-appearance: none !important;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease !important;
+}
+
+.social-edit-input > input::placeholder,
+.social-edit-page input[type="text"]::placeholder {
+    color: #5d7089 !important;
+    opacity: 1 !important;
+}
+
+.social-edit-input > input:hover,
+.social-edit-page input[type="text"]:hover {
+    border-color: rgba(22, 140, 255, 0.42) !important;
+}
+
+.social-edit-input > input:focus,
+.social-edit-page input[type="text"]:focus {
+    color: #ffffff !important;
+    background: rgba(4, 17, 30, 0.98) !important;
+    border-color: rgba(22, 140, 255, 0.65) !important;
+    box-shadow:
+        0 0 0 3px rgba(22, 140, 255, 0.08),
+        0 0 15px rgba(22, 140, 255, 0.05) !important;
+}
+
+/* Cartes / séparation visuelle */
+.social-edit-item {
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Messages */
+.social-alert {
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.social-alert-success {
+    color: #b9f5d0;
+    background: rgba(41, 173, 96, 0.08);
+    border: 1px solid rgba(41, 173, 96, 0.22);
+}
+
+.social-alert-error {
+    color: #ffb8b8;
+    background: rgba(220, 65, 65, 0.08);
+    border: 1px solid rgba(220, 65, 65, 0.22);
+}
+
+/* Actions */
+.social-edit-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+    margin-top: 25px !important;
+}
+
+.social-edit-actions .profile-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-height: 42px !important;
+    padding: 0 17px !important;
+    box-sizing: border-box !important;
+}
+
+.social-edit-actions .profile-button-primary {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #117bda, #0b5ca8) !important;
+    border-color: rgba(53, 165, 255, 0.40) !important;
+    box-shadow: 0 7px 20px rgba(0, 107, 214, 0.16) !important;
+}
+
+.social-edit-actions .profile-button-primary:hover {
+    filter: brightness(1.08) !important;
+    box-shadow: 0 10px 25px rgba(0, 107, 214, 0.24) !important;
+}
+
+@media (max-width: 900px) {
+    .social-edit-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .social-edit-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .social-edit-actions .profile-button {
+        width: 100% !important;
+    }
+
+    .social-edit-input > input,
+    .social-edit-page input[type="text"] {
+        height: 44px !important;
+        line-height: 44px !important;
+    }
+}
+
+/* =========================================================
+   EDITION : même présentation que /profils/social
+   ========================================================= */
+
+.social-edit-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 18px !important;
+    width: 100% !important;
+}
+
+.social-edit-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 18px !important;
+    background: linear-gradient(
+        145deg,
+        rgba(14, 31, 52, 0.98),
+        rgba(7, 18, 32, 0.98)
+    ) !important;
+    border: 1px solid rgba(41, 105, 160, 0.20) !important;
+    border-radius: 14px !important;
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.20),
+        inset 0 0 20px rgba(255, 255, 255, 0.01) !important;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease !important;
+}
+
+.social-edit-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(22, 140, 255, 0.45) !important;
+    background: linear-gradient(
+        145deg,
+        rgba(15, 40, 68, 0.98),
+        rgba(7, 20, 36, 0.98)
+    ) !important;
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.30),
+        0 0 20px rgba(22, 140, 255, 0.07) !important;
+}
+
+.social-edit-card:focus-within {
+    border-color: rgba(22, 140, 255, 0.55) !important;
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.30),
+        0 0 22px rgba(22, 140, 255, 0.09) !important;
+}
+
+.social-edit-card-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 24px !important;
+    margin-bottom: 11px !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+.social-edit-card-header i {
+    width: 22px !important;
+    min-width: 22px !important;
+    color: #e5f1ff !important;
+    text-align: center !important;
+    font-size: 16px !important;
+}
+
+.social-edit-card-value {
+    width: 100% !important;
+}
+
+.social-edit-card-value input,
+.social-edit-card-value input[type="text"] {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    box-sizing: border-box !important;
+    color: #dcecff !important;
+    background: rgba(3, 12, 23, 0.92) !important;
+    border: 1px solid rgba(47, 101, 150, 0.30) !important;
+    border-radius: 9px !important;
+    outline: none !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    line-height: normal !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease !important;
+}
+
+.social-edit-card-value input::placeholder {
+    color: #6d7f96 !important;
+    opacity: 1 !important;
+}
+
+.social-edit-card-value input:hover {
+    border-color: rgba(22, 140, 255, 0.42) !important;
+}
+
+.social-edit-card-value input:focus {
+    color: #ffffff !important;
+    background: rgba(4, 17, 30, 0.98) !important;
+    border-color: rgba(22, 140, 255, 0.65) !important;
+    box-shadow:
+        0 0 0 3px rgba(22, 140, 255, 0.08),
+        0 0 15px rgba(22, 140, 255, 0.05) !important;
+}
+
+@media (max-width: 900px) {
+    .social-edit-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
