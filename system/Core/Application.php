@@ -11,6 +11,7 @@
 
 declare(strict_types=1);
 namespace BelCMS\Core;
+use RuntimeException;
 
 if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
@@ -173,6 +174,62 @@ final class Application
             $this->modules
         );
         $this->modules->loadAll();
+
+/*
+ * Administration
+ */
+$adminRoutes = require dirname(__DIR__, 2)
+    . '/administration/routes.php';
+
+foreach ($adminRoutes as $route => $handler) {
+
+    $parts = preg_split(
+        '/\s+/',
+        trim($route),
+        2
+    );
+
+    if (
+        $parts === false
+        || count($parts) !== 2
+    ) {
+        throw new RuntimeException(
+            "Route d'administration invalide : {$route}"
+        );
+    }
+
+    $method = strtoupper($parts[0]);
+    $path   = $parts[1];
+
+    switch ($method) {
+
+        case 'GET':
+
+            $this->router->get(
+                $path,
+                $handler,
+                'Administration'
+            );
+
+            break;
+
+        case 'POST':
+
+            $this->router->post(
+                $path,
+                $handler,
+                'Administration'
+            );
+
+            break;
+
+        default:
+
+            throw new RuntimeException(
+                "Méthode HTTP d'administration non supportée : {$method}"
+            );
+    }
+}
         /*
         * Layout
         */
@@ -247,27 +304,49 @@ final class Application
     /**
      * Lance l'application
      */
-    public function run(): void
-    {
-        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+public function run(): void
+{
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    $uri = $_SERVER['REQUEST_URI'] ?? '/';
 
-        ob_start();
+    ob_start();
 
-        $this->router->dispatch(
-            $method,
-            $uri
-        );
+    $this->router->dispatch(
+        $method,
+        $uri
+    );
 
-        $content = ob_get_clean();
+    $content = ob_get_clean();
 
-        $moduleName = $this->router->getCurrentModule();
+    /*
+     * Administration
+     * URL publique : /admin
+     * Dossier physique : /administration
+     */
+    $path = parse_url($uri, PHP_URL_PATH);
 
-        $this->layout->render(
-            $content,
-            $moduleName
-        );
+    if (
+        is_string($path)
+        && ($path === '/admin' || str_starts_with($path, '/admin/'))
+    ) {
+        $title = 'Administration';
+
+        require dirname(__DIR__, 2)
+            . '/administration/Views/layout.php';
+
+        return;
     }
+
+    /*
+     * Site public
+     */
+    $moduleName = $this->router->getCurrentModule();
+
+    $this->layout->render(
+        $content,
+        $moduleName
+    );
+}
 
     public function user(): User
     {
@@ -283,4 +362,5 @@ final class Application
     {
         return $this->userSession;
     }
+    
 }

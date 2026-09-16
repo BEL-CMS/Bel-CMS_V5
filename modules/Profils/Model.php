@@ -54,7 +54,7 @@ final class Model
 
         $sql = new BDD();
 
-        $sql->table(TABLE_USER_PROFILS);
+        $sql->table(TABLE_USERS_PROFILS);
 
         $sql->where([
             'name'  => 'hash_key',
@@ -84,7 +84,7 @@ final class Model
 
         $sql = new BDD();
 
-        $sql->table(TABLE_USER_SOCIAL);
+        $sql->table(TABLE_USERS_SOCIAL);
 
         $sql->where([
             'name'  => 'hash_key',
@@ -151,7 +151,7 @@ final class Model
 
             $sql = new BDD();
 
-            $sql->table(TABLE_USER_SOCIAL);
+            $sql->table(TABLE_USERS_SOCIAL);
 
             $sql->where([
                 'name'  => 'hash_key',
@@ -166,7 +166,7 @@ final class Model
          */
         $sql = new BDD();
 
-        $sql->table(TABLE_USER_SOCIAL);
+        $sql->table(TABLE_USERS_SOCIAL);
 
         return $sql->insert(
             array_merge(

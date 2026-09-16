@@ -60,7 +60,7 @@ final class User
 
         $hashKey = trim($hashKey);
 
-        $this->db->table('belcms_user');
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
@@ -69,9 +69,92 @@ final class User
 
         if (is_object($this->db->data)) {
             $this->currentUser = $this->db->data;
+
+            // Charge les informations complémentaires une seule fois
+            // pour la durée de vie de l'instance User.
+            $hashKey = (string)($this->currentUser->hash_key ?? '');
+
+            if ($hashKey !== '') {
+                $this->currentUser->profile = $this->loadProfile($hashKey);
+                $this->currentUser->social = $this->loadSocial($hashKey);
+                $this->currentUser->groups = $this->loadGroups($hashKey);
+            } else {
+                $this->currentUser->profile = null;
+                $this->currentUser->social = null;
+                $this->currentUser->groups = null;
+            }
         }
 
         return $this->currentUser;
+    }
+
+    /**
+     * Charge le profil de l'utilisateur connecté.
+     */
+    private function loadProfile(string $hashKey): ?object
+    {
+        $hashKey = trim($hashKey);
+
+        if ($hashKey === '') {
+            return null;
+        }
+
+        $this->db->table('TABLE_USERS_PROFILS');
+        $this->db->where([
+            'name'  => 'hash_key',
+            'value' => $hashKey
+        ]);
+        $this->db->queryOne();
+
+        return is_object($this->db->data)
+            ? $this->db->data
+            : null;
+    }
+
+    /**
+     * Charge les réseaux sociaux de l'utilisateur connecté.
+     */
+    private function loadSocial(string $hashKey): ?object
+    {
+        $hashKey = trim($hashKey);
+
+        if ($hashKey === '') {
+            return null;
+        }
+
+        $this->db->table('TABLE_USERS_SOCIAL');
+        $this->db->where([
+            'name'  => 'hash_key',
+            'value' => $hashKey
+        ]);
+        $this->db->queryOne();
+
+        return is_object($this->db->data)
+            ? $this->db->data
+            : null;
+    }
+
+    /**
+     * Charge les groupes de l'utilisateur connecté.
+     */
+    private function loadGroups(string $hashKey): ?object
+    {
+        $hashKey = trim($hashKey);
+
+        if ($hashKey === '') {
+            return null;
+        }
+
+        $this->db->table('TABLE_USERS_GROUPS');
+        $this->db->where([
+            'name'  => 'hash_key',
+            'value' => $hashKey
+        ]);
+        $this->db->queryOne();
+
+        return is_object($this->db->data)
+            ? $this->db->data
+            : null;
     }
 
     public function isLogged(): bool
@@ -797,6 +880,4 @@ final class User
             'ip' => $ip,
         ]);
     }
-
-
 }

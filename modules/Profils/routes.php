@@ -44,6 +44,11 @@ return [
         'social'
     ],
 
-'GET /profils/editsocial' => [Controller::class, 'editsocial'],
-'POST /profils/editsocial' => [Controller::class, 'editsocial'],
+    'GET /profils/editsocial' =>
+        [Controller::class,
+        'editsocial'],
+
+    'POST /profils/editsocial' => 
+        [Controller::class,
+        'editsocial'],
 ];

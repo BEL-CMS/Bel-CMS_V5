@@ -26,7 +26,7 @@ final class Model
     public function getMembers(): array
     {
         $db = new BDD();
-        $db->table(TABLE_USER_PROFILS);
+        $db->table(TABLE_USERS_PROFILS);
         $db->queryAll();
 
         if (!is_array($db->data)) {
@@ -52,7 +52,7 @@ final class Model
         }
 
         $db = new BDD();
-        $db->table(TABLE_USER_PROFILS);
+        $db->table(TABLE_USERS_PROFILS);
         $db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
@@ -71,7 +71,7 @@ final class Model
         }
 
         $db = new BDD();
-        $db->table(TABLE_USER_SOCIAL);
+        $db->table(TABLE_USERS_SOCIAL);
         $db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,

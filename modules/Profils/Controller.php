@@ -21,6 +21,7 @@ endif;
 use BelCMS\Core\User;
 use BelCMS\Core\View;
 use BelCMS\Core\Language;
+use BelCMS\Core\Assets;
 
 if (!defined('CHECK_INDEX')):
     header(
@@ -49,13 +50,20 @@ final class Controller
     private View $view;
     private Language $language;
     private User $user;
+    private Assets $assets;
 
-    public function __construct(Model $model,View $view,Language $language,User $user)
-    {
+    public function __construct(
+        Model $model,
+        View $view,
+        Language $language,
+        User $user,
+        Assets $assets
+    ) {
         $this->model = $model;
         $this->view = $view;
         $this->language = $language;
         $this->user = $user;
+        $this->assets = $assets;
     }
     /**
      * Affichage du profil
@@ -288,6 +296,10 @@ public function social(): void
         exit;
     }
 
+    $this->assets->moduleCssFile(
+        'Profils',
+        'social.css'
+    );
 
     echo $this->view->render(
         'Profils',
@@ -313,6 +325,11 @@ public function editsocial(): void
         header('Location: /profils');
         exit;
     }
+
+    $this->assets->moduleCssFile(
+        'Profils',
+        'social.css'
+    );
 
     $errors = [];
     $success = null;

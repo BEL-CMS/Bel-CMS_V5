@@ -27,7 +27,7 @@ final class Profils
     private function getProfils (string $hash_key)
     {
         $sql = new BDD;
-        $sql->table('TABLE_USER_PROFILS');
+        $sql->table('TABLE_USERS_PROFILS');
         $sql->where(array('name' => 'hash_key', 'value' => $hash_key));
         $sql->queryOne();
         $return = $sql->data;

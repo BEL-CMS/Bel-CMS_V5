@@ -47,35 +47,70 @@ class BDD
         $this->db = PDOConnection::getInstance()->getConnection();
     }
 
-    public function table(?string $data = null): self
-    {
-        if ($data === null || trim($data) === '') {
-            return $this;
-        }
-
-        $tmp = preg_split('/\s+/', trim($data));
-        $table = $tmp[0];
-
-        if (defined($table)) {
-            $table = constant($table);
-        }
-
-        if (!preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
-            throw new RuntimeException('Nom de table invalide : ' . $table);
-        }
-
-        if (isset($tmp[1])) {
-            $alias = $tmp[1];
-            if (!preg_match('/^[a-zA-Z0-9_]+$/', $alias)) {
-                throw new RuntimeException('Alias de table invalide : ' . $alias);
-            }
-            $this->table = $table . ' ' . $alias;
-        } else {
-            $this->table = $table;
-        }
-
+public function table(?string $data = null): self
+{
+    if ($data === null || trim($data) === '') {
         return $this;
     }
+
+    /*
+     * Nouveau contexte de requête
+     */
+    $this->table     = '';
+    $this->fields    = '*';
+    $this->where     = '';
+    $this->orderby   = '';
+    $this->limit     = '';
+    $this->join      = '';
+    $this->parameters = [];
+    $this->likeValue = '';
+
+    $tmp = preg_split('/\s+/', trim($data));
+
+    if ($tmp === false || empty($tmp[0])) {
+        return $this;
+    }
+
+    $table = $tmp[0];
+
+    /*
+     * Résolution des constantes TABLE_*
+     */
+    if (defined($table)) {
+        $table = constant($table);
+    }
+
+    /*
+     * Sécurité du nom de table
+     */
+    if (!preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+        throw new RuntimeException(
+            'Nom de table invalide : ' . $table
+        );
+    }
+
+    /*
+     * Alias éventuel
+     */
+    if (isset($tmp[1])) {
+
+        $alias = $tmp[1];
+
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $alias)) {
+            throw new RuntimeException(
+                'Alias de table invalide : ' . $alias
+            );
+        }
+
+        $this->table = $table . ' ' . $alias;
+
+    } else {
+
+        $this->table = $table;
+    }
+
+    return $this;
+}
 
     public function fields(array $data = []): self
     {
