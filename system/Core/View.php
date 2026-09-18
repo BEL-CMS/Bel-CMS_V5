@@ -84,9 +84,8 @@ final class View
             . DIRECTORY_SEPARATOR
             . 'administration'
             . DIRECTORY_SEPARATOR
-            . 'Views';
-    }
-
+            . 'Modules';
+     }
     /**
      * Rend une vue d'un module.
      */
@@ -117,29 +116,32 @@ final class View
         );
     }
 
-    /**
-     * Rend une vue de l'administration.
-     */
     public function renderAdmin(
+        string $module,
         string $view,
         array $data = []
     ): string {
-        $file =
-            $this->adminViewsPath
+        $file = $this->adminViewsPath
+            . DIRECTORY_SEPARATOR
+            . $module
+            . DIRECTORY_SEPARATOR
+            . 'Views'
             . DIRECTORY_SEPARATOR
             . $view
             . '.php';
 
         if (!is_file($file)) {
-            throw new RuntimeException(
-                "Vue d'administration introuvable : {$file}"
+            throw new \RuntimeException(
+                'Vue d’administration introuvable : ' . $file
             );
         }
 
-        return $this->includeView(
-            $file,
-            $data
-        );
+        extract($data, EXTR_SKIP);
+
+        ob_start();
+        require $file;
+
+        return (string) ob_get_clean();
     }
 
     /**

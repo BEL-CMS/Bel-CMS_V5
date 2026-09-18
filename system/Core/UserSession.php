@@ -56,7 +56,7 @@ final class UserSession
             return $this->updateActivity($sessionId);
         }
 
-        $this->db->table('belcms_user_sessions');
+        $this->db->table('TABLE_SESSION');
 
         return $this->db->insert([
             'hash_key'      => $hashKey,
@@ -81,7 +81,7 @@ final class UserSession
         }
 
         $this->db->table(
-            'belcms_user_sessions'
+            'TABLE_SESSION'
         );
 
         $this->db->where([
@@ -107,7 +107,7 @@ final class UserSession
         }
 
         $this->db->table(
-            'belcms_user_sessions'
+            'TABLE_SESSION'
         );
 
         $this->db->where([
@@ -135,7 +135,7 @@ final class UserSession
         }
 
         $this->db->table(
-            'belcms_user_sessions'
+            'TABLE_SESSION'
         );
 
         $this->db->where([
@@ -161,7 +161,7 @@ final class UserSession
         }
 
         $this->db->table(
-            'belcms_user_sessions'
+            'TABLE_SESSION'
         );
 
         $this->db->where([
@@ -171,7 +171,6 @@ final class UserSession
 
         return $this->db->delete();
     }
-
     /**
      * Supprime toutes les sessions
      * d'un utilisateur sauf celle indiquée.
@@ -183,33 +182,40 @@ final class UserSession
         $hashKey = trim($hashKey);
         $currentSessionId = trim($currentSessionId);
 
-        if (
-            $hashKey === '' ||
-            $currentSessionId === ''
-        ) {
+        if ($hashKey === '' || $currentSessionId === '') {
             return 0;
         }
 
-        $sessions = $this->getByHashKey(
-            $hashKey
-        );
+        // Sécurité : la session PHP courante doit réellement
+        // appartenir à l'utilisateur demandé avant toute suppression.
+        $currentSession = $this->getBySessionId($currentSessionId);
 
+        if (!is_object($currentSession)) {
+            return 0;
+        }
+
+        $dbHashKey = trim((string)($currentSession->hash_key ?? ''));
+
+        if ($dbHashKey === '' || !hash_equals($dbHashKey, $hashKey)) {
+            return 0;
+        }
+
+        $sessions = $this->getByHashKey($hashKey);
         $deleted = 0;
 
         foreach ($sessions as $session) {
+            $sessionId = trim((string)($session->session_id ?? ''));
 
-            if (
-                !isset($session->session_id) ||
-                $session->session_id === $currentSessionId
-            ) {
+            if ($sessionId === '') {
                 continue;
             }
 
-            if (
-                $this->delete(
-                    (string) $session->session_id
-                )
-            ) {
+            // La session PHP actuelle est TOUJOURS conservée.
+            if (hash_equals($sessionId, $currentSessionId)) {
+                continue;
+            }
+
+            if ($this->delete($sessionId)) {
                 $deleted++;
             }
         }
@@ -329,12 +335,12 @@ final class UserSession
             'Y-m-d H:i:s',
             strtotime("-{$days} days")
         );
-        $this->db->table('belcms_user_sessions');
+        $this->db->table('TABLE_SESSION');
 
         $this->db->where([
             'name'     => 'last_activity',
             'value'    => $lastActivity,
-            'operator' => '<'
+            'op'       => '<'
         ]);
 
         $deleted += (int)$this->db->delete();
@@ -343,12 +349,12 @@ final class UserSession
         */
         $now = date('Y-m-d H:i:s');
 
-        $this->db->table('belcms_user_sessions');
+        $this->db->table('TABLE_SESSION');
 
         $this->db->where([
             'name'     => 'expires_at',
             'value'    => $now,
-            'operator' => '<'
+            'op'       => '<'
         ]);
 
         $deleted += (int)$this->db->delete();
@@ -369,4 +375,5 @@ final class UserSession
 
         return strtotime((string)$session->expires_at) <= time();
     }
+
 }

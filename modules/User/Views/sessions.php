@@ -161,7 +161,6 @@ function belcmsSessionDeviceIcon(?string $userAgent): string
 
         </div>
 
-
         <a
             href="/user/security"
             class="user-sessions-back"
@@ -544,5 +543,35 @@ function belcmsSessionDeviceIcon(?string $userAgent): string
         </div>
 
     </section>
+
+<div class="user-sessions-actions">
+
+    <form
+        method="post"
+        action="/user/security/sessions"
+        onsubmit="return confirm(
+            'Voulez-vous vraiment déconnecter toutes les autres sessions ?'
+        );"
+    >
+
+        <?= csrf_field() ?>
+
+        <input
+            type="hidden"
+            name="action"
+            value="logout-others"
+        >
+
+        <button
+            type="submit"
+            class="user-session-button user-session-button-danger"
+        >
+            <i class="fa-solid fa-power-off"></i>
+            Déconnecter les autres sessions
+        </button>
+
+    </form>
+
+</div>
 
 </div>

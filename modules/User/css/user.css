@@ -3019,3 +3019,98 @@
     top: 50% !important;
     transform: translateY(-50%) !important;
 }
+/* =========================================================
+   ACTIONS SESSIONS
+   ========================================================= */
+
+.user-sessions-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 25px;
+    margin-top: 25px;
+}
+
+.user-sessions-actions form {
+    margin: 0;
+}
+
+
+/* =========================================================
+   BOUTON SESSION
+   ========================================================= */
+
+.user-session-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 11px 18px;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* =========================================================
+   DANGER
+   ========================================================= */
+
+.user-session-button-danger {
+    color: #ffffff;
+    background: #dc3545;
+    border-color: #dc3545;
+}
+
+.user-session-button-danger:hover {
+    color: #ffffff;
+    background: #bb2d3b;
+    border-color: #b02a37;
+
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.25);
+
+    transform: translateY(-1px);
+}
+
+.user-session-button-danger:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.user-session-button-danger i {
+    font-size: 14px;
+}
+
+.user-session-button-danger {
+    color: #fff;
+    background: linear-gradient(135deg, #dc3545, #a71d2a);
+    border: 1px solid #dc3545;
+
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
+}
+
+.user-session-button-danger:hover {
+    color: #fff;
+    background: linear-gradient(135deg, #e74c5a, #c82333);
+    border-color: #e74c5a;
+
+    box-shadow:
+        0 6px 20px rgba(220, 53, 69, 0.30),
+        0 0 8px rgba(220, 53, 69, 0.15);
+
+    transform: translateY(-1px);
+}

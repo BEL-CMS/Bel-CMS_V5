@@ -7,7 +7,7 @@
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
-*/
+ */
 
 declare(strict_types=1);
 
@@ -76,6 +76,35 @@ class Autoloader
             $file = dirname(__DIR__)
                 . DIRECTORY_SEPARATOR
                 . 'modules'
+                . DIRECTORY_SEPARATOR
+                . str_replace(
+                    '\\',
+                    DIRECTORY_SEPARATOR,
+                    $class
+                )
+                . '.php';
+
+            if (is_file($file)) {
+                require_once $file;
+            }
+
+            return;
+        }
+        /*
+        * Classes Administration
+        */
+        if (str_starts_with($class, 'Admin\\')) {
+
+            $class = substr(
+                $class,
+                strlen('Admin\\')
+            );
+
+            $file = dirname(__DIR__)
+                . DIRECTORY_SEPARATOR
+                . 'administration'
+                . DIRECTORY_SEPARATOR
+                . 'Modules'
                 . DIRECTORY_SEPARATOR
                 . str_replace(
                     '\\',

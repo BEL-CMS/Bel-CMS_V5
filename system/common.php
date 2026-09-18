@@ -359,4 +359,28 @@ final class Common
         $str = substr($str, 0, $length);
         return $str;
     }
+
+    #########################################
+    # Get IP
+    #########################################
+    public static function GetIp ()
+    {
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            return $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }
+
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip_list = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $client_ip = trim($ip_list[0]);
+            
+            if (filter_var($client_ip, FILTER_VALIDATE_IP)) {
+                return $client_ip;
+            }
+        }
+
+        if (!empty($_SERVER['HTTP_X_REAL_IP']) && filter_var($_SERVER['HTTP_X_REAL_IP'], FILTER_VALIDATE_IP)) {
+            return $_SERVER['HTTP_X_REAL_IP'];
+        }
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    }
 }

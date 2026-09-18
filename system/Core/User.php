@@ -362,7 +362,7 @@ final class User
     {
         $user = null;
 
-        $this->db->table('belcms_user');
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             'name'  => 'email',
             'value' => $identifier,
@@ -377,7 +377,7 @@ final class User
             return $user;
         }
 
-        $this->db->table('belcms_user');
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             'name'  => 'username',
             'value' => $identifier,
@@ -399,7 +399,7 @@ final class User
             return false;
         }
 
-        $this->db->table('belcms_user');
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
@@ -573,7 +573,7 @@ final class User
             return false;
         }
 
-        $this->db->table('belcms_user');
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
@@ -606,7 +606,7 @@ final class User
             return false;
         }
 
-        $this->db->table('belcms_user');
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
@@ -844,7 +844,7 @@ final class User
             return false;
         }
 
-        $this->db->table('belcms_user');
+        $this->db->table('TABLE_USERS');
 
         $this->db->where([
             'name'  => 'hash_key',
@@ -869,7 +869,7 @@ final class User
             return false;
         }
 
-        $this->db->table('belcms_user');
+        $this->db->table('TABLE_USERS');
 
         $this->db->where([
             'name'  => 'hash_key',

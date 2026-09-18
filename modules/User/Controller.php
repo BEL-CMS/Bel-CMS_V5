@@ -367,6 +367,75 @@ final class Controller
             ]
         );
     }
+    /**
+     * Gestion des sessions actives de l'utilisateur.
+     */
+    public function sessions(): void
+    {
+        if (!$this->user->isLogged()) {
+            header('Location: /user/login');
+            exit;
+        }
+
+        $user = $this->user->data();
+        $hashKey = trim((string)($user->hash_key ?? ''));
+        $success = null;
+        $error = null;
+
+        // Toujours utiliser l'identifiant de session PHP côté serveur.
+        $currentSessionId = session_id();
+
+        // S'assure que la session actuelle existe en BDD.
+        if ($hashKey !== '') {
+            $currentSession = $this->userSession->current($hashKey);
+            if (is_object($currentSession)) {
+                $currentSessionId = trim((string)($currentSession->session_id ?? $currentSessionId));
+            }
+        }
+
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            if (!csrf_verify($_POST['csrf_token'] ?? null)) {
+                $error = 'Votre session de sécurité a expiré. Veuillez réessayer.';
+            } elseif ((string)($_POST['action'] ?? '') === 'logout-others') {
+                if ($hashKey === '' || $currentSessionId === '') {
+                    $error = 'Impossible d’identifier votre session actuelle.';
+                } else {
+                    $deleted = $this->userSession->deleteOthers($hashKey, $currentSessionId);
+                    $success = $deleted > 0
+                        ? ($deleted === 1
+                            ? '1 autre session a été déconnectée.'
+                            : $deleted . ' autres sessions ont été déconnectées.')
+                        : 'Aucune autre session active à déconnecter.';
+                }
+            }
+        }
+
+        $sessions = [];
+        if ($hashKey !== '') {
+            $sessions = $this->userSession->getByHashKey($hashKey);
+            foreach ($sessions as $session) {
+                $sessionId = trim((string)($session->session_id ?? ''));
+                $session->is_current = (
+                    $sessionId !== ''
+                    && $currentSessionId !== ''
+                    && hash_equals($sessionId, $currentSessionId)
+                );
+            }
+        }
+
+        echo $this->view->render(
+            'User',
+            'sessions',
+            [
+                'user' => $user,
+                'sessions' => $sessions,
+                'currentSessionId' => $currentSessionId,
+                'success' => $success,
+                'error' => $error,
+            ]
+        );
+    }
+
     public function twoFactor(): void
     {
         if (!$this->user->isLogged()) {

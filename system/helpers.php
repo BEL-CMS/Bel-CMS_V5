@@ -11,33 +11,76 @@
 
 declare(strict_types=1);
 
-use BelCMS\Core\Debug;
-use BelCMS\Core\Language;
-
 if (!defined('CHECK_INDEX')):
-	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
-	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
+    header($_SERVER['SERVER_PROTOCOL'] .' 403 Direct access forbidden');
+    exit(
+        '<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1 {margin: 20px auto;text-align: center;color: red;}p {text-align: center;font-weight: bold;}</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>'
+    );
 endif;
 
-function debug(mixed $data, bool $exitAfter = true, bool $collapse = false): void 
-{
-    Debug::dump($data, $exitAfter, $collapse);
-}
+use BelCMS\Core\Debug;
+use BelCMS\Core\Language;
+use BelCMS\Core\Csrf;
 
-function __(string $key, ?string $default = null): string 
-{
-    if (!isset($GLOBALS['belcms_language'])) {
-        return $default ?? $key;
+    /*
+    * Debug
+    */
+    function debug(mixed $data, bool $exitAfter = true, bool $collapse = false): void {
+        Debug::dump($data, $exitAfter, $collapse);
     }
+    /*
+    * Traduction
+    */
+    function __(string $key, ?string $default = null): string 
+    {
+        if (!isset($GLOBALS['belcms_language'])) {
+            return $default ?? $key;
+        }
 
-    $language = $GLOBALS['belcms_language'];
+        $language = $GLOBALS['belcms_language'];
 
-    if (!$language instanceof Language) {
-        return $default ?? $key;
+        if (!$language instanceof Language) {
+            return $default ?? $key;
+        }
+
+        return $language->get(
+            $key,
+            $default
+        );
     }
+    /*
+    * Token CSRF
+    */
+    function csrf_token(): string
+    {
+        /** @var \BelCMS\Core\Csrf $csrf */
+        $csrf = $GLOBALS['belcms_app']
+            ->container()
+            ->get(Csrf::class);
 
-    return $language->get(
-        $key,
-        $default
-    );
-}
+        return $csrf->token();
+    }
+    /*
+    * Champ HTML CSRF
+    */
+    function csrf_field(): string
+    {
+        /** @var \BelCMS\Core\Csrf $csrf */
+        $csrf = $GLOBALS['belcms_app']
+            ->container()
+            ->get(Csrf::class);
+
+        return $csrf->field();
+    }
+    /*
+    * Vérification CSRF
+    */
+    function csrf_verify(?string $token): bool
+    {
+        /** @var \BelCMS\Core\Csrf $csrf */
+        $csrf = $GLOBALS['belcms_app']
+            ->container()
+            ->get(Csrf::class);
+
+        return $csrf->verify($token);
+    }
