@@ -175,4 +175,102 @@ final class Model
 
         return true;
     }
+    /**
+     * Réinitialise le 2FA d'un utilisateur.
+     */
+    public function resetTwoFactor(string $hashKey): bool
+    {
+        $hashKey = trim($hashKey);
+
+        if ($hashKey === '') {
+            return false;
+        }
+
+        $this->db->table(TABLE_USERS);
+
+        $this->db->where([
+            [
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
+        ]);
+
+        $this->db->update([
+            'two_factor_enabled' => 0,
+            'two_factor_secret'  => null,
+            'login_2fa'          => 0,
+            'serial_secure'      => null,
+        ]);
+
+        return true;
+    }
+    public function deleteUser(string $hashKey): bool
+    {
+        if ($hashKey === '') {
+            return false;
+        }
+
+        /*
+        * Supprimer le profil.
+        */
+        $this->db->table(TABLE_USERS_PROFILS);
+        $this->db->where([
+            [
+                'name' => 'hash_key',
+                'value' => $hashKey
+            ]
+        ]);
+        $this->db->delete();
+
+        /*
+        * Supprimer les réseaux sociaux.
+        */
+        $this->db->table(TABLE_USERS_SOCIAL);
+        $this->db->where([
+            [
+                'name' => 'hash_key',
+                'value' => $hashKey
+            ]
+        ]);
+        $this->db->delete();
+
+        /*
+        * Supprimer les groupes.
+        */
+        $this->db->table(TABLE_USERS_GROUPS);
+        $this->db->where([
+            [
+                'name' => 'hash_key',
+                'value' => $hashKey
+            ]
+        ]);
+        $this->db->delete();
+
+        /*
+        * Supprimer les codes de récupération.
+        */
+        $this->db->table(TABLE_RECOVERY);
+        $this->db->where([
+            [
+                'name' => 'hash_key',
+                'value' => $hashKey
+            ]
+        ]);
+        $this->db->delete();
+
+        /*
+        * Supprimer l'utilisateur.
+        */
+        $this->db->table(TABLE_USERS);
+        $this->db->where([
+            [
+                'name' => 'hash_key',
+                'value' => $hashKey
+            ]
+        ]);
+        $this->db->delete();
+
+        return true;
+    }
+
 }

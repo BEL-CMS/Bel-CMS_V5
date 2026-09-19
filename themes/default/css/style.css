@@ -1229,3 +1229,585 @@ select {
         gap: 5px;
     }
 }
+/* =========================================================
+   USER REGISTER - BEL-CMS V5
+   ========================================================= */
+
+.user-register-page {
+    min-height: calc(100vh - 160px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px 20px;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.user-register-card {
+    position: relative;
+
+    width: min(520px, 100%);
+
+    padding: 38px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14, 23, 42, 0.98),
+            rgba(7, 14, 27, 0.98)
+        );
+
+    border: 1px solid rgba(81, 148, 255, 0.18);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.40),
+        0 0 50px rgba(39, 135, 255, 0.06);
+
+    overflow: hidden;
+}
+
+
+/* Halo lumineux */
+
+.user-register-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    top: -140px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(39, 135, 255, 0.20),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+
+/* petite ligne lumineuse */
+
+.user-register-card::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 10%;
+    right: 10%;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(76, 157, 255, 0.60),
+            transparent
+        );
+
+    opacity: 0.8;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.user-register-header {
+    position: relative;
+
+    text-align: center;
+
+    margin-bottom: 32px;
+}
+
+.user-register-icon {
+    width: 62px;
+    height: 62px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #2c8cff,
+            #155bc0
+        );
+
+    border-radius: 16px;
+
+    color: #fff;
+
+    font-size: 23px;
+
+    box-shadow:
+        0 12px 35px rgba(39, 135, 255, 0.25);
+
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.user-register-header h1 {
+    margin: 0 0 9px;
+
+    color: #f2f6ff;
+
+    font-size: 30px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.7px;
+}
+
+.user-register-header p {
+    margin: 0;
+
+    color: #7f8da3;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   ALERTS
+   ========================================================= */
+
+.user-register-alert {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 13px 15px;
+
+    margin-bottom: 24px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+.user-register-alert-icon {
+    flex-shrink: 0;
+
+    padding-top: 2px;
+}
+
+.user-register-alert-content {
+    flex: 1;
+}
+
+.user-register-alert-danger {
+    color: #ff9da6;
+
+    background:
+        rgba(255, 92, 108, 0.07);
+
+    border:
+        1px solid rgba(255, 92, 108, 0.18);
+}
+
+.user-register-alert-success {
+    color: #83e2bb;
+
+    background:
+        rgba(37, 199, 139, 0.07);
+
+    border:
+        1px solid rgba(37, 199, 139, 0.18);
+}
+
+
+/* =========================================================
+   FIELDS
+   ========================================================= */
+
+.user-register-field {
+    margin-bottom: 20px;
+}
+
+.user-register-label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #dbe5f3;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.user-register-input {
+    position: relative;
+}
+
+.user-register-input > i:first-child {
+    position: absolute;
+
+    left: 15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #61728a;
+
+    font-size: 14px;
+
+    pointer-events: none;
+
+    transition:
+        color 0.25s ease;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.user-register-input input {
+    display: block;
+
+    width: 100%;
+
+    height: 50px;
+
+    padding:
+        0 47px
+        0 44px;
+
+    color: #edf4ff !important;
+
+    background:
+        rgba(3, 8, 17, 0.78) !important;
+
+    border:
+        1px solid rgba(104, 152, 255, 0.14) !important;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.015);
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+.user-register-input input::placeholder {
+    color: #56657a !important;
+
+    opacity: 1;
+}
+
+.user-register-input input:hover {
+    border-color:
+        rgba(104, 152, 255, 0.25) !important;
+}
+
+.user-register-input input:focus {
+    background:
+        rgba(7, 15, 29, 0.95) !important;
+
+    border-color:
+        rgba(52, 145, 255, 0.68) !important;
+
+    box-shadow:
+        0 0 0 3px rgba(39, 135, 255, 0.08),
+        0 0 20px rgba(39, 135, 255, 0.06);
+}
+
+.user-register-input:focus-within > i:first-child {
+    color: #4da3ff;
+}
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+   ========================================================= */
+
+.user-register-password-toggle {
+    position: absolute;
+
+    right: 9px;
+    top: 50%;
+
+    width: 34px;
+    height: 34px;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: 0;
+
+    border-radius: 7px;
+
+    color: #60728a;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.user-register-password-toggle:hover {
+    color: #fff;
+
+    background:
+        rgba(39, 135, 255, 0.10);
+}
+
+
+/* =========================================================
+   HELP
+   ========================================================= */
+
+.user-register-help {
+    margin-top: 6px;
+
+    color: #64748a;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   SECURITY NOTE
+   ========================================================= */
+
+.user-register-security-note {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    margin:
+        5px 0
+        22px;
+
+    padding: 12px 13px;
+
+    background:
+        rgba(39, 135, 255, 0.045);
+
+    border:
+        1px solid rgba(39, 135, 255, 0.10);
+
+    border-radius: 9px;
+
+    color: #7f93ad;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+.user-register-security-note i {
+    flex-shrink: 0;
+
+    margin-top: 2px;
+
+    color: #4a9cff;
+}
+
+
+/* =========================================================
+   SUBMIT
+   ========================================================= */
+
+.user-register-submit {
+    position: relative;
+
+    width: 100%;
+    min-height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 0 18px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2b8cff,
+            #1765cc
+        );
+
+    color: #fff;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    box-shadow:
+        0 10px 25px rgba(39, 135, 255, 0.20);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+.user-register-submit:hover {
+    transform: translateY(-2px);
+
+    filter: brightness(1.06);
+
+    box-shadow:
+        0 15px 32px rgba(39, 135, 255, 0.30);
+}
+
+.user-register-submit:active {
+    transform: translateY(0);
+}
+
+.user-register-submit-arrow {
+    position: absolute;
+
+    right: 17px;
+
+    opacity: 0.7;
+
+    transition:
+        transform 0.25s ease;
+}
+
+.user-register-submit:hover
+.user-register-submit-arrow {
+    transform: translateX(3px);
+
+    opacity: 1;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.user-register-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    margin-top: 25px;
+    padding-top: 21px;
+
+    border-top:
+        1px solid rgba(104, 152, 255, 0.09);
+
+    color: #687890;
+
+    font-size: 12px;
+}
+
+.user-register-footer a {
+    color: #4da3ff;
+
+    font-weight: 600;
+
+    transition:
+        color 0.2s ease;
+}
+
+.user-register-footer a:hover {
+    color: #8bc4ff;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .user-register-page {
+        min-height: auto;
+
+        padding:
+            30px 12px
+            45px;
+    }
+
+    .user-register-card {
+        padding: 28px 20px;
+
+        border-radius: 16px;
+    }
+
+    .user-register-header h1 {
+        font-size: 26px;
+    }
+
+    .user-register-header p {
+        font-size: 13px;
+    }
+
+    .user-register-input input {
+        height: 48px;
+    }
+
+    .user-register-footer {
+        flex-direction: column;
+
+        gap: 4px;
+    }
+}
+.user-login-success {
+    margin-bottom: 20px;
+    padding: 14px 16px;
+
+    border: 1px solid rgba(70, 200, 120, 0.25);
+    border-radius: 9px;
+
+    background: rgba(70, 200, 120, 0.08);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+.user-login-group small {
+    font-size: 12px;
+    opacity: 0.5;
+}

@@ -1,16 +1,11 @@
 /* =========================================================
-   Bel-CMS V5
-   Administration - Dashboard
-   ========================================================= */
-
-
-/* =========================================================
-   Conteneur principal
+   Bel-CMS V5 - Dashboard
    ========================================================= */
 
 .admin-dashboard {
     width: 100%;
-    box-sizing: border-box;
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
 
@@ -27,24 +22,33 @@
 }
 
 .admin-page-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
     margin: 0;
+
+    color: #ffffff;
 
     font-size: 28px;
     font-weight: 700;
-
-    line-height: 1.2;
 }
 
 .admin-page-header h1 i {
-    margin-right: 10px;
+    color: #249cff;
+
+    filter:
+        drop-shadow(
+            0 0 10px rgba(36, 156, 255, 0.45)
+        );
 }
 
 .admin-page-header p {
     margin: 8px 0 0;
 
-    font-size: 14px;
+    color: #8195aa;
 
-    opacity: 0.60;
+    font-size: 14px;
 }
 
 
@@ -55,13 +59,12 @@
 .dashboard-stats {
     display: grid;
 
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
 
     gap: 20px;
 
-    width: 100%;
-
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 
@@ -74,162 +77,490 @@
 
     min-height: 190px;
 
-    padding: 22px;
+    display: flex;
+    flex-direction: column;
 
-    box-sizing: border-box;
+    padding: 24px;
 
     overflow: hidden;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    border-radius: 14px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(20, 31, 55, 0.95),
-            rgba(10, 17, 32, 0.98)
+            rgba(15, 35, 61, 0.96),
+            rgba(7, 17, 31, 0.96)
         );
 
+    border: 1px solid rgba(44, 143, 224, 0.18);
+
+    border-radius: 14px;
+
     box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.20);
+        0 10px 35px rgba(0, 0, 0, 0.18);
 
     transition:
-        transform 0.20s ease,
-        border-color 0.20s ease,
-        box-shadow 0.20s ease;
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
 }
-
-
-/* Effet lumineux discret */
 
 .dashboard-card::before {
     content: "";
 
     position: absolute;
 
-    top: -80px;
-    right: -80px;
+    width: 180px;
+    height: 180px;
 
-    width: 160px;
-    height: 160px;
+    top: -100px;
+    right: -80px;
 
     border-radius: 50%;
 
-    background: rgba(30, 120, 255, 0.08);
-
-    filter: blur(10px);
+    background:
+        rgba(25, 145, 255, 0.06);
 
     pointer-events: none;
 }
 
-
-/* Hover */
-
 .dashboard-card:hover {
     transform: translateY(-4px);
 
-    border-color: rgba(50, 140, 255, 0.35);
+    border-color:
+        rgba(46, 158, 255, 0.45);
 
     box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.30);
+        0 16px 40px rgba(0, 0, 0, 0.28),
+        0 0 25px rgba(0, 132, 255, 0.08);
 }
 
 
 /* =========================================================
-   Icône
+   Icône statistique
    ========================================================= */
 
 .dashboard-card-icon {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
     width: 48px;
     height: 48px;
 
-    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    background: rgba(30, 120, 255, 0.12);
+    margin-bottom: 18px;
+
+    border-radius: 11px;
+
+    color: #43adff;
+
+    background:
+        rgba(33, 150, 243, 0.10);
+
+    border: 1px solid
+        rgba(33, 150, 243, 0.20);
 
     font-size: 20px;
+
+    box-shadow:
+        inset 0 0 15px
+        rgba(0, 140, 255, 0.04);
+}
+
+.dashboard-card:hover
+.dashboard-card-icon {
+    box-shadow:
+        0 0 20px
+        rgba(33, 150, 243, 0.15);
 }
 
 
 /* =========================================================
-   Contenu
+   Contenu statistique
    ========================================================= */
 
 .dashboard-card-content {
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
 }
 
 .dashboard-card-label {
-    display: block;
+    color: #8297ad;
 
-    margin-bottom: 6px;
+    font-size: 13px;
 
-    font-size: 14px;
+    text-transform: uppercase;
 
-    opacity: 0.60;
+    letter-spacing: 0.8px;
 }
 
 .dashboard-card-value {
-    display: block;
+    color: #ffffff;
 
     font-size: 32px;
+
+    line-height: 1.1;
+
     font-weight: 700;
 
-    line-height: 1;
+    letter-spacing: -0.5px;
 }
 
 
 /* =========================================================
-   Lien de la carte
+   Lien statistique
    ========================================================= */
 
 .dashboard-card-link {
-    position: absolute;
+    margin-top: auto;
 
-    left: 22px;
-    right: 22px;
-    bottom: 18px;
+    padding-top: 18px;
 }
 
 .dashboard-card-link a {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #62baff;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease,
+        gap 0.2s ease;
+}
+
+.dashboard-card-link a:hover {
+    color: #ffffff;
+
+    gap: 12px;
+}
+
+.dashboard-card-link a i {
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   Deux colonnes
+   ========================================================= */
+
+.dashboard-columns {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.4fr)
+        minmax(320px, 1fr);
+
+    gap: 20px;
+
+    margin-bottom: 25px;
+}
+
+
+/* =========================================================
+   Panneaux
+   ========================================================= */
+
+.dashboard-panel {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 31, 54, 0.96),
+            rgba(6, 15, 28, 0.96)
+        );
+
+    border: 1px solid
+        rgba(44, 143, 224, 0.17);
+
+    border-radius: 14px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 10px 35px
+        rgba(0, 0, 0, 0.16);
+}
+
+
+/* =========================================================
+   En-tête des panneaux
+   ========================================================= */
+
+.dashboard-panel-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 22px;
+}
+
+.dashboard-panel-icon {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    color: #43adff;
+
+    background:
+        rgba(33, 150, 243, 0.09);
+
+    border:
+        1px solid
+        rgba(33, 150, 243, 0.18);
+}
+
+.dashboard-panel-header h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    font-weight: 600;
+}
+
+.dashboard-panel-header p {
+    margin: 4px 0 0;
+
+    color: #71869c;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   Actions rapides
+   ========================================================= */
+
+.dashboard-quick-actions {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.dashboard-quick-action {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    min-height: 60px;
+
+    padding: 9px 12px;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    background:
+        rgba(255, 255, 255, 0.018);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.05);
+
+    border-radius: 9px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dashboard-quick-action:hover {
+    transform: translateX(3px);
+
+    background:
+        rgba(33, 150, 243, 0.07);
+
+    border-color:
+        rgba(33, 150, 243, 0.20);
+}
+
+.quick-action-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    color: #43adff;
+
+    background:
+        rgba(33, 150, 243, 0.08);
+}
+
+.dashboard-quick-action > span:nth-child(2) {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+    flex: 1;
+}
+
+.dashboard-quick-action strong {
+    color: #dce9f5;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.dashboard-quick-action small {
+    color: #657b90;
+
+    font-size: 11px;
+}
+
+.dashboard-quick-action > i {
+    color: #4f708c;
+
+    font-size: 11px;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dashboard-quick-action:hover > i {
+    color: #43adff;
+
+    transform: translateX(3px);
+}
+
+
+/* =========================================================
+   État système
+   ========================================================= */
+
+.dashboard-system-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0;
+}
+
+.dashboard-system-item {
     display: flex;
 
     align-items: center;
     justify-content: space-between;
 
-    width: 100%;
+    gap: 15px;
 
-    color: inherit;
+    padding: 15px 0;
 
-    text-decoration: none;
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-system-item:first-child {
+    padding-top: 0;
+}
+
+.dashboard-system-item:last-child {
+    padding-bottom: 0;
+
+    border-bottom: none;
+}
+
+.system-item-name {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #a9b9c9;
 
     font-size: 13px;
-
-    opacity: 0.60;
-
-    transition:
-        opacity 0.20s ease,
-        transform 0.20s ease;
 }
 
-.dashboard-card-link a:hover {
-    opacity: 1;
+.system-item-icon {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    color: #6bbdff;
+
+    background:
+        rgba(33, 150, 243, 0.07);
 }
 
-.dashboard-card-link i {
-    font-size: 11px;
+.system-item-value {
+    display: flex;
 
-    transition: transform 0.20s ease;
+    align-items: center;
+
+    gap: 10px;
 }
 
-.dashboard-card-link a:hover i {
-    transform: translateX(4px);
+.system-item-value strong {
+    color: #dce9f5;
+
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+.system-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: #63c78b;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+}
+
+.system-status i {
+    font-size: 6px;
+
+    filter:
+        drop-shadow(
+            0 0 5px rgba(99, 199, 139, 0.5)
+        );
 }
 
 
@@ -238,70 +569,104 @@
    ========================================================= */
 
 .dashboard-welcome {
+    position: relative;
+
     display: flex;
 
     align-items: center;
 
     gap: 20px;
 
-    padding: 25px;
+    padding: 27px 30px;
 
-    box-sizing: border-box;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    border-radius: 14px;
+    overflow: hidden;
 
     background:
         linear-gradient(
-            145deg,
-            rgba(20, 31, 55, 0.85),
-            rgba(10, 17, 32, 0.95)
+            110deg,
+            rgba(11, 39, 70, 0.96),
+            rgba(7, 19, 34, 0.96)
         );
 
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-
-/* Icône bienvenue */
-
-.dashboard-welcome-icon {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    flex: 0 0 55px;
-
-    width: 55px;
-    height: 55px;
+    border:
+        1px solid
+        rgba(33, 150, 243, 0.18);
 
     border-radius: 14px;
 
-    background: rgba(30, 120, 255, 0.12);
-
-    font-size: 22px;
+    box-shadow:
+        0 10px 35px
+        rgba(0, 0, 0, 0.14);
 }
 
+.dashboard-welcome::after {
+    content: "";
 
-/* Texte bienvenue */
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    right: -150px;
+    top: -180px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(33, 150, 243, 0.08);
+
+    pointer-events: none;
+}
+
+.dashboard-welcome-icon {
+    width: 58px;
+    height: 58px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    color: #45adff;
+
+    background:
+        rgba(33, 150, 243, 0.09);
+
+    border:
+        1px solid
+        rgba(33, 150, 243, 0.20);
+
+    font-size: 24px;
+
+    box-shadow:
+        0 0 25px
+        rgba(33, 150, 243, 0.08);
+}
 
 .dashboard-welcome h2 {
-    margin: 0 0 8px;
+    margin: 0 0 7px;
 
-    font-size: 19px;
+    color: #ffffff;
+
+    font-size: 18px;
+
     font-weight: 600;
 }
 
 .dashboard-welcome p {
+    max-width: 900px;
+
     margin: 0;
 
-    font-size: 14px;
+    color: #8196aa;
 
-    line-height: 1.6;
+    font-size: 13px;
 
-    opacity: 0.60;
+    line-height: 1.7;
 }
 
 
@@ -312,7 +677,12 @@
 @media (max-width: 1100px) {
 
     .dashboard-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-columns {
+        grid-template-columns: 1fr;
     }
 
 }
@@ -324,18 +694,75 @@
 
 @media (max-width: 650px) {
 
+    .admin-dashboard {
+        width: 100%;
+    }
+
+    .admin-page-header {
+        margin-bottom: 22px;
+    }
+
+    .admin-page-header h1 {
+        font-size: 23px;
+    }
+
+    .admin-page-header p {
+        font-size: 12px;
+    }
+
     .dashboard-stats {
         grid-template-columns: 1fr;
+
+        gap: 12px;
     }
 
     .dashboard-card {
-        min-height: 180px;
+        min-height: 165px;
+
+        padding: 20px;
+    }
+
+    .dashboard-card-value {
+        font-size: 28px;
+    }
+
+    .dashboard-columns {
+        gap: 12px;
+    }
+
+    .dashboard-panel {
+        padding: 20px;
     }
 
     .dashboard-welcome {
         align-items: flex-start;
 
-        padding: 20px;
+        padding: 22px;
+
+        gap: 15px;
+    }
+
+    .dashboard-welcome-icon {
+        width: 48px;
+        height: 48px;
+
+        font-size: 19px;
+    }
+
+    .dashboard-welcome h2 {
+        font-size: 16px;
+    }
+
+    .dashboard-welcome p {
+        font-size: 12px;
+    }
+
+    .system-item-value {
+        flex-direction: column;
+
+        align-items: flex-end;
+
+        gap: 4px;
     }
 
 }
@@ -345,19 +772,18 @@
    Très petits écrans
    ========================================================= */
 
-@media (max-width: 400px) {
+@media (max-width: 420px) {
 
-    .admin-page-header h1 {
-        font-size: 23px;
+    .dashboard-system-item {
+        align-items: flex-start;
     }
 
-    .dashboard-card {
-        padding: 18px;
+    .system-item-name {
+        font-size: 12px;
     }
 
-    .dashboard-card-link {
-        left: 18px;
-        right: 18px;
+    .system-item-value strong {
+        font-size: 11px;
     }
 
 }

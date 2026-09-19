@@ -12,6 +12,7 @@
 declare(strict_types=1);
 namespace BelCMS\Core;
 use RuntimeException;
+use BelCMS\Core\Errors\ErrorPage;
 
 if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
@@ -154,6 +155,12 @@ final class Application
         $this->container->set(
             Profils::class,
             $this->profils
+        );
+        $errorPage = new ErrorPage();
+
+        $this->container->set(
+            ErrorPage::class,
+            $errorPage
         );
         /*
         * Router

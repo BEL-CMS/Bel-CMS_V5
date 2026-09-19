@@ -309,13 +309,49 @@ $search = (string) ($search ?? '');
                                     ) ?>"
                                 >
 
-                                <button
-                                    type="submit"
-                                    class="admin-user-action"
-                                    title="Supprimer l'utilisateur"
-                                >
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
+<!-- Supprimer -->
+
+<form
+    method="post"
+    action="/admin/users/delete"
+    style="display: inline;"
+    onsubmit="return confirm(
+        'ATTENTION !\n\n' +
+        'Vous êtes sur le point de supprimer définitivement cet utilisateur et ses données associées.\n\n' +
+        'Cette action est irréversible.\n\n' +
+        'Voulez-vous vraiment continuer ?'
+    );"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= htmlspecialchars(
+            csrf_token(),
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>"
+    >
+
+    <input
+        type="hidden"
+        name="hash_key"
+        value="<?= htmlspecialchars(
+            $hashKey,
+            ENT_QUOTES,
+            'UTF-8'
+        ) ?>"
+    >
+
+    <button
+        type="submit"
+        class="admin-user-action delete"
+        title="Supprimer l'utilisateur"
+    >
+        <i class="fa-solid fa-trash"></i>
+    </button>
+
+</form>
 
                             </form>
 

@@ -58,15 +58,38 @@ final class Model
     }
 
     /**
-     * Récupère les statistiques du dashboard.
+     * Informations système.
+     */
+    public function getSystemInformation(): array
+    {
+        return [
+            'php' => PHP_VERSION,
+            'cms' => '5.0.0',
+            'database' => 'MySQL',
+        ];
+    }
+
+    /**
+     * Statistiques générales du dashboard.
      */
     public function getStatistics(): array
     {
         return [
-            'users'     => $this->countUsers(),
-            'profiles'  => $this->countProfiles(),
-            'groups'    => $this->countGroups(),
-            'sessions'  => $this->countSessions(),
+            'users' => $this->countUsers(),
+            'profiles' => $this->countProfiles(),
+            'groups' => $this->countGroups(),
+            'sessions' => $this->countSessions(),
+        ];
+    }
+
+    /**
+     * Données complètes du dashboard.
+     */
+    public function getDashboardData(): array
+    {
+        return [
+            'statistics' => $this->getStatistics(),
+            'system' => $this->getSystemInformation(),
         ];
     }
 }

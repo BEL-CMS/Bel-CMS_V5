@@ -17,15 +17,24 @@ if (!defined('CHECK_INDEX')):
 endif;
 
 $config = require __DIR__ . '/database.php';
-$prefix = $config['prefix'] ?? '';
+$DB_PREFIX = $config['prefix'] ?? '';
 
 $tables = [
-    'TABLE_NEWS'              => $prefix . 'news',
-    'TABLE_NEWS_CAT'          => $prefix . 'news_cat',
-    'TABLE_PAGES'             => $prefix . 'pages',
-    'TABLE_PAGES_CONTENT'     => $prefix . 'pages_content',
-    'TABLE_USER'              => $prefix . 'user',
-    'TABLE_RECOVERY'          => $prefix . 'user_recovery',
+    'TABLE_CAPTCHA'           => $DB_PREFIX . 'captcha',
+    'TABLE_BELCMS_SHIELD'     => $DB_PREFIX . 'captcha_shield',
+    'TABLE_CAPTCHA_LOGS'      => $DB_PREFIX . 'captcha_log',
+    'TABLE_CAPTCHA_BLACKLIST' => $DB_PREFIX . 'captcha_blacklist',
+    'TABLE_GROUPS'            => $DB_PREFIX . 'groups',  
+    'TABLE_NEWS'              => $DB_PREFIX . 'news',
+    'TABLE_NEWS_CAT'          => $DB_PREFIX . 'news_cat',
+    'TABLE_PAGES'             => $DB_PREFIX . 'pages',
+    'TABLE_PAGES_CONTENT'     => $DB_PREFIX . 'pages_content',
+    'TABLE_SESSION'           => $DB_PREFIX . 'user_sessions',
+    'TABLE_USERS'             => $DB_PREFIX . 'users',
+    'TABLE_USERS_GROUPS'      => $DB_PREFIX . 'users_groups',
+    'TABLE_USERS_PROFILS'     => $DB_PREFIX . 'users_profils',
+    'TABLE_USERS_SOCIAL'      => $DB_PREFIX . 'users_social',
+    'TABLE_RECOVERY'          => $DB_PREFIX . 'user_recovery',
 ];
 
 foreach ($tables as $name => $value) {

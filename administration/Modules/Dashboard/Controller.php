@@ -31,6 +31,7 @@ final class Controller
         }
 
         $statistics = $this->model->getStatistics();
+        $dashboard = $this->model->getDashboardData();
 
         $this->assets->css(
             '/administration/Modules/Dashboard/css/dashboard.css'
@@ -40,8 +41,9 @@ final class Controller
             'Dashboard',
             'index',
             [
-                'user'        => $this->user,
-                'statistics'  => $statistics,
+                'user' => $this->user,
+                'statistics' => $dashboard['statistics'],
+                'system' => $dashboard['system'],
             ]
         );
     }

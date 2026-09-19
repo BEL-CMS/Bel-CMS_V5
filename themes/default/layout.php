@@ -132,7 +132,7 @@ if (
                     <h3>Projet</h3>
                     <a href="https://www.bel-cms.dev" target="_blank" rel="noopener">Site officiel</a>
                     <a href="#">Documentation</a>
-                    <a href="#">GitHub</a>
+                    <a href="https://github.com/BEL-CMS/Bel-CMS_V5" target="_blank">GitHub</a>
                 </div>
             </div>
             <div class="bc-footer-bottom">

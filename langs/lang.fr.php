@@ -13,6 +13,11 @@ declare(strict_types=1);
 
 return [
     /*
+     * Commun
+     */
+    'USER_NO_AVATAR' => '/assets/avatar/dummy-avatar.jpg',
+    'USER_BG_NONE' => '/assets/img/bg-profile.png',
+    /*
      * Général
      */
     'SITE_NAME'  => 'Bel-CMS',
@@ -29,3 +34,4 @@ return [
     'ERROR_404_MESSAGE' => 'La page demandée n’existe pas ou n’est plus disponible.',
 
 ];
+
