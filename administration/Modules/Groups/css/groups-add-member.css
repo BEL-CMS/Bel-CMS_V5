@@ -1,0 +1,265 @@
+/* =========================================================
+   Bel-CMS V5 - Groups / Add Member
+   Styles spécifiques à la page d'ajout d'un membre
+   ========================================================= */
+
+.group-add-panel {
+    width: 100%;
+}
+
+.group-add-search {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    margin-bottom: 18px;
+    padding: 20px;
+    border: 1px solid rgba(90, 150, 255, 0.16);
+    border-radius: 14px;
+    background: rgba(8, 18, 38, 0.72);
+}
+
+.group-search-field {
+    flex: 1;
+    min-width: 0;
+}
+
+.group-search-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #aebbd1;
+}
+
+.group-search-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.group-search-control > i {
+    position: absolute;
+    left: 14px;
+    z-index: 2;
+    color: #6f8db8;
+    pointer-events: none;
+}
+
+.group-search-control input {
+    width: 100%;
+    height: 44px;
+    padding: 0 42px 0 42px;
+    border: 1px solid rgba(105, 155, 230, 0.2);
+    border-radius: 9px;
+    outline: none;
+    background: #0b172c;
+    color: #eef5ff;
+    font: inherit;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.group-search-control input::placeholder {
+    color: #61718b;
+}
+
+.group-search-control input:focus {
+    border-color: rgba(56, 145, 255, .7);
+    box-shadow: 0 0 0 3px rgba(56, 145, 255, .10);
+}
+
+.group-search-clear {
+    position: absolute;
+    right: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: #71839e;
+    text-decoration: none;
+}
+
+.group-search-clear:hover {
+    color: #fff;
+}
+
+.group-add-info {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 16px;
+    padding: 12px 15px;
+    border: 1px solid rgba(90, 150, 255, 0.12);
+    border-radius: 10px;
+    background: rgba(20, 40, 70, .42);
+    color: #91a3bd;
+    font-size: 13px;
+}
+
+.group-add-info i {
+    color: #4d9cff;
+}
+
+.group-add-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.group-add-user-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid rgba(90, 150, 255, 0.13);
+    border-radius: 12px;
+    background: rgba(8, 18, 38, .78);
+    transition: border-color .2s, transform .2s, background .2s;
+}
+
+.group-add-user-card:hover {
+    border-color: rgba(65, 150, 255, .35);
+    background: rgba(12, 27, 52, .9);
+    transform: translateY(-1px);
+}
+
+.group-add-user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1d5ea8, #183b70);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .22);
+}
+
+.group-add-user-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.group-add-user-name {
+    overflow: hidden;
+    color: #edf4ff;
+    font-size: 15px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.group-add-user-email {
+    overflow: hidden;
+    margin-top: 4px;
+    color: #7386a2;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.group-add-user-email i {
+    margin-right: 5px;
+}
+
+.group-add-user-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: 8px;
+}
+
+.group-add-user-actions form {
+    margin: 0;
+}
+
+.group-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.group-alert-danger {
+    border: 1px solid rgba(235, 75, 95, .28);
+    background: rgba(120, 25, 40, .18);
+    color: #ff9da9;
+}
+
+.group-empty-state {
+    padding: 50px 20px;
+    border: 1px dashed rgba(90, 150, 255, .2);
+    border-radius: 14px;
+    background: rgba(8, 18, 38, .45);
+    text-align: center;
+}
+
+.group-empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    margin-bottom: 14px;
+    border-radius: 50%;
+    background: rgba(52, 112, 190, .12);
+    color: #5f87b9;
+    font-size: 22px;
+}
+
+.group-empty-state h3 {
+    margin: 0 0 7px;
+    color: #dfeaff;
+    font-size: 17px;
+}
+
+.group-empty-state p {
+    max-width: 540px;
+    margin: 0 auto;
+    color: #71839d;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+    .group-add-search {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .group-add-search .btn {
+        width: 100%;
+    }
+
+    .group-add-user-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .group-add-user-content {
+        flex: 1 1 calc(100% - 60px);
+    }
+
+    .group-add-user-actions {
+        width: 100%;
+        margin-left: 58px;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .group-add-user-actions {
+        margin-left: 0;
+    }
+
+    .group-add-user-actions .btn {
+        flex: 1;
+    }
+}

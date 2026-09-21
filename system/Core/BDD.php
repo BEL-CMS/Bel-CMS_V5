@@ -220,6 +220,51 @@ public function table(?string $data = null): self
         return $this;
     }
 
+    public function whereOr(array $data = []): self
+    {
+        if (empty($data)) {
+            return $this;
+        }
+
+        $conditions = [];
+        $index = 0;
+
+        foreach ($data as $condition) {
+
+            if (!is_array($condition)) {
+                continue;
+            }
+
+            if (
+                !isset($condition['name'])
+                || !array_key_exists('value', $condition)
+            ) {
+                continue;
+            }
+
+            $conditions[] = $this->buildCondition(
+                $condition,
+                'or_' . $index
+            );
+
+            $index++;
+        }
+
+        if (!$conditions) {
+            return $this;
+        }
+
+        $orWhere = '(' . implode(' OR ', $conditions) . ')';
+
+        if ($this->where === '') {
+            $this->where = ' WHERE ' . $orWhere;
+        } else {
+            $this->where .= ' AND ' . $orWhere;
+        }
+
+        return $this;
+    }
+
     public function whereLike(array $data): self
     {
         if (!isset($data['name']) || !array_key_exists('value', $data)) {
@@ -476,17 +521,46 @@ public function table(?string $data = null): self
         }
     }
 
-    private function buildCondition(array $condition, int $index): string
-    {
+    private function buildCondition(
+        array $condition,
+        int|string $index
+    ): string {
         $name = (string) $condition['name'];
-        $operator = strtoupper(trim((string) ($condition['op'] ?? '=')));
-        $allowed = ['=', '!=', '<>', '>', '<', '>=', '<=', 'LIKE', 'NOT LIKE'];
+
+        $operator = strtoupper(
+            trim((string) ($condition['op'] ?? '='))
+        );
+
+        $allowed = [
+            '=',
+            '!=',
+            '<>',
+            '>',
+            '<',
+            '>=',
+            '<=',
+            'LIKE',
+            'NOT LIKE',
+            'IS NULL',
+            'IS NOT NULL',
+        ];
+
         if (!in_array($operator, $allowed, true)) {
             $operator = '=';
         }
 
+        /*
+        * IS NULL et IS NOT NULL
+        * n'utilisent aucun paramètre.
+        */
+        if ($operator === 'IS NULL' || $operator === 'IS NOT NULL') {
+            return $name . ' ' . $operator;
+        }
+
         $placeholder = ':where_' . $index;
+
         $this->parameters[$placeholder] = $condition['value'];
+
         return $name . ' ' . $operator . ' ' . $placeholder;
     }
 

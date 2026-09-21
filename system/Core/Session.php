@@ -32,9 +32,14 @@ final class Session
             return;
         }
 
+        $secure = (
+            (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)
+        );
+
         session_start([
             'cookie_httponly' => true,
-            'cookie_secure'   => true,
+            'cookie_secure'   => $secure,
             'cookie_samesite' => 'Strict',
         ]);
     }
