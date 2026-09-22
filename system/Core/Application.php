@@ -311,49 +311,107 @@ foreach ($adminRoutes as $route => $handler) {
     /**
      * Lance l'application
      */
-public function run(): void
-{
-    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    $uri = $_SERVER['REQUEST_URI'] ?? '/';
+    public function run(): void
+    {
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
 
-    ob_start();
+        /*
+        * Normalisation des URLs d'administration.
+        *
+        * /admin
+        * /Admin
+        * /ADMIN
+        * /AdMiN
+        *
+        * deviennent tous :
+        *
+        * /admin
+        */
+        $path = parse_url($uri, PHP_URL_PATH);
 
-    $this->router->dispatch(
-        $method,
-        $uri
-    );
+        if (is_string($path)) {
 
-    $content = ob_get_clean();
+            if (
+                $path === '/Admin'
+                || $path === '/ADMIN'
+                || preg_match(
+                    '#^/admin(?:/|$)#i',
+                    $path
+                )
+            ) {
+                $normalizedPath = preg_replace(
+                    '#^/admin#i',
+                    '/admin',
+                    $path
+                );
 
-    /*
-     * Administration
-     * URL publique : /admin
-     * Dossier physique : /administration
-     */
-    $path = parse_url($uri, PHP_URL_PATH);
+                if (is_string($normalizedPath)) {
 
-    if (
-        is_string($path)
-        && ($path === '/admin' || str_starts_with($path, '/admin/'))
-    ) {
-        $title = 'Administration';
+                    $query = parse_url(
+                        $uri,
+                        PHP_URL_QUERY
+                    );
 
-        require dirname(__DIR__, 2)
-            . '/administration/Views/layout.php';
+                    $uri = $normalizedPath;
 
-        return;
+                    if (
+                        is_string($query)
+                        && $query !== ''
+                    ) {
+                        $uri .= '?' . $query;
+                    }
+                }
+            }
+        }
+
+        ob_start();
+
+        $this->router->dispatch(
+            $method,
+            $uri
+        );
+
+        $content = ob_get_clean();
+
+        /*
+        * Administration
+        * URL publique : /admin
+        * Dossier physique : /administration
+        */
+        $path = parse_url(
+            $uri,
+            PHP_URL_PATH
+        );
+
+        if (
+            is_string($path)
+            && (
+                $path === '/admin'
+                || str_starts_with(
+                    $path,
+                    '/admin/'
+                )
+            )
+        ) {
+            $title = 'Administration';
+
+            require dirname(__DIR__, 2)
+                . '/administration/Views/layout.php';
+
+            return;
+        }
+
+        /*
+        * Site public
+        */
+        $moduleName = $this->router->getCurrentModule();
+
+        $this->layout->render(
+            $content,
+            $moduleName
+        );
     }
-
-    /*
-     * Site public
-     */
-    $moduleName = $this->router->getCurrentModule();
-
-    $this->layout->render(
-        $content,
-        $moduleName
-    );
-}
 
     public function user(): User
     {
