@@ -1,14 +1,18 @@
 <?php
-
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ */
 declare(strict_types=1);
 
 namespace BelCMS\Admin\Groups;
-
 use BelCMS\Core\Assets;
 use BelCMS\Core\Csrf;
 use BelCMS\Core\Errors\ErrorPage;
 use BelCMS\Core\View;
-
 final class Controller
 {
     public function __construct(
@@ -25,14 +29,12 @@ final class Controller
     public function index(): void
     {
         $groups = $this->model->getGroups();
-
         $this->assets->css(
             '/administration/Modules/Groups/css/groups.css'
         );
         $this->assets->css(
             '/administration/Modules/Groups/css/groups-add-member.css'
         );
-
         echo $this->view->renderAdmin(
             'Groups',
             'index',
@@ -60,7 +62,6 @@ final class Controller
         * Affichage du formulaire
         */
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-
             echo $this->view->renderAdmin(
                 'Groups',
                 'create',
@@ -68,14 +69,12 @@ final class Controller
                     'csrf' => $this->csrf->field(),
                 ]
             );
-
             return;
         }
         /*
         * Vérification CSRF
         */
         if (!$this->csrf->verify($_POST['csrf_token'] ?? '')) {
-
             $this->errorPage->show(
                 419,
                 'Session expirée',
@@ -90,15 +89,12 @@ final class Controller
         $name = trim(
             (string) ($_POST['name'] ?? '')
         );
-
         $image = trim(
             (string) ($_POST['image'] ?? '')
         );
-
         $color = trim(
             (string) ($_POST['color'] ?? '#000000')
         );
-
         $description = trim(
             (string) ($_POST['description'] ?? '')
         );
@@ -106,7 +102,6 @@ final class Controller
         * Validation du nom
         */
         if ($name === '') {
-
             $this->errorPage->show(
                 400,
                 'Nom invalide',
@@ -119,7 +114,6 @@ final class Controller
         * Longueur du nom
         */
         if (mb_strlen($name) > 32) {
-
             $this->errorPage->show(
                 400,
                 'Nom invalide',
@@ -128,7 +122,6 @@ final class Controller
                 'Retour'
             );
         }
-
         if (!preg_match('/^#[a-fA-F0-9]{6,8}$/', $color)) {
             $this->errorPage->show(
                 400,
@@ -155,7 +148,6 @@ final class Controller
         * Vérification de la création
         */
         if (!$created) {
-
             $this->errorPage->show(
                 500,
                 'Erreur',
@@ -188,14 +180,10 @@ final class Controller
         $this->assets->css(
             '/administration/Modules/Groups/css/groups-add-member.css'
         );
-
         $idGroup = (int) (
             $_GET['id_group'] ?? 0
         );
-
-
         if ($idGroup <= 0) {
-
             $this->errorPage->show(
                 400,
                 'Groupe invalide',
@@ -210,9 +198,7 @@ final class Controller
         $group = $this->model->getGroupByIdGroup(
             $idGroup
         );
-
         if (!$group) {
-
             $this->errorPage->show(
                 404,
                 'Groupe introuvable',
@@ -225,7 +211,6 @@ final class Controller
          * Traitement du formulaire
          */
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
             if (!$this->csrf->verify($_POST['csrf_token'] ?? '')) {
                 $this->errorPage->show(
                     419,
@@ -233,28 +218,22 @@ final class Controller
                     'Votre session a expiré. Veuillez actualiser la page et réessayer.'
                 );
             }
-
             $name = trim(
                 (string) ($_POST['name'] ?? '')
             );
-
             $image = trim(
                 (string) ($_POST['image'] ?? '')
             );
-
             $color = trim(
                 (string) ($_POST['color'] ?? '#000000')
             );
-
             $description = trim(
                 (string) ($_POST['description'] ?? '')
             );
-
             /*
              * Validation
              */
             if ($name === '') {
-
                 $this->errorPage->show(
                     400,
                     'Nom invalide',
@@ -263,9 +242,7 @@ final class Controller
                     'Retour'
                 );
             }
-
             if (mb_strlen($name) > 32) {
-
                 $this->errorPage->show(
                     400,
                     'Nom invalide',
@@ -274,9 +251,7 @@ final class Controller
                     'Retour'
                 );
             }
-
             if (!preg_match('/^#[a-fA-F0-9]{6,8}$/', $color)) {
-
                 $this->errorPage->show(
                     400,
                     'Couleur invalide',
@@ -285,7 +260,6 @@ final class Controller
                     'Retour'
                 );
             }
-
             /*
              * Vérification du nom
              */
@@ -295,7 +269,6 @@ final class Controller
                     $idGroup
                 )
             ) {
-
                 $this->errorPage->show(
                     400,
                     'Groupe existant',
@@ -304,7 +277,6 @@ final class Controller
                     'Retour'
                 );
             }
-
             /*
              * Modification.
              *
@@ -319,9 +291,7 @@ final class Controller
                     'description' => $description,
                 ]
             );
-
             if (!$updated) {
-
                 $this->errorPage->show(
                     500,
                     'Erreur',
@@ -330,12 +300,9 @@ final class Controller
                     'Retour aux groupes'
                 );
             }
-
-
             header('Location: /admin/groups');
             exit;
         }
-
         /*
          * Affichage du formulaire
          */
@@ -353,8 +320,6 @@ final class Controller
             ]
         );
     }
-
-
     /**
      * Suppression d'un groupe
      */
@@ -364,7 +329,6 @@ final class Controller
          * POST uniquement
          */
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-
             $this->errorPage->show(
                 405,
                 'Méthode non autorisée',
@@ -373,12 +337,10 @@ final class Controller
                 'Retour aux groupes'
             );
         }
-
         /*
          * CSRF
          */
         if (!$this->csrf->verify($_POST['csrf_token'] ?? '')) {
-
             $this->errorPage->show(
                 419,
                 'Session expirée',
@@ -387,13 +349,10 @@ final class Controller
                 'Retour'
             );
         }
-
         $idGroup = (int) (
             $_POST['id_group'] ?? 0
         );
-
         if ($idGroup <= 0) {
-
             $this->errorPage->show(
                 400,
                 'Groupe invalide',
@@ -402,12 +361,10 @@ final class Controller
                 'Retour aux groupes'
             );
         }
-
         /*
          * Protection des groupes système.
          */
         if (in_array($idGroup, [1, 2], true)) {
-
             $this->errorPage->show(
                 403,
                 'Action refusée',
@@ -416,16 +373,13 @@ final class Controller
                 'Retour aux groupes'
             );
         }
-
         /*
          * Vérification du groupe.
          */
         $group = $this->model->getGroupByIdGroup(
             $idGroup
         );
-
         if (!$group) {
-
             $this->errorPage->show(
                 404,
                 'Groupe introuvable',
@@ -434,16 +388,13 @@ final class Controller
                 'Retour aux groupes'
             );
         }
-
         /*
          * Vérification des membres.
          */
         $memberCount = $this->model->countGroupMembers(
             $idGroup
         );
-
         if ($memberCount > 0) {
-
             $this->errorPage->show(
                 400,
                 'Suppression impossible',
@@ -452,16 +403,13 @@ final class Controller
                 'Retour aux groupes'
             );
         }
-
         /*
          * Suppression.
          */
         $deleted = $this->model->deleteGroup(
             $idGroup
         );
-
         if (!$deleted) {
-
             $this->errorPage->show(
                 500,
                 'Erreur',
@@ -470,7 +418,6 @@ final class Controller
                 'Retour aux groupes'
             );
         }
-
         header('Location: /admin/groups');
         exit;
     }
@@ -480,7 +427,6 @@ final class Controller
     public function members(): void
     {
         $idGroup = (int) ($_GET['id_group'] ?? 0);
-
         if ($idGroup <= 0) {
             $this->errorPage->show(
                 400,
@@ -491,9 +437,7 @@ final class Controller
             );
             return;
         }
-
         $group = $this->model->getGroupByIdGroup($idGroup);
-
         if ($group === null) {
             $this->errorPage->show(
                 404,
@@ -504,13 +448,10 @@ final class Controller
             );
             return;
         }
-
         $members = $this->model->getGroupMembers($idGroup);
-
         $this->assets->css(
             '/administration/Modules/Groups/css/groups.css'
         );
-
         echo $this->view->renderAdmin(
             'Groups',
             'members',
@@ -531,7 +472,6 @@ final class Controller
             ?? $_POST['id_group']
             ?? 0
         );
-
         if ($idGroup <= 0) {
             $this->errorPage->show(
                 400,
@@ -542,9 +482,7 @@ final class Controller
             );
             return;
         }
-
         $group = $this->model->getGroupByIdGroup($idGroup);
-
         if ($group === null) {
             $this->errorPage->show(
                 404,
@@ -555,12 +493,10 @@ final class Controller
             );
             return;
         }
-
         /*
         * Traitement du formulaire
         */
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
             /*
             * Vérification CSRF
             */
@@ -574,28 +510,22 @@ final class Controller
                 );
                 return;
             }
-
             $hashKey = trim(
                 (string) ($_POST['hash_key'] ?? '')
             );
-
             /*
             * Aucun utilisateur sélectionné
             */
             if ($hashKey === '') {
-
                 $search = trim(
                     (string) ($_POST['search'] ?? '')
                 );
-
                 $this->assets->css(
                     '/administration/Modules/Groups/css/groups.css'
                 );
-
                 $this->assets->css(
                     '/administration/Modules/Groups/css/groups-add-member.css'
                 );
-
                 echo $this->view->renderAdmin(
                     'Groups',
                     'add_member',
@@ -610,10 +540,8 @@ final class Controller
                         'error'  => 'Veuillez sélectionner un utilisateur.',
                     ]
                 );
-
                 return;
             }
-
             /*
             * Ajout du membre
             */
@@ -621,19 +549,15 @@ final class Controller
                 $hashKey,
                 $idGroup
             )) {
-
                 $search = trim(
                     (string) ($_POST['search'] ?? '')
                 );
-
                 $this->assets->css(
                     '/administration/Modules/Groups/css/groups.css'
                 );
-
                 $this->assets->css(
                     '/administration/Modules/Groups/css/groups-add-member.css'
                 );
-
                 echo $this->view->renderAdmin(
                     'Groups',
                     'add_member',
@@ -648,15 +572,12 @@ final class Controller
                         'error'  => 'Impossible d’ajouter cet utilisateur au groupe.',
                     ]
                 );
-
                 return;
             }
-
             /*
             * Régénération du token CSRF
             */
             $this->csrf->regenerate();
-
             /*
             * Retour aux membres
             */
@@ -664,30 +585,24 @@ final class Controller
                 'Location: /admin/groups/members?id_group='
                 . $idGroup
             );
-
             exit;
         }
-
         /*
         * Recherche
         */
         $search = trim(
             (string) ($_GET['search'] ?? '')
         );
-
         $users = $this->model->searchUsersForGroup(
             $idGroup,
             $search
         );
-
         $this->assets->css(
             '/administration/Modules/Groups/css/groups.css'
         );
-
         $this->assets->css(
             '/administration/Modules/Groups/css/groups-add-member.css'
         );
-
         echo $this->view->renderAdmin(
             'Groups',
             'add_member',
@@ -718,7 +633,6 @@ final class Controller
             );
             return;
         }
-
         /*
         * Vérification CSRF
         */
@@ -732,18 +646,15 @@ final class Controller
             );
             return;
         }
-
         /*
         * Récupération des données
         */
         $idGroup = (int) (
             $_POST['id_group'] ?? 0
         );
-
         $hashKey = trim(
             (string) ($_POST['hash_key'] ?? '')
         );
-
         /*
         * Validation
         */
@@ -757,7 +668,6 @@ final class Controller
             );
             return;
         }
-
         if ($hashKey === '') {
             $this->errorPage->show(
                 400,
@@ -768,14 +678,12 @@ final class Controller
             );
             return;
         }
-
         /*
         * Vérification du groupe
         */
         $group = $this->model->getGroupByIdGroup(
             $idGroup
         );
-
         if ($group === null) {
             $this->errorPage->show(
                 404,
@@ -786,7 +694,6 @@ final class Controller
             );
             return;
         }
-
         /*
         * Suppression du membre
         */
@@ -803,12 +710,10 @@ final class Controller
             );
             return;
         }
-
         /*
         * Régénération du token CSRF
         */
         $this->csrf->regenerate();
-
         /*
         * Retour à la liste des membres
         */
@@ -816,7 +721,6 @@ final class Controller
             'Location: /admin/groups/members?id_group='
             . $idGroup
         );
-
         exit;
     }
 }

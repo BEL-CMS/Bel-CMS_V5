@@ -1,15 +1,19 @@
 <?php
-
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ */
 declare(strict_types=1);
 
 namespace BelCMS\Admin\User;
-
 use BelCMS\Core\Assets;
 use BelCMS\Core\User;
 use BelCMS\Core\View;
 use BelCMS\Core\UserSession;
 use BelCMS\Core\Errors\ErrorPage;
-
 final class Controller
 {
     public function __construct(
@@ -30,41 +34,32 @@ final class Controller
             header('Location: /user/login');
             exit;
         }
-
         if (!$this->user->isAdmin()) {
             http_response_code(403);
             exit('Accès interdit.');
         }
-
         $page = max(
             1,
             (int) ($_GET['page'] ?? 1)
         );
-
         $search = trim(
             (string) ($_GET['search'] ?? '')
         );
-
         $perPage = 25;
-
         $users = $this->model->getUsers(
             $page,
             $perPage,
             $search
         );
-
         $total = $this->model->countUsers(
             $search
         );
-
         $pages = (int) ceil(
             $total / $perPage
         );
-
         $this->assets->css(
             '/administration/Modules/User/css/user.css'
         );
-
         echo $this->view->renderAdmin(
             'User',
             'index',
@@ -88,48 +83,37 @@ final class Controller
             header('Location: /user/login');
             exit;
         }
-
         if (!$this->user->isAdmin()) {
             http_response_code(403);
             exit('Accès interdit.');
         }
-
         $hashKey = trim(
             (string) ($_GET['hash_key'] ?? $_POST['hash_key'] ?? '')
         );
-
         if ($hashKey === '') {
             http_response_code(400);
             exit('Utilisateur invalide.');
         }
-
         $targetUser = $this->model->getUserByHashKey($hashKey);
-
         if ($targetUser === null) {
             http_response_code(404);
             exit('Utilisateur introuvable.');
         }
-
         /*
         * Traitement du formulaire
         */
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
-
             if (!csrf_verify($_POST['csrf_token'] ?? null)) {
                 http_response_code(403);
                 exit('Jeton CSRF invalide.');
             }
-
             $username = trim(
                 (string) ($_POST['username'] ?? '')
             );
-
             $email = trim(
                 (string) ($_POST['email'] ?? '')
             );
-
             $valid = isset($_POST['valid']) ? 1 : 0;
-
             /*
             * Validation
             */
@@ -137,12 +121,10 @@ final class Controller
                 http_response_code(400);
                 exit('Le nom d\'utilisateur est obligatoire.');
             }
-
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 http_response_code(400);
                 exit('Adresse email invalide.');
             }
-
             /*
             * Données à mettre à jour
             */
@@ -151,7 +133,6 @@ final class Controller
                 'email'    => $email,
                 'valid'    => $valid,
             ];
-
             /*
             * Mise à jour
             */
@@ -159,7 +140,6 @@ final class Controller
                 $hashKey,
                 $data
             );
-
             /*
             * Retour sur la page d'édition
             */
@@ -168,17 +148,14 @@ final class Controller
                 . urlencode($hashKey)
                 . '&saved=1'
             );
-
             exit;
         }
-
         /*
         * CSS du module
         */
         $this->assets->css(
             '/administration/Modules/User/css/user.css'
         );
-
         /*
         * Affichage
         */
@@ -201,44 +178,35 @@ final class Controller
             header('Location: /user/login');
             exit;
         }
-
         if (!$this->user->isAdmin()) {
             http_response_code(403);
             exit('Accès interdit.');
         }
-
         $hashKey = trim(
             (string) ($_GET['hash_key'] ?? '')
         );
-
         if ($hashKey === '') {
             http_response_code(400);
             exit('Utilisateur invalide.');
         }
-
         $targetUser = $this->model->getUserByHashKey($hashKey);
-
         if ($targetUser === null) {
             http_response_code(404);
             exit('Utilisateur introuvable.');
         }
-
         /*
         * Récupération des sessions
         */
         $sessions = $this->userSession->getByHashKey($hashKey);
-
         if (!is_array($sessions)) {
             $sessions = [];
         }
-
         /*
         * CSS
         */
         $this->assets->css(
             '/administration/Modules/User/css/user.css'
         );
-
         /*
         * Affichage
         */
@@ -262,50 +230,40 @@ final class Controller
             header('Location: /user/login');
             exit;
         }
-
         if (!$this->user->isAdmin()) {
             http_response_code(403);
             exit('Accès interdit.');
         }
-
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             http_response_code(405);
             exit('Méthode non autorisée.');
         }
-
         if (!csrf_verify($_POST['csrf_token'] ?? null)) {
             http_response_code(403);
             exit('Jeton CSRF invalide.');
         }
-
         $hashKey = trim(
             (string) ($_POST['hash_key'] ?? '')
         );
-
         if ($hashKey === '') {
             http_response_code(400);
             exit('Utilisateur invalide.');
         }
-
         $targetUser = $this->model->getUserByHashKey($hashKey);
-
         if ($targetUser === null) {
             http_response_code(404);
             exit('Utilisateur introuvable.');
         }
-
         /*
         * Administration :
         * suppression de TOUTES les sessions
         * du compte sélectionné.
         */
         $this->userSession->deleteAll($hashKey);
-
         header(
             'Location: /admin/users/sessions?hash_key='
             . urlencode($hashKey)
         );
-
         exit;
     }
     /**
@@ -317,49 +275,39 @@ final class Controller
             header('Location: /user/login');
             exit;
         }
-
         if (!$this->user->isAdmin()) {
             http_response_code(403);
             exit('Accès interdit.');
         }
-
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             http_response_code(405);
             exit('Méthode non autorisée.');
         }
-
         if (!csrf_verify($_POST['csrf_token'] ?? null)) {
             http_response_code(403);
             exit('Jeton CSRF invalide.');
         }
-
         $hashKey = trim(
             (string) ($_POST['hash_key'] ?? '')
         );
-
         if ($hashKey === '') {
             http_response_code(400);
             exit('Utilisateur invalide.');
         }
-
         $targetUser = $this->model->getUserByHashKey($hashKey);
-
         if ($targetUser === null) {
             http_response_code(404);
             exit('Utilisateur introuvable.');
         }
-
         /*
         * Désactivation du 2FA
         */
         $this->model->resetTwoFactor($hashKey);
-
         header(
             'Location: /admin/users/edit?hash_key='
             . urlencode($hashKey)
             . '&2fa_reset=1'
         );
-
         exit;
     }
 public function delete(): void
@@ -368,34 +316,27 @@ public function delete(): void
         header('Location: /user/login');
         exit;
     }
-
     if (!$this->user->isAdmin()) {
         http_response_code(403);
         exit('Accès interdit.');
     }
-
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
         http_response_code(405);
         exit('Méthode non autorisée.');
     }
-
     if (!csrf_verify($_POST['csrf_token'] ?? null)) {
         http_response_code(403);
         exit('Jeton CSRF invalide.');
     }
-
     $hashKey = trim((string) ($_POST['hash_key'] ?? ''));
-
     if ($hashKey === '') {
         http_response_code(400);
         exit('Utilisateur invalide.');
     }
-
     /*
      * Empêcher la suppression de son propre compte.
      */
     $currentHashKey = $this->user->hashKey();
-
     if (
         $currentHashKey !== null &&
         $currentHashKey !== '' &&
@@ -409,22 +350,18 @@ public function delete(): void
             'Retour aux utilisateurs'
         );
     }
-
     /*
      * Vérifier que l'utilisateur existe.
      */
     $targetUser = $this->model->getUserByHashKey($hashKey);
-
     if (!$targetUser) {
         http_response_code(404);
         exit('Utilisateur introuvable.');
     }
-
     /*
      * Supprimer toutes les sessions.
      */
     $this->userSession->deleteAll($hashKey);
-
     /*
      * Supprimer l'utilisateur et ses données associées.
      */
@@ -432,7 +369,6 @@ public function delete(): void
         http_response_code(500);
         exit("Impossible de supprimer l\'utilisateur.");
     }
-
     header('Location: /admin/users?deleted=1');
     exit;
 }

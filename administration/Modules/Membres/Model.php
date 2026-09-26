@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Bel-CMS [Content management system]
  * @version 5.0.0 [PHP8.5]
@@ -7,20 +6,16 @@
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  */
-
 declare(strict_types=1);
 
 namespace BelCMS\Admin\Membres;
-
 use BelCMS\Core\BDD;
-
 final class Model
 {
     /**
      * Instance BDD.
      */
     private BDD $db;
-
     /**
      * Constructeur.
      */
@@ -28,7 +23,6 @@ final class Model
     {
         $this->db = $db;
     }
-
     /**
      * Récupère la liste des membres.
      *
@@ -45,11 +39,8 @@ final class Model
     ): array {
         $page = max(1, $page);
         $perPage = max(1, $perPage);
-
         $offset = ($page - 1) * $perPage;
-
         $this->db->table('TABLE_USERS');
-
         /*
          * Recherche.
          */
@@ -59,7 +50,6 @@ final class Model
                 $search
             );
         }
-
         /*
          * Tri.
          */
@@ -67,7 +57,6 @@ final class Model
             'id',
             'DESC'
         );
-
         /*
          * Pagination.
          */
@@ -78,16 +67,12 @@ final class Model
             ],
             true
         );
-
         $this->db->queryAll();
-
         if (!is_array($this->db->data)) {
             return [];
         }
-
         return $this->db->data;
     }
-
     /**
      * Compte le nombre total de membres.
      *
@@ -99,7 +84,6 @@ final class Model
         string $search = ''
     ): int {
         $this->db->table('TABLE_USERS');
-
         /*
          * Recherche.
          */
@@ -109,10 +93,8 @@ final class Model
                 $search
             );
         }
-
         return (int)$this->db->count();
     }
-
     /**
      * Récupère un membre par son hash_key.
      */
@@ -120,28 +102,21 @@ final class Model
         string $hashKey
     ): ?object {
         $hashKey = trim($hashKey);
-
         if ($hashKey === '') {
             return null;
         }
-
         $this->db->table('TABLE_USERS');
-
         $this->db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
             'op'    => '=',
         ]);
-
         $this->db->queryOne();
-
         if (!is_object($this->db->data)) {
             return null;
         }
-
         return $this->db->data;
     }
-
     /**
      * Récupère le profil d'un membre.
      */
@@ -149,28 +124,21 @@ final class Model
         string $hashKey
     ): ?object {
         $hashKey = trim($hashKey);
-
         if ($hashKey === '') {
             return null;
         }
-
         $this->db->table('TABLE_USERS_PROFILS');
-
         $this->db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
             'op'    => '=',
         ]);
-
         $this->db->queryOne();
-
         if (!is_object($this->db->data)) {
             return null;
         }
-
         return $this->db->data;
     }
-
     /**
      * Récupère les réseaux sociaux d'un membre.
      */
@@ -178,28 +146,21 @@ final class Model
         string $hashKey
     ): ?object {
         $hashKey = trim($hashKey);
-
         if ($hashKey === '') {
             return null;
         }
-
         $this->db->table('TABLE_USERS_SOCIAL');
-
         $this->db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
             'op'    => '=',
         ]);
-
         $this->db->queryOne();
-
         if (!is_object($this->db->data)) {
             return null;
         }
-
         return $this->db->data;
     }
-
     /**
      * Récupère les groupes d'un membre.
      */
@@ -207,25 +168,19 @@ final class Model
         string $hashKey
     ): ?object {
         $hashKey = trim($hashKey);
-
         if ($hashKey === '') {
             return null;
         }
-
         $this->db->table('TABLE_USERS_GROUPS');
-
         $this->db->where([
             'name'  => 'hash_key',
             'value' => $hashKey,
             'op'    => '=',
         ]);
-
         $this->db->queryOne();
-
         if (!is_object($this->db->data)) {
             return null;
         }
-
         return $this->db->data;
     }
 }

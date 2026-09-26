@@ -1,18 +1,20 @@
 <?php
-
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ */
 declare(strict_types=1);
-
 namespace BelCMS\Admin\Dashboard;
-
 use BelCMS\Core\BDD;
-
 final class Model
 {
     public function __construct(
         private BDD $db
     ) {
     }
-
     /**
      * Nombre total de membres.
      */
@@ -20,10 +22,8 @@ final class Model
     {
         $this->db->table(TABLE_USERS);
         $this->db->count();
-
         return (int) $this->db->data;
     }
-
     /**
      * Nombre de profils.
      */
@@ -31,10 +31,8 @@ final class Model
     {
         $this->db->table(TABLE_USERS_PROFILS);
         $this->db->count();
-
         return (int) $this->db->data;
     }
-
     /**
      * Nombre de groupes.
      */
@@ -42,10 +40,8 @@ final class Model
     {
         $this->db->table(TABLE_GROUPS);
         $this->db->count();
-
         return (int) $this->db->data;
     }
-
     /**
      * Nombre de sessions actives.
      */
@@ -53,10 +49,8 @@ final class Model
     {
         $this->db->table(TABLE_SESSION);
         $this->db->count();
-
         return (int) $this->db->data;
     }
-
     /**
      * Informations système.
      */
@@ -68,7 +62,6 @@ final class Model
             'database' => 'MySQL',
         ];
     }
-
     /**
      * Statistiques générales du dashboard.
      */
@@ -81,7 +74,6 @@ final class Model
             'sessions' => $this->countSessions(),
         ];
     }
-
     /**
      * Données complètes du dashboard.
      */

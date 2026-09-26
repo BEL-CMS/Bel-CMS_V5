@@ -10,7 +10,9 @@
 */
 
 declare(strict_types=1);
+
 namespace BelCMS\Core;
+
 use RuntimeException;
 use BelCMS\Core\Errors\ErrorPage;
 
@@ -67,7 +69,6 @@ final class Application
         * Session
         */
         $this->session = new Session();
-
         $this->csrf = new Csrf(
             $this->session
         );
@@ -101,7 +102,6 @@ final class Application
         * Assets
         */
         $this->assets = new Assets();
-
         /*
         * Plugins globaux
         */
@@ -117,37 +117,30 @@ final class Application
             Session::class,
             $this->session
         );
-
         $this->container->set(
             BDD::class,
             $this->db
         );
-
         $this->container->set(
             UserSession::class,
             $this->userSession
         );
-
         $this->container->set(
             User::class,
             $this->user
         );
-
         $this->container->set(
             View::class,
             $this->view
         );
-
         $this->container->set(
             Assets::class,
             $this->assets
         );
-
         $this->container->set(
             Language::class,
             $this->language
         );
-
         $this->container->set(
             Csrf::class,
             $this->csrf
@@ -157,7 +150,6 @@ final class Application
             $this->profils
         );
         $errorPage = new ErrorPage();
-
         $this->container->set(
             ErrorPage::class,
             $errorPage
@@ -181,62 +173,60 @@ final class Application
             $this->modules
         );
         $this->modules->loadAll();
-
-/*
- * Administration
- */
-$adminRoutes = require dirname(__DIR__, 2)
-    . '/administration/routes.php';
-
-foreach ($adminRoutes as $route => $handler) {
-
-    $parts = preg_split(
-        '/\s+/',
-        trim($route),
-        2
-    );
-
-    if (
-        $parts === false
-        || count($parts) !== 2
-    ) {
-        throw new RuntimeException(
-            "Route d'administration invalide : {$route}"
+        /*
+        * ---------------------------------------------------------
+        * Menu dynamique de l'administration
+        * ---------------------------------------------------------
+        */
+        $adminMenu = new AdminMenu(
+            $this->modules
         );
-    }
-
-    $method = strtoupper($parts[0]);
-    $path   = $parts[1];
-
-    switch ($method) {
-
-        case 'GET':
-
-            $this->router->get(
-                $path,
-                $handler,
-                'Administration'
+        $this->container->set(
+            AdminMenu::class,
+            $adminMenu
+        );
+        /*
+        * Administration
+        */
+        $adminRoutes = require dirname(__DIR__, 2)
+            . '/administration/routes.php';
+        foreach ($adminRoutes as $route => $handler) {
+            $parts = preg_split(
+                '/\s+/',
+                trim($route),
+                2
             );
-
-            break;
-
-        case 'POST':
-
-            $this->router->post(
-                $path,
-                $handler,
-                'Administration'
-            );
-
-            break;
-
-        default:
-
-            throw new RuntimeException(
-                "Méthode HTTP d'administration non supportée : {$method}"
-            );
-    }
-}
+            if (
+                $parts === false
+                || count($parts) !== 2
+            ) {
+                throw new RuntimeException(
+                    "Route d'administration invalide : {$route}"
+                );
+            }
+            $method = strtoupper($parts[0]);
+            $path   = $parts[1];
+            switch ($method) {
+                case 'GET':
+                    $this->router->get(
+                        $path,
+                        $handler,
+                        'Administration'
+                    );
+                    break;
+                case 'POST':
+                    $this->router->post(
+                        $path,
+                        $handler,
+                        'Administration'
+                    );
+                    break;
+                default:
+                    throw new RuntimeException(
+                        "Méthode HTTP d'administration non supportée : {$method}"
+                    );
+            }
+        }
         /*
         * Layout
         */
@@ -313,48 +303,46 @@ foreach ($adminRoutes as $route => $handler) {
      */
     public function run(): void
     {
-        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        $uri = $_SERVER['REQUEST_URI'] ?? '/';
-
         /*
-        * Normalisation des URLs d'administration.
+        * ---------------------------------------------------------
+        * Initialisation
+        * ---------------------------------------------------------
+        */
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $uri    = $_SERVER['REQUEST_URI'] ?? '/';
+        /*
+        * ---------------------------------------------------------
+        * Normalisation des URLs d'administration
+        * ---------------------------------------------------------
+        *
+        * Toutes ces URLs deviennent :
         *
         * /admin
+        * /admin/...
+        *
+        * Exemples :
+        *
         * /Admin
         * /ADMIN
         * /AdMiN
+        * /ADMIN/news
         *
-        * deviennent tous :
-        *
-        * /admin
+        * Le changement est effectué AVANT le Router.
         */
         $path = parse_url($uri, PHP_URL_PATH);
-
         if (is_string($path)) {
-
-            if (
-                $path === '/Admin'
-                || $path === '/ADMIN'
-                || preg_match(
-                    '#^/admin(?:/|$)#i',
-                    $path
-                )
-            ) {
+            if (preg_match('#^/admin(?:/|$)#i', $path)) {
                 $normalizedPath = preg_replace(
                     '#^/admin#i',
                     '/admin',
                     $path
                 );
-
                 if (is_string($normalizedPath)) {
-
                     $query = parse_url(
                         $uri,
                         PHP_URL_QUERY
                     );
-
                     $uri = $normalizedPath;
-
                     if (
                         is_string($query)
                         && $query !== ''
@@ -364,68 +352,56 @@ foreach ($adminRoutes as $route => $handler) {
                 }
             }
         }
-
+        /*
+        * ---------------------------------------------------------
+        * Dispatch du Router
+        * ---------------------------------------------------------
+        */
         ob_start();
-
         $this->router->dispatch(
             $method,
             $uri
         );
-
         $content = ob_get_clean();
-
         /*
-        * Administration
-        * URL publique : /admin
-        * Dossier physique : /administration
+        * ---------------------------------------------------------
+        * Chemin actuel
+        * ---------------------------------------------------------
         */
         $path = parse_url(
             $uri,
             PHP_URL_PATH
         );
-
-        if (
-            is_string($path)
-            && (
-                $path === '/admin'
-                || str_starts_with(
-                    $path,
-                    '/admin/'
-                )
-            )
-        ) {
+        /*
+        * ---------------------------------------------------------
+        * Administration
+        * ---------------------------------------------------------
+        */
+        if (is_string($path) && ($path === '/admin' || str_starts_with($path, '/admin/'))) {
             $title = 'Administration';
-
-            require dirname(__DIR__, 2)
-                . '/administration/Views/layout.php';
-
+            $adminMenu = $this->container->get(
+                AdminMenu::class
+            );
+            require dirname(__DIR__, 2). '/administration/Views/layout.php';
             return;
         }
-
         /*
+        * ---------------------------------------------------------
         * Site public
+        * ---------------------------------------------------------
         */
-        $moduleName = $this->router->getCurrentModule();
-
-        $this->layout->render(
-            $content,
-            $moduleName
-        );
+        echo $content;
     }
-
     public function user(): User
     {
         return $this->user;
     }
-
     public function session(): Session
     {
         return $this->session;
     }
-
     public function userSession(): UserSession
     {
         return $this->userSession;
     }
-    
 }

@@ -1,6 +1,12 @@
 <?php
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ */
 declare(strict_types=1);
-
 /**
  * @var object $group
  * @var array $users
@@ -8,13 +14,11 @@ declare(strict_types=1);
  * @var string $csrf
  * @var string|null $error
  */
-
 $groupName = htmlspecialchars(
     (string) ($group->name ?? ''),
     ENT_QUOTES,
     'UTF-8'
 );
-
 $idGroup = (int) ($group->id_group ?? 0);
 $searchValue = htmlspecialchars(
     (string) ($search ?? ''),
@@ -22,9 +26,7 @@ $searchValue = htmlspecialchars(
     'UTF-8'
 );
 ?>
-
 <div class="group-page">
-
     <div class="group-page-header">
         <div class="group-page-header-main">
             <a
@@ -34,7 +36,6 @@ $searchValue = htmlspecialchars(
                 <i class="fa-solid fa-arrow-left"></i>
                 Retour aux membres
             </a>
-
             <div class="group-page-title">
                 <span class="group-page-eyebrow">Gestion du groupe</span>
                 <h1>
@@ -48,16 +49,13 @@ $searchValue = htmlspecialchars(
             </div>
         </div>
     </div>
-
     <?php if (!empty($error)): ?>
         <div class="group-alert group-alert-danger">
             <i class="fa-solid fa-circle-exclamation"></i>
             <span><?= htmlspecialchars((string) $error, ENT_QUOTES, 'UTF-8') ?></span>
         </div>
     <?php endif; ?>
-
     <div class="group-add-panel">
-
         <form
             method="get"
             action="/admin/groups/members/add"
@@ -68,15 +66,12 @@ $searchValue = htmlspecialchars(
                 name="id_group"
                 value="<?= $idGroup ?>"
             >
-
             <div class="group-search-field">
                 <label for="group-user-search">
                     Rechercher un utilisateur
                 </label>
-
                 <div class="group-search-control">
                     <i class="fa-solid fa-magnifying-glass"></i>
-
                     <input
                         type="search"
                         id="group-user-search"
@@ -85,7 +80,6 @@ $searchValue = htmlspecialchars(
                         placeholder="Pseudo ou adresse e-mail..."
                         autocomplete="off"
                     >
-
                     <?php if ($searchValue !== ''): ?>
                         <a
                             href="/admin/groups/members/add?id_group=<?= $idGroup ?>"
@@ -98,16 +92,13 @@ $searchValue = htmlspecialchars(
                     <?php endif; ?>
                 </div>
             </div>
-
             <button type="submit" class="btn btn-primary">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 Rechercher
             </button>
         </form>
-
         <div class="group-add-info">
             <i class="fa-solid fa-circle-info"></i>
-
             <?php if ($searchValue !== ''): ?>
                 Utilisateurs disponibles correspondant à
                 <strong><?= $searchValue ?></strong>.
@@ -115,11 +106,8 @@ $searchValue = htmlspecialchars(
                 Sélectionnez un utilisateur parmi les membres disponibles.
             <?php endif; ?>
         </div>
-
         <?php if (!empty($users)): ?>
-
             <div class="group-add-user-list">
-
                 <?php foreach ($users as $user): ?>
                     <?php
                     $hashKey = htmlspecialchars(
@@ -127,19 +115,16 @@ $searchValue = htmlspecialchars(
                         ENT_QUOTES,
                         'UTF-8'
                     );
-
                     $username = htmlspecialchars(
                         (string) ($user->username ?? 'Utilisateur'),
                         ENT_QUOTES,
                         'UTF-8'
                     );
-
                     $email = htmlspecialchars(
                         (string) ($user->email ?? ''),
                         ENT_QUOTES,
                         'UTF-8'
                     );
-
                     $initial = mb_strtoupper(
                         mb_substr(
                             (string) ($user->username ?? '?'),
@@ -148,18 +133,14 @@ $searchValue = htmlspecialchars(
                         )
                     );
                     ?>
-
                     <article class="group-add-user-card">
-
                         <div class="group-add-user-avatar">
                             <?= htmlspecialchars($initial, ENT_QUOTES, 'UTF-8') ?>
                         </div>
-
                         <div class="group-add-user-content">
                             <div class="group-add-user-name">
                                 <?= $username ?>
                             </div>
-
                             <?php if ($email !== ''): ?>
                                 <div class="group-add-user-email">
                                     <i class="fa-solid fa-envelope"></i>
@@ -167,9 +148,7 @@ $searchValue = htmlspecialchars(
                                 </div>
                             <?php endif; ?>
                         </div>
-
                         <div class="group-add-user-actions">
-
                             <a
                                 href="/admin/users/edit?hash_key=<?= $hashKey ?>"
                                 class="btn btn-secondary btn-small"
@@ -177,32 +156,27 @@ $searchValue = htmlspecialchars(
                                 <i class="fa-solid fa-eye"></i>
                                 Voir
                             </a>
-
                             <form
                                 method="post"
                                 action="/admin/groups/members/add"
                                 onsubmit="return confirm('Ajouter cet utilisateur au groupe ?');"
                             >
                                 <?= $csrf ?>
-
                                 <input
                                     type="hidden"
                                     name="id_group"
                                     value="<?= $idGroup ?>"
                                 >
-
                                 <input
                                     type="hidden"
                                     name="hash_key"
                                     value="<?= $hashKey ?>"
                                 >
-
                                 <input
                                     type="hidden"
                                     name="search"
                                     value="<?= $searchValue ?>"
                                 >
-
                                 <button
                                     type="submit"
                                     class="btn btn-success btn-small"
@@ -211,21 +185,15 @@ $searchValue = htmlspecialchars(
                                     Ajouter
                                 </button>
                             </form>
-
                         </div>
-
                     </article>
                 <?php endforeach; ?>
-
             </div>
-
         <?php else: ?>
-
             <div class="group-empty-state">
                 <div class="group-empty-icon">
                     <i class="fa-solid fa-user-slash"></i>
                 </div>
-
                 <?php if ($searchValue !== ''): ?>
                     <h3>Aucun utilisateur trouvé</h3>
                     <p>
@@ -239,9 +207,6 @@ $searchValue = htmlspecialchars(
                     </p>
                 <?php endif; ?>
             </div>
-
         <?php endif; ?>
-
     </div>
-
 </div>
