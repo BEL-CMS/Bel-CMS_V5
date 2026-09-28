@@ -647,3 +647,119 @@
         grid-template-columns: 1fr;
     }
 }
+/* =========================================================
+   MENU INTERNE DES MODULES
+   ========================================================= */
+.admin-module-menu {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 25px;
+    padding: 0;
+    background: rgba(255, 255, 255, .025);
+    border: 1px solid rgba(255, 255, 255, .07);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-top: 25px;
+    border-color: 1px solid rgba(255, 255, 255, .07);
+}
+/* ---------------------------------------------------------
+   Titre du module
+   --------------------------------------------------------- */
+.admin-module-menu-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 58px;
+    padding: 0 22px;
+    background: rgba(255, 255, 255, .07);
+    color: rgba(255, 255, 255, 1);
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    border-right: 1px solid rgba(255, 255, 255, .07);
+}
+.admin-module-menu-title i {
+    font-size: 16px;
+}
+/* ---------------------------------------------------------
+   Conteneur des liens
+   --------------------------------------------------------- */
+.admin-module-menu-items {
+    display: flex;
+    align-items: stretch;
+    min-height: 58px;
+    flex: 1;
+}
+/* ---------------------------------------------------------
+   Lien
+   --------------------------------------------------------- */
+.admin-module-menu-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 20px;
+    color: rgba(255, 255, 255, 0.6);
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-right: 1px solid rgba(255, 255, 255, .07);
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+/* Icône */
+.admin-module-menu-link i {
+    font-size: 14px;
+}
+/* ---------------------------------------------------------
+   Hover
+   --------------------------------------------------------- */
+.admin-module-menu-link:hover {
+    color: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, .07);
+}
+/* ---------------------------------------------------------
+   Élément actif
+   --------------------------------------------------------- */
+.admin-module-menu-link.active {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, .07);
+}
+/* Barre inférieure de l'élément actif */
+.admin-module-menu-link.active::after {
+    content: "";
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 3px 3px 0 0;
+}
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+@media (max-width: 900px) {
+    .admin-module-menu {
+        display: block;
+    }
+    .admin-module-menu-title {
+        min-height: 50px;
+        border-right: 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .admin-module-menu-items {
+        overflow-x: auto;
+        min-height: 52px;
+    }
+    .admin-module-menu-link {
+        min-height: 52px;
+        white-space: nowrap;
+    }
+}

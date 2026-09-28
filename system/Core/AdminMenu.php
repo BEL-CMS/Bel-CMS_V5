@@ -3,79 +3,472 @@
  * Bel-CMS [Content management system]
  * @version 5.0.0 [PHP8.5]
  * @link https://bel-cms.dev
- * @link https://determe.be
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
-*/
+ */
 
 declare(strict_types=1);
 
 namespace BelCMS\Core;
 
+use RuntimeException;
+
 final class AdminMenu
 {
-    public function __construct(private ModuleManager $moduleManager) { }
     /**
-     * Retourne les éléments du menu administration.
+     * Chemin des modules d'administration.
      */
-    public function getItems(): array
+    private string $modulesPath;
+
+    /**
+     * ModuleManager principal.
+     */
+    private ModuleManager $modules;
+
+    /**
+     * Configuration des modules.
+     */
+    private array $items = [];
+
+    /**
+     * Module actuellement sélectionné.
+     */
+    private ?array $currentModule = null;
+
+    /**
+     * URL actuellement utilisée.
+     */
+    private string $currentPath = '';
+
+    public function __construct(
+        ModuleManager $modules,
+        ?string $modulesPath = null
+    ) {
+        $this->modules = $modules;
+
+        $this->modulesPath = $modulesPath
+            ?? dirname(__DIR__, 2)
+            . '/administration/Modules';
+
+        $this->load();
+    }
+
+    /**
+     * Charge les menus des modules.
+     */
+    private function load(): void
     {
-        $items = [];
-        foreach ($this->moduleManager->all() as $module) {
-            $config = $module['config'] ?? [];
-            /*
-             * -------------------------------------------------
-             * Administration activée ?
-             * -------------------------------------------------
-             */
+        $this->items = [];
+
+        if (!is_dir($this->modulesPath)) {
+            return;
+        }
+
+        $directories = scandir(
+            $this->modulesPath
+        );
+
+        if ($directories === false) {
+            return;
+        }
+
+        foreach ($directories as $directory) {
+
             if (
-                ($config['admin']['enabled'] ?? false) !== true
+                $directory === '.'
+                || $directory === '..'
             ) {
                 continue;
             }
+
+            $path = $this->modulesPath
+                . DIRECTORY_SEPARATOR
+                . $directory;
+
+            if (!is_dir($path)) {
+                continue;
+            }
+
+            $moduleFile = $path
+                . DIRECTORY_SEPARATOR
+                . 'module.php';
+
             /*
-             * -------------------------------------------------
-             * Menu activé ?
-             * -------------------------------------------------
+             * Le module doit posséder un module.php
              */
-            $menu = $config['admin']['menu'] ?? [];
+            if (!is_file($moduleFile)) {
+                continue;
+            }
+
+            $config = require $moduleFile;
+
+            if (!is_array($config)) {
+                throw new RuntimeException(
+                    "Le fichier module.php du module "
+                    . $directory
+                    . " doit retourner un tableau."
+                );
+            }
+
+            /*
+             * Pas de menu d'administration
+             */
             if (
-                !is_array($menu)
-                || ($menu['enabled'] ?? false) !== true
+                !isset($config['admin'])
+                || !is_array($config['admin'])
             ) {
                 continue;
             }
+
+            $admin = $config['admin'];
+
             /*
-             * -------------------------------------------------
-             * Informations du menu
-             * -------------------------------------------------
+             * Informations principales
              */
-            $items[] = [
-                'module' => $module['name'],
-                'label' => $menu['label']
-                    ?? $module['name'],
-                'icon' => $menu['icon']
-                    ?? 'fa-puzzle-piece',
-                'order' => (int) (
-                    $menu['order'] ?? 100
+            $label = trim(
+                (string) (
+                    $admin['label']
+                    ?? $config['name']
+                    ?? $directory
+                )
+            );
+
+            if ($label === '') {
+                $label = $directory;
+            }
+
+            $icon = trim(
+                (string) (
+                    $admin['icon']
+                    ?? 'fa-puzzle-piece'
+                )
+            );
+
+            $order = (int) (
+                $admin['order']
+                ?? 999
+            );
+
+            /*
+             * Menu interne du module
+             */
+            $menu = [];
+
+            if (
+                isset($admin['menu'])
+                && is_array($admin['menu'])
+            ) {
+                foreach ($admin['menu'] as $menuItem) {
+
+                    if (!is_array($menuItem)) {
+                        continue;
+                    }
+
+                    $menuLabel = trim(
+                        (string) (
+                            $menuItem['label']
+                            ?? ''
+                        )
+                    );
+
+                    $route = trim(
+                        (string) (
+                            $menuItem['route']
+                            ?? ''
+                        )
+                    );
+
+                    if (
+                        $menuLabel === ''
+                        || $route === ''
+                    ) {
+                        continue;
+                    }
+
+                    $menuIcon = trim(
+                        (string) (
+                            $menuItem['icon']
+                            ?? ''
+                        )
+                    );
+
+                    $menuOrder = (int) (
+                        $menuItem['order']
+                        ?? 999
+                    );
+
+                    $menu[] = [
+                        'label'  => $menuLabel,
+                        'route'  => $route,
+                        'icon'   => $menuIcon,
+                        'order'  => $menuOrder,
+                    ];
+                }
+            }
+
+            /*
+             * Tri du menu interne
+             */
+            usort(
+                $menu,
+                static function (
+                    array $a,
+                    array $b
+                ): int {
+                    return $a['order']
+                        <=> $b['order'];
+                }
+            );
+
+            /*
+             * Enregistrement du module
+             */
+            $this->items[] = [
+                'module'  => $directory,
+                'name'    => (string) (
+                    $config['name']
+                    ?? $directory
                 ),
+                'version' => (string) (
+                    $config['version']
+                    ?? ''
+                ),
+                'author'  => (string) (
+                    $config['author']
+                    ?? ''
+                ),
+                'label'   => $label,
+                'icon'    => $icon,
+                'order'   => $order,
+                'path'    => $path,
+                'menu'    => $menu,
             ];
         }
+
         /*
-         * -----------------------------------------------------
-         * Tri du menu
-         * -----------------------------------------------------
+         * Tri des modules
          */
         usort(
-            $items,
+            $this->items,
             static function (
                 array $a,
                 array $b
             ): int {
-                return $a['order'] <=> $b['order'];
+                return $a['order']
+                    <=> $b['order'];
             }
         );
-        return $items;
+    }
+
+    /**
+     * Retourne tous les modules
+     * disposant d'un menu d'administration.
+     */
+/**
+ * Retourne tous les éléments du menu.
+ *
+ * Alias conservé pour compatibilité
+ * avec le layout de l'administration.
+ */
+public function getItems(): array
+{
+    return $this->items;
+}
+
+/**
+ * Alias de getItems().
+ */
+public function all(): array
+{
+    return $this->getItems();
+}
+
+    /**
+     * Retourne un module par son nom.
+     */
+    public function get(
+        string $module
+    ): ?array {
+        foreach ($this->items as $item) {
+
+            if (
+                strcasecmp(
+                    $item['module'],
+                    $module
+                ) === 0
+            ) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Détermine le module correspondant
+     * à une URL d'administration.
+     */
+    public function findByPath(
+        string $path
+    ): ?array {
+        $path = parse_url(
+            $path,
+            PHP_URL_PATH
+        );
+
+        if (!is_string($path)) {
+            return null;
+        }
+
+        $path = '/' . ltrim(
+            $path,
+            '/'
+        );
+
+        foreach ($this->items as $item) {
+
+            foreach ($item['menu'] as $menuItem) {
+
+                $route = '/' . ltrim(
+                    $menuItem['route'],
+                    '/'
+                );
+
+                /*
+                 * Correspondance exacte
+                 */
+                if ($path === $route) {
+
+                    return $item;
+                }
+
+                /*
+                 * Correspondance avec sous-route
+                 */
+                if (
+                    str_starts_with(
+                        $path,
+                        rtrim($route, '/')
+                        . '/'
+                    )
+                ) {
+                    return $item;
+                }
+            }
+        }
+
+        /*
+         * Si aucune entrée interne
+         * ne correspond, on cherche
+         * une route correspondant
+         * au nom du module.
+         */
+        foreach ($this->items as $item) {
+
+            $module = strtolower(
+                $item['module']
+            );
+
+            $base = '/admin/'
+                . strtolower($module);
+
+            if (
+                $path === $base
+                || str_starts_with(
+                    $path,
+                    $base . '/'
+                )
+            ) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Définit le chemin courant.
+     */
+    public function setCurrentPath(
+        string $path
+    ): void {
+        $this->currentPath = $path;
+
+        $this->currentModule = $this->findByPath(
+            $path
+        );
+    }
+    /**
+     * Retourne le module courant.
+     */
+    public function current(): ?array
+    {
+        return $this->currentModule;
+    }
+    /**
+     * Retourne le menu du module courant.
+     */
+    public function currentMenu(): array
+    {
+        if ($this->currentModule === null) {
+            return [];
+        }
+
+        return $this->currentModule['menu'];
+    }
+    public function isActive(
+        string $route,
+        ?string $currentPath = null
+    ): bool {
+        $currentPath ??= $this->currentPath;
+
+        $route = parse_url(
+            $route,
+            PHP_URL_PATH
+        );
+
+        $currentPath = parse_url(
+            $currentPath,
+            PHP_URL_PATH
+        );
+
+        if (
+            !is_string($route)
+            || !is_string($currentPath)
+        ) {
+            return false;
+        }
+
+        $route = '/' . ltrim(
+            $route,
+            '/'
+        );
+
+        $currentPath = '/' . ltrim(
+            $currentPath,
+            '/'
+        );
+
+        /*
+        * Correspondance exacte
+        */
+        return $currentPath === $route;
+    }
+
+    /**
+     * Retourne le chemin des modules.
+     */
+    public function path(): string
+    {
+        return $this->modulesPath;
+    }
+
+    /**
+     * Retourne le chemin courant.
+     */
+    public function currentPath(): string
+    {
+        return $this->currentPath;
     }
 }

@@ -14,19 +14,13 @@ declare(strict_types=1);
 namespace BelCMS\Core;
 
 use RuntimeException;
-
 final class ModuleManager
 {
     private string $modulesPath;
-
     private Router $router;
-
     private Assets $assets;
-
     private Language $language;
-
     private array $modules = [];
-
     public function __construct(
         Router $router,
         Assets $assets,
@@ -36,58 +30,49 @@ final class ModuleManager
         $this->router = $router;
         $this->assets = $assets;
         $this->language = $language;
-
         $this->modulesPath = $modulesPath
             ?? dirname(__DIR__, 2) . '/modules';
     }
-
     /**
      * Découvre les modules
      */
     public function discover(): array
     {
         $this->modules = [];
-
         if (!is_dir($this->modulesPath)) {
             return [];
         }
-
         $directories = scandir($this->modulesPath);
-
         if ($directories === false) {
             return [];
         }
-
         foreach ($directories as $directory) {
-
             if (
                 $directory === '.'
                 || $directory === '..'
             ) {
                 continue;
             }
-
             $path = $this->modulesPath
                 . DIRECTORY_SEPARATOR
                 . $directory;
-
             if (!is_dir($path)) {
                 continue;
             }
-
             $this->modules[$directory] = [
                 'name' => $directory,
                 'path' => $path,
+
+                'config' => [],
+
                 'assets' => [
                     'css' => false,
                     'js' => false,
                 ],
             ];
         }
-
         return $this->modules;
     }
-
     /**
      * Charge un module
      */
@@ -96,13 +81,11 @@ final class ModuleManager
         $path = $this->modulesPath
             . DIRECTORY_SEPARATOR
             . $name;
-
         if (!is_dir($path)) {
             throw new RuntimeException(
                 "Le module {$name} n'existe pas."
             );
         }
-
         /*
          * -------------------------------------------------
          * Configuration du module
@@ -111,13 +94,9 @@ final class ModuleManager
         $moduleFile = $path
             . DIRECTORY_SEPARATOR
             . 'module.php';
-
         $moduleConfig = [];
-
         if (is_file($moduleFile)) {
-
             $moduleConfig = require $moduleFile;
-
             if (!is_array($moduleConfig)) {
                 throw new RuntimeException(
                     "Le fichier module.php du module {$name} "
@@ -125,14 +104,13 @@ final class ModuleManager
                 );
             }
         }
-
+        $this->modules[$name]['config'] = $moduleConfig;
         /*
          * -------------------------------------------------
          * Langue du module
          * -------------------------------------------------
          */
         $this->language->loadModule($name);
-
         /*
          * -------------------------------------------------
          * Mémorisation des assets
@@ -145,20 +123,16 @@ final class ModuleManager
             'css' => false,
             'js'  => false,
         ];
-
         if (
             isset($moduleConfig['assets'])
             && is_array($moduleConfig['assets'])
         ) {
             $assets['css'] =
                 ($moduleConfig['assets']['css'] ?? false) === true;
-
             $assets['js'] =
                 ($moduleConfig['assets']['js'] ?? false) === true;
         }
-
         $this->modules[$name]['assets'] = $assets;
-
         /*
          * -------------------------------------------------
          * Routes
@@ -167,27 +141,21 @@ final class ModuleManager
         $routesFile = $path
             . DIRECTORY_SEPARATOR
             . 'routes.php';
-
         if (is_file($routesFile)) {
-
             $routes = require $routesFile;
-
             if (!is_array($routes)) {
                 throw new RuntimeException(
                     "Le fichier routes.php du module {$name} "
                     . "doit retourner un tableau."
                 );
             }
-
             $this->registerRoutes(
                 $routes,
                 $name
             );
         }
-
         return true;
     }
-
     /**
      * Enregistre les routes d'un module
      */
@@ -196,46 +164,34 @@ final class ModuleManager
         string $module
     ): void {
         foreach ($routes as $route => $handler) {
-
             if (!is_string($route)) {
                 continue;
             }
-
             [$method, $path] = $this->parseRoute(
                 $route
             );
-
             switch ($method) {
-
                 case 'GET':
-
                     $this->router->get(
                         $path,
                         $handler,
                         $module
                     );
-
                     break;
-
                 case 'POST':
-
                     $this->router->post(
                         $path,
                         $handler,
                         $module
                     );
-
                     break;
-
                 default:
-
                     throw new RuntimeException(
                         "Méthode HTTP non supportée : {$method}"
                     );
             }
         }
     }
-
     /**
      * Analyse une route
      */
@@ -243,13 +199,11 @@ final class ModuleManager
         string $route
     ): array {
         $route = trim($route);
-
         $parts = preg_split(
             '/\s+/',
             $route,
             2
         );
-
         if (
             $parts === false
             || count($parts) !== 2
@@ -258,27 +212,23 @@ final class ModuleManager
                 "Route invalide : {$route}"
             );
         }
-
         return [
             strtoupper($parts[0]),
             $parts[1]
         ];
     }
-
     /**
      * Charge tous les modules
      */
     public function loadAll(): void
     {
         $this->discover();
-
         foreach ($this->modules as $module) {
             $this->load(
                 $module['name']
             );
         }
     }
-
     /**
      * Retourne la configuration d'un module
      */
@@ -286,7 +236,6 @@ final class ModuleManager
     {
         return $this->modules[$name] ?? null;
     }
-
     /**
      * Vérifie si un module existe
      */
@@ -298,7 +247,6 @@ final class ModuleManager
             . $name
         );
     }
-
     /**
      * Retourne tous les modules
      */
@@ -306,7 +254,6 @@ final class ModuleManager
     {
         return $this->modules;
     }
-
     /**
      * Retourne le chemin des modules
      */

@@ -8,19 +8,14 @@
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
 */
-
 declare(strict_types=1);
-
 namespace BelCMS\Core;
-
 use RuntimeException;
 use BelCMS\Core\Errors\ErrorPage;
-
 if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
 	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
 endif;
-
 final class Application
 {
     private Router $router;
@@ -38,7 +33,6 @@ final class Application
     private UserSession $userSession;
     private Csrf $csrf;
     private Profils $profils;
-
     public function __construct()
     {
         /*
@@ -186,7 +180,9 @@ final class Application
             $adminMenu
         );
         /*
-        * Administration
+        * ---------------------------------------------------------
+        * Administration : routes globales
+        * ---------------------------------------------------------
         */
         $adminRoutes = require dirname(__DIR__, 2)
             . '/administration/routes.php';
@@ -225,6 +221,98 @@ final class Application
                     throw new RuntimeException(
                         "Méthode HTTP d'administration non supportée : {$method}"
                     );
+            }
+        }
+        /*
+        * ---------------------------------------------------------
+        * Administration : routes des modules
+        * ---------------------------------------------------------
+        *
+        * Chaque module peut posséder son propre routes.php :
+        *
+        * administration/Modules/User/routes.php
+        * administration/Modules/News/routes.php
+        * administration/Modules/Gallery/routes.php
+        *
+        * Les routes globales ci-dessus restent inchangées.
+        */
+        $adminModulesPath = dirname(__DIR__, 2)
+            . '/administration/Modules';
+        if (is_dir($adminModulesPath)) {
+            $directories = scandir($adminModulesPath);
+            if ($directories !== false) {
+                foreach ($directories as $directory) {
+                    if (
+                        $directory === '.'
+                        || $directory === '..'
+                    ) {
+                        continue;
+                    }
+                    $modulePath =
+                        $adminModulesPath
+                        . DIRECTORY_SEPARATOR
+                        . $directory;
+                    if (!is_dir($modulePath)) {
+                        continue;
+                    }
+                    $routesFile =
+                        $modulePath
+                        . DIRECTORY_SEPARATOR
+                        . 'routes.php';
+                    if (!is_file($routesFile)) {
+                        continue;
+                    }
+                    $moduleRoutes = require $routesFile;
+                    if (!is_array($moduleRoutes)) {
+                        continue;
+                    }
+                    foreach ($moduleRoutes as $moduleRoute) {
+                        if (!is_array($moduleRoute)) {
+                            continue;
+                        }
+                        $method = strtoupper(
+                            (string) (
+                                $moduleRoute['method']
+                                ?? 'GET'
+                            )
+                        );
+                        $path = trim(
+                            (string) (
+                                $moduleRoute['path']
+                                ?? ''
+                            )
+                        );
+                        $handler =
+                            $moduleRoute['handler']
+                            ?? null;
+                        if (
+                            $path === ''
+                            || $handler === null
+                        ) {
+                            continue;
+                        }
+                        switch ($method) {
+                            case 'GET':
+                                $this->router->get(
+                                    $path,
+                                    $handler,
+                                    $directory
+                                );
+                                break;
+                            case 'POST':
+                                $this->router->post(
+                                    $path,
+                                    $handler,
+                                    $directory
+                                );
+                                break;
+                            default:
+                                throw new RuntimeException(
+                                    "Méthode HTTP non supportée dans le module {$directory} : {$method}"
+                                );
+                        }
+                    }
+                }
             }
         }
         /*
@@ -390,6 +478,11 @@ final class Application
         * Site public
         * ---------------------------------------------------------
         */
+        $title = 'Bel-CMS';
+        $this->layout->render(
+            $content,
+            $title
+        );
         echo $content;
     }
     public function user(): User

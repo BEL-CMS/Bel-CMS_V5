@@ -7,7 +7,6 @@
  * @copyright 2015-2026 Bel-CMS
  */
 declare(strict_types=1);
-
 namespace BelCMS\Admin\User;
 use BelCMS\Core\BDD;
 final class Model
@@ -27,9 +26,9 @@ final class Model
         $page = max(1, $page);
         $perPage = max(1, $perPage);
         $offset = ($page - 1) * $perPage;
-        $this->db->table(TABLE_USERS);
+        $this->db->table('TABLE_USERS');
         if ($search !== '') {
-            $this->db->whereLike('username', $search);
+           $this->db->whereLike(array('name' => 'username', 'value' => $search));
         }
         $this->db->orderby('id');
         $this->db->limit([$offset, $perPage], true);
@@ -45,9 +44,9 @@ final class Model
     public function countUsers(
         string $search = ''
     ): int {
-        $this->db->table(TABLE_USERS);
+        $this->db->table('TABLE_USERS');
         if ($search !== '') {
-            $this->db->whereLike('username', $search);
+            $this->db->whereLike(array('name' => 'username', 'value' => $search));
         }
         $this->db->count();
         return (int) $this->db->data;
@@ -62,7 +61,7 @@ final class Model
         if ($hashKey === '') {
             return null;
         }
-        $this->db->table(TABLE_USERS);
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             [
                 'name'  => 'hash_key',
@@ -84,7 +83,7 @@ final class Model
         if ($hashKey === '') {
             return null;
         }
-        $this->db->table(TABLE_USERS_PROFILS);
+        $this->db->table('TABLE_USERS_PROFILS');
         $this->db->where([
             [
                 'name'  => 'hash_key',
@@ -106,7 +105,7 @@ final class Model
         if ($hashKey === '') {
             return null;
         }
-        $this->db->table(TABLE_USERS_GROUPS);
+        $this->db->table('TABLE_USERS_GROUPS');
         $this->db->where([
             [
                 'name'  => 'hash_key',
@@ -129,7 +128,7 @@ final class Model
         if ($hashKey === '' || $data === []) {
             return false;
         }
-        $this->db->table(TABLE_USERS);
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             [
                 'name'  => 'hash_key',
@@ -142,13 +141,14 @@ final class Model
     /**
      * Réinitialise le 2FA d'un utilisateur.
      */
-    public function resetTwoFactor(string $hashKey): bool
-    {
+    public function resetTwoFactor(
+        string $hashKey
+    ): bool {
         $hashKey = trim($hashKey);
         if ($hashKey === '') {
             return false;
         }
-        $this->db->table(TABLE_USERS);
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             [
                 'name'  => 'hash_key',
@@ -163,66 +163,265 @@ final class Model
         ]);
         return true;
     }
-    public function deleteUser(string $hashKey): bool
-    {
+    /**
+     * Supprime un utilisateur.
+     */
+    public function deleteUser(
+        string $hashKey
+    ): bool {
         if ($hashKey === '') {
             return false;
         }
         /*
-        * Supprimer le profil.
-        */
-        $this->db->table(TABLE_USERS_PROFILS);
+         * Supprimer le profil.
+         */
+        $this->db->table('TABLE_USERS_PROFILS');
         $this->db->where([
             [
-                'name' => 'hash_key',
-                'value' => $hashKey
-            ]
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
         ]);
         $this->db->delete();
         /*
-        * Supprimer les réseaux sociaux.
-        */
-        $this->db->table(TABLE_USERS_SOCIAL);
+         * Supprimer les réseaux sociaux.
+         */
+        $this->db->table('TABLE_USERS_SOCIAL');
         $this->db->where([
             [
-                'name' => 'hash_key',
-                'value' => $hashKey
-            ]
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
         ]);
         $this->db->delete();
         /*
-        * Supprimer les groupes.
-        */
-        $this->db->table(TABLE_USERS_GROUPS);
+         * Supprimer les groupes.
+         */
+        $this->db->table('TABLE_USERS_GROUPS');
         $this->db->where([
             [
-                'name' => 'hash_key',
-                'value' => $hashKey
-            ]
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
         ]);
         $this->db->delete();
         /*
-        * Supprimer les codes de récupération.
-        */
-        $this->db->table(TABLE_RECOVERY);
+         * Supprimer les codes de récupération.
+         */
+        $this->db->table('TABLE_RECOVERY');
         $this->db->where([
             [
-                'name' => 'hash_key',
-                'value' => $hashKey
-            ]
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
         ]);
         $this->db->delete();
         /*
-        * Supprimer l'utilisateur.
-        */
-        $this->db->table(TABLE_USERS);
+         * Supprimer l'utilisateur.
+         */
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             [
-                'name' => 'hash_key',
-                'value' => $hashKey
-            ]
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
         ]);
         $this->db->delete();
         return true;
+    }
+    /*
+     * =========================================================
+     * MEMBRES EN ATTENTE
+     * =========================================================
+     */
+    /**
+     * Récupère les membres en attente d'inscription.
+     */
+    public function getPendingUsers(): array
+    {
+        $this->db->table('belcms_user_temp');
+        $this->db->orderby(array(array('name' => 'created_at', 'type' => 'DESC')));
+        $this->db->queryAll();
+        if (!is_array($this->db->data)) {
+            return [];
+        }
+        return $this->db->data;
+    }
+    /**
+     * Valide un membre en attente.
+     *
+     * Les données sont transférées de belcms_user_temp
+     * vers TABLE_USERS.
+     */
+    public function validatePendingUser(
+        int $id
+    ): bool {
+        if ($id <= 0) {
+            return false;
+        }
+        /*
+         * -----------------------------------------------------
+         * Récupération de l'inscription temporaire
+         * -----------------------------------------------------
+         */
+        $this->db->table('belcms_user_temp');
+        $this->db->where([
+            [
+                'name'  => 'id',
+                'value' => $id,
+            ],
+        ]);
+        $this->db->queryOne();
+        if (!is_object($this->db->data)) {
+            return false;
+        }
+        $pending = $this->db->data;
+        /*
+         * -----------------------------------------------------
+         * Vérification des données obligatoires
+         * -----------------------------------------------------
+         */
+        $username = trim((string) ($pending->username ?? ''));
+        $hashKey  = trim((string) ($pending->hash_key ?? ''));
+        $email    = trim((string) ($pending->email ?? ''));
+        $password = (string) ($pending->password ?? '');
+        if (
+            $username === ''
+            || $hashKey === ''
+            || $email === ''
+            || $password === ''
+        ) {
+            return false;
+        }
+        /*
+         * -----------------------------------------------------
+         * Vérification du hash_key déjà existant
+         * -----------------------------------------------------
+         */
+        $this->db->table(TABLE_USERS);
+        $this->db->where([
+            [
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
+        ]);
+        $this->db->queryOne();
+        if (is_object($this->db->data)) {
+            return false;
+        }
+        /*
+         * -----------------------------------------------------
+         * Vérification du username
+         * -----------------------------------------------------
+         */
+        $this->db->table(TABLE_USERS);
+        $this->db->where([
+            [
+                'name'  => 'username',
+                'value' => $username,
+            ],
+        ]);
+        $this->db->queryOne();
+        if (is_object($this->db->data)) {
+            return false;
+        }
+        /*
+         * -----------------------------------------------------
+         * Vérification de l'email
+         * -----------------------------------------------------
+         */
+        $this->db->table(TABLE_USERS);
+        $this->db->where([
+            [
+                'name'  => 'email',
+                'value' => $email,
+            ],
+        ]);
+        $this->db->queryOne();
+        if (is_object($this->db->data)) {
+            return false;
+        }
+        /*
+         * -----------------------------------------------------
+         * Création du compte définitif
+         * -----------------------------------------------------
+         */
+        $this->db->table('TABLE_USERS');
+        $this->db->insert([
+            'username'           => $username,
+            'hash_key'           => $hashKey,
+            'password'           => $password,
+            'email'              => $email,
+            'ip'                 => $pending->ip ?? null,
+            'valid'              => 1,
+            'two_factor_enabled' => 0,
+            'two_factor_secret'  => null,
+            'serial_secure'      => null,
+            'login_2fa'          => 0,
+            'admin'              => null,
+            'is_admin'           => null,
+        ]);
+        /*
+         * -----------------------------------------------------
+         * Vérification de l'insertion
+         * -----------------------------------------------------
+         */
+        $this->db->table('TABLE_USERS');
+        $this->db->where([
+            [
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
+        ]);
+        $this->db->queryOne();
+        if (!is_object($this->db->data)) {
+            return false;
+        }
+        /*
+         * -----------------------------------------------------
+         * Suppression de l'inscription temporaire
+         * -----------------------------------------------------
+         */
+        $this->db->table('TABLE_USERS_TMP');
+        $this->db->where([
+            [
+                'name'  => 'id',
+                'value' => $id,
+            ],
+        ]);
+        $this->db->delete();
+        return true;
+    }
+    /**
+     * Supprime un membre en attente.
+     */
+    public function deletePendingUser(
+        int $id
+    ): bool {
+        if ($id <= 0) {
+            return false;
+        }
+        $this->db->table('TABLE_USERS_TMP');
+        $this->db->where([
+            [
+                'name'  => 'id',
+                'value' => $id,
+            ],
+        ]);
+        $this->db->delete();
+        return true;
+    }
+    /**
+     * Nombre total d'utilisateurs.
+     */
+    public function countUsersPending(
+        string $search = ''
+    ): int {
+        $this->db->table('TABLE_USERS_TMP');
+        if ($search !== '') {
+            $this->db->whereLike('username', $search);
+        }
+        $this->db->count();
+        return (int) $this->db->data;
     }
 }

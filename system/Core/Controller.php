@@ -12,7 +12,6 @@
 declare(strict_types=1);
 
 namespace BelCMS\Modules\Profils;
-
 use BelCMS\Core\User;
 use BelCMS\Core\View;
 use BelCMS\Core\Language;
@@ -30,7 +29,6 @@ final class Controller
     private Language $language;
     private Assets $assets;
     private User $user;
-
     public function __construct(
         Model $model,
         View $view,
@@ -44,7 +42,6 @@ final class Controller
         $this->assets = $assets;
         $this->user = $user;
     }
-
     /**
      * Affichage du profil.
      */
@@ -54,19 +51,14 @@ final class Controller
             header('Location: /user/login');
             exit;
         }
-
         $this->assets->moduleCss('Profils');
         $this->assets->moduleJs('Profils');
-
         $hashKey = $this->user->hashKey();
-
         if ($hashKey === null || $hashKey === '') {
             header('Location: /user/login');
             exit;
         }
-
         $profile = $this->model->getByHashKey($hashKey);
-
         echo $this->view->render(
             'Profils',
             'index',
@@ -77,7 +69,6 @@ final class Controller
             ]
         );
     }
-
     /**
      * Modification du profil.
      */
@@ -87,25 +78,18 @@ final class Controller
             header('Location: /user/login');
             exit;
         }
-
         $this->assets->moduleCss('Profils');
         $this->assets->moduleCssFile('Profils', 'edit.css');
-
         $this->assets->moduleJs('Profils');
         $this->assets->moduleJsFile('Profils', 'edit.js');
-
         $hashKey = $this->user->hashKey();
-
         if ($hashKey === null || $hashKey === '') {
             header('Location: /profile');
             exit;
         }
-
         $profile = $this->model->getByHashKey($hashKey);
-
         $errors = [];
         $success = null;
-
         echo $this->view->render(
             'Profils',
             'edit',

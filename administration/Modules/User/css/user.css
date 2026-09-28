@@ -1,971 +1,485 @@
 /* ========================================================= Bel-CMS V5 Administration - User ========================================================= */ 
-
 /* ========================================================= Conteneur ========================================================= */
-
 .admin-users { width: 100%; box-sizing: border-box; } 
-
 /* ========================================================= En-tête ========================================================= */
-
 .admin-users-header { margin-bottom: 25px; }
-
 .admin-users-header h1 { margin: 0;
-
  font-size: 28px; font-weight: 700;
-
  line-height: 1.2; }
-
 .admin-users-header h1 i { margin-right: 10px; }
-
 .admin-users-header p { margin: 8px 0 0;
-
  font-size: 14px;
-
  opacity: .60; } 
-
 /* ========================================================= Recherche ========================================================= */
-
 .admin-users-search { display: flex; align-items: center;
-
  gap: 10px;
-
  width: 100%;
-
  margin-bottom: 25px; }
-
 .admin-users-search input { flex: 1;
-
  min-width: 0;
-
  height: 45px;
-
  padding: 0 15px;
-
  box-sizing: border-box;
-
  border: 1px solid rgba(255, 255, 255, .08);
-
  border-radius: 9px;
-
  outline: none;
-
  background: rgba(10, 17, 32, .85);
-
  color: inherit;
-
  font-size: 14px;
-
  transition: border-color .2s ease, box-shadow .2s ease; }
-
 .admin-users-search input::placeholder { opacity: .45; }
-
 .admin-users-search input:focus { border-color: rgba(30, 120, 255, .45);
-
  box-shadow: 0 0 0 3px rgba(30, 120, 255, .08); } 
-
 /* Bouton recherche */
-
 .admin-users-search button { display: inline-flex;
-
  align-items: center; justify-content: center;
-
  gap: 8px;
-
  height: 45px;
-
  padding: 0 18px;
-
  border: 1px solid rgba(30, 120, 255, .25);
-
  border-radius: 9px;
-
  outline: none;
-
  cursor: pointer;
-
  background: rgba(30, 120, 255, .14);
-
  color: inherit;
-
  font-size: 14px;
-
  transition: background .2s ease, border-color .2s ease, transform .2s ease; }
-
 .admin-users-search button:hover { background: rgba(30, 120, 255, .24);
-
  border-color: rgba(30, 120, 255, .45);
-
  transform: translateY(-1px); } 
-
 /* ========================================================= Tableau utilisateurs ========================================================= */
-
 .admin-users-table { width: 100%;
-
  overflow: hidden;
-
  border: 1px solid rgba(255, 255, 255, .08);
-
  border-radius: 14px;
-
  background: linear-gradient( 145deg, rgba(20, 31, 55, .92), rgba(10, 17, 32, .98) );
-
  box-shadow: 0 10px 30px rgba(0, 0, 0, .18); } 
-
 /* ========================================================= En-tête tableau ========================================================= */
-
 .admin-users-table-header { display: grid;
-
  grid-template-columns: minmax(180px, 2fr) minmax(150px, 1.5fr) 100px 100px 150px;
-
  align-items: center;
-
  min-height: 52px;
-
  padding: 0 20px;
-
  box-sizing: border-box;
-
  border-bottom: 1px solid rgba(255, 255, 255, .07);
-
  background: rgba(255, 255, 255, .025);
-
  font-size: 12px; font-weight: 600;
-
  text-transform: uppercase;
-
  letter-spacing: .04em;
-
  opacity: .65; } 
-
 /* ========================================================= Ligne utilisateur ========================================================= */
-
 .admin-user-row { display: grid;
-
  grid-template-columns: minmax(180px, 2fr) minmax(150px, 1.5fr) 100px 100px 150px;
-
  align-items: center;
-
  min-height: 68px;
-
  padding: 0 20px;
-
  box-sizing: border-box;
-
  border-bottom: 1px solid rgba(255, 255, 255, .05);
-
  transition: background .2s ease; }
-
 .admin-user-row:last-child { border-bottom: 0; }
-
 .admin-user-row:hover { background: rgba(30, 120, 255, .045); } 
-
 /* ========================================================= Nom utilisateur ========================================================= */
-
 .admin-user-name { display: flex;
-
  align-items: center;
-
  gap: 12px;
-
  min-width: 0; }
-
 .admin-user-avatar { display: flex;
-
  align-items: center; justify-content: center;
-
  flex: 0 0 38px;
-
  width: 38px; height: 38px;
-
  border-radius: 10px;
-
  background: rgba(30, 120, 255, .12);
-
  font-size: 15px; }
-
 .admin-user-name strong { display: block;
-
  overflow: hidden;
-
  text-overflow: ellipsis;
-
  white-space: nowrap;
-
  font-size: 14px; } 
-
 /* ========================================================= Email ========================================================= */
-
 .admin-user-email { overflow: hidden;
-
  text-overflow: ellipsis;
-
  white-space: nowrap;
-
  font-size: 13px;
-
  opacity: .60; } 
-
 /* ========================================================= Statut ========================================================= */
-
 .admin-user-status { display: inline-flex;
-
  align-items: center;
-
  gap: 6px;
-
  width: fit-content;
-
  padding: 5px 9px;
-
  border-radius: 20px;
-
  background: rgba(255, 255, 255, .05);
-
  font-size: 11px; }
-
 .admin-user-status::before { content: "";
-
  width: 6px; height: 6px;
-
  border-radius: 50%;
-
  background: currentColor; } 
-
 /* ========================================================= 2FA ========================================================= */
-
 .admin-user-2fa { font-size: 13px; }
-
 .admin-user-2fa.enabled { opacity: .9; }
-
 .admin-user-2fa.disabled { opacity: .4; } 
-
 /* ========================================================= Actions ========================================================= */
-
 .admin-user-actions { display: flex;
-
  justify-content: flex-end;
-
  align-items: center;
-
  gap: 7px; }
-
 .admin-user-action { display: inline-flex;
-
  align-items: center; justify-content: center;
-
  width: 34px; height: 34px;
-
  border: 1px solid rgba(255, 255, 255, .07);
-
  border-radius: 8px;
-
  background: rgba(255, 255, 255, .035);
-
  color: inherit;
-
  text-decoration: none;
-
  cursor: pointer;
-
  transition: background .2s ease, border-color .2s ease, transform .2s ease; }
-
 .admin-user-action:hover { background: rgba(30, 120, 255, .12);
-
  border-color: rgba(30, 120, 255, .25);
-
  transform: translateY(-1px); } 
-
 /* ========================================================= Aucun utilisateur ========================================================= */
-
 .admin-users-empty { padding: 50px 20px;
-
  text-align: center;
-
  opacity: .55; }
-
 .admin-users-empty i { display: block;
-
  margin-bottom: 12px;
-
  font-size: 28px; } 
-
 /* ========================================================= Pagination ========================================================= */
-
 .admin-users-pagination { display: flex;
-
  align-items: center; justify-content: center;
-
  gap: 6px;
-
  margin-top: 25px; }
-
 .admin-users-pagination a, .admin-users-pagination span { display: inline-flex;
-
  align-items: center; justify-content: center;
-
  min-width: 36px; height: 36px;
-
  padding: 0 10px;
-
  box-sizing: border-box;
-
  border: 1px solid rgba(255, 255, 255, .07);
-
  border-radius: 8px;
-
  background: rgba(255, 255, 255, .035);
-
  color: inherit;
-
  text-decoration: none;
-
  font-size: 13px;
-
  transition: background .2s ease, border-color .2s ease; }
-
 .admin-users-pagination a:hover { background: rgba(30, 120, 255, .12);
-
  border-color: rgba(30, 120, 255, .25); }
-
 .admin-users-pagination .active { background: rgba(30, 120, 255, .18);
-
  border-color: rgba(30, 120, 255, .35); } 
-
 /* ========================================================= Responsive ========================================================= */
-
 @media (max-width: 1000px) {
-
  .admin-users-table-header { display: none; }
-
  .admin-user-row { grid-template-columns: 1fr auto;
-
  gap: 15px;
-
  padding: 15px 20px; }
-
  .admin-user-email { grid-column: 1; }
-
  .admin-user-actions { grid-column: 2; grid-row: 1 / span 2; }
-
 } 
-
 /* ========================================================= Mobile ========================================================= */
-
 @media (max-width: 600px) {
-
  .admin-users-search { flex-direction: column;
-
  align-items: stretch; }
-
  .admin-users-search button { width: 100%; }
-
  .admin-user-row { grid-template-columns: 1fr; }
-
  .admin-user-actions { grid-column: 1; grid-row: auto;
-
  justify-content: flex-start;
-
  padding-top: 5px; }
-
 } .admin-users-search > .admin-user-action { flex: 0 0 45px;
-
  width: 45px; height: 45px;
-
  box-sizing: border-box; }
-
 .admin-user-status { white-space: nowrap; }
-
 .admin-user-2fa { display: inline-flex;
-
  align-items: center;
-
  gap: 6px;
-
  white-space: nowrap; } /* ========================================================= Edition utilisateur ========================================================= */
-
 .admin-user-edit { width: 100%; max-width: 900px; } 
-
 /* Formulaire */
-
 .admin-user-form { margin-top: 25px; padding: 25px; border: 1px solid rgba(255, 255, 255, .08); border-radius: 14px; background: linear-gradient( 145deg, rgba(20, 31, 55, .92), rgba(10, 17, 32, .98) ); box-shadow: 0 10px 30px rgba(0, 0, 0, .18); } /* Groupe */ .admin-user-form-group { margin-bottom: 22px; } .admin-user-form-group > label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; opacity: .75; } /* Champs */ .admin-user-form-group input[type="text"], .admin-user-form-group input[type="email"] { width: 100%;
-
  height: 45px;
-
  padding: 0 14px;
-
  box-sizing: border-box;
-
  border: 1px solid rgba(255, 255, 255, .08);
-
  border-radius: 9px;
-
  outline: none;
-
  background: rgba(10, 17, 32, .85);
-
  color: inherit;
-
  transition: border-color .2s ease, box-shadow .2s ease; }
-
 .admin-user-form-group input:focus { border-color: rgba(30, 120, 255, .45);
-
  box-shadow: 0 0 0 3px rgba(30, 120, 255, .08); } 
-
 /* Switch */
-
 .admin-user-switch { display: flex !important;
-
  align-items: center;
-
  gap: 10px;
-
  cursor: pointer; }
-
 .admin-user-switch input { width: 18px; height: 18px;
-
  cursor: pointer; } 
-
 /* Informations */
-
 .admin-user-info { display: grid;
-
  grid-template-columns: 1fr 1fr;
-
  gap: 15px;
-
  margin-top: 25px;
-
  padding: 18px;
-
  border-radius: 10px;
-
  background: rgba(255, 255, 255, .025); }
-
 .admin-user-info > div { display: flex;
-
  flex-direction: column;
-
  gap: 7px; }
-
 .admin-user-info span { font-size: 12px;
-
  opacity: .55; }
-
 .admin-user-info code { overflow: hidden;
-
  text-overflow: ellipsis;
-
  color: inherit;
-
  font-size: 12px; }
-
 .admin-user-info strong { font-size: 13px; } /* Alert */ .admin-user-alert { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 13px 16px; border: 1px solid rgba(255, 255, 255, .08); border-radius: 9px; background: rgba(255, 255, 255, .04); font-size: 13px; }
-
 .admin-user-alert.success { border-color: rgba(40, 180, 100, .25);
-
  background: rgba(40, 180, 100, .08); } 
-
 /* Actions */
-
 .admin-user-form-actions { display: flex;
-
  justify-content: flex-end;
-
  gap: 10px;
-
  margin-top: 30px; }
-
 .admin-user-button { display: inline-flex;
-
  align-items: center; justify-content: center;
-
  gap: 8px;
-
  min-height: 42px;
-
  padding: 0 18px;
-
  border: 1px solid rgba(255, 255, 255, .08);
-
  border-radius: 9px;
-
  color: inherit;
-
  text-decoration: none;
-
  cursor: pointer;
-
  font-size: 13px;
-
  transition: background .2s ease, border-color .2s ease, transform .2s ease; }
-
 .admin-user-button:hover { transform: translateY(-1px); }
-
 .admin-user-button.primary { background: rgba(30, 120, 255, .16);
-
  border-color: rgba(30, 120, 255, .30); }
-
 .admin-user-button.primary:hover { background: rgba(30, 120, 255, .25); }
-
 .admin-user-button.secondary { background: rgba(255, 255, 255, .035); }
-
 .admin-user-button.secondary:hover { background: rgba(255, 255, 255, .07); } 
-
 /* Mobile */
-
 @media (max-width: 650px) {
-
  .admin-user-form { padding: 18px; }
-
  .admin-user-info { grid-template-columns: 1fr; }
-
  .admin-user-form-actions { flex-direction: column-reverse; }
-
  .admin-user-button { width: 100%; }
-
 } /* ========================================================= Bel-CMS V5 Administration - User Sessions ========================================================= */ 
-
 /* ========================================================= Conteneur ========================================================= */
-
 .admin-user-sessions { width: 100%; } 
-
 /* ========================================================= Actions ========================================================= */
-
 .admin-user-session-actions { display: flex;
-
  align-items: center; justify-content: space-between;
-
  gap: 12px;
-
  margin-bottom: 25px; }
-
 .admin-user-session-actions > form { margin: 0; } 
-
 /* ========================================================= Boutons ========================================================= */
-
 .admin-user-button { display: inline-flex;
-
  align-items: center; justify-content: center;
-
  gap: 8px;
-
  min-height: 42px;
-
  padding: 0 18px;
-
  box-sizing: border-box;
-
  border: 1px solid rgba(255, 255, 255, .08);
-
  border-radius: 9px;
-
  background: rgba(255, 255, 255, .035);
-
  color: inherit;
-
  text-decoration: none;
-
  font-size: 13px;
-
  cursor: pointer;
-
  transition: background .2s ease, border-color .2s ease, transform .2s ease; }
-
 .admin-user-button:hover { transform: translateY(-1px); } 
-
 /* Bouton retour */
-
 .admin-user-button.secondary:hover { background: rgba(255, 255, 255, .07);
-
  border-color: rgba(255, 255, 255, .12); } 
-
 /* Bouton danger */
-
 .admin-user-button.danger { background: rgba(220, 60, 70, .10);
-
  border-color: rgba(220, 60, 70, .25); }
-
 .admin-user-button.danger:hover { background: rgba(220, 60, 70, .18);
-
  border-color: rgba(220, 60, 70, .40); } 
-
 /* ========================================================= Liste des sessions ========================================================= */
-
 .admin-user-sessions-list { display: flex;
-
  flex-direction: column;
-
  gap: 10px; } 
-
 /* ========================================================= Session ========================================================= */
-
 .admin-user-session { display: grid;
-
  grid-template-columns: 50px minmax(0, 1fr) minmax(180px, auto);
-
  align-items: center;
-
  gap: 15px;
-
  min-height: 80px;
-
  padding: 15px 20px;
-
  box-sizing: border-box;
-
  border: 1px solid rgba(255, 255, 255, .08);
-
  border-radius: 12px;
-
  background: linear-gradient( 145deg, rgba(20, 31, 55, .92), rgba(10, 17, 32, .98) );
-
  box-shadow: 0 8px 25px rgba(0, 0, 0, .15);
-
  transition: border-color .2s ease, background .2s ease, transform .2s ease; }
-
 .admin-user-session:hover { transform: translateY(-2px);
-
  border-color: rgba(30, 120, 255, .25);
-
  background: linear-gradient( 145deg, rgba(22, 36, 65, .95), rgba(10, 17, 32, .98) ); } 
-
 /* ========================================================= Icône ========================================================= */
-
 .admin-user-session-icon { display: flex;
-
  align-items: center; justify-content: center;
-
  width: 45px; height: 45px;
-
  border-radius: 11px;
-
  background: rgba(30, 120, 255, .12);
-
  font-size: 18px; } 
-
 /* ========================================================= Informations ========================================================= */
-
 .admin-user-session-info { display: flex;
-
  flex-direction: column;
-
  gap: 6px;
-
  min-width: 0; }
-
 .admin-user-session-info strong { font-size: 14px;
-
  font-weight: 600; }
-
 .admin-user-session-info span { overflow: hidden;
-
  text-overflow: ellipsis;
-
  white-space: nowrap;
-
  font-size: 13px;
-
  opacity: .60; } 
-
 /* ========================================================= ID session ========================================================= */
-
 .admin-user-session-id { min-width: 0;
-
  text-align: right; }
-
 .admin-user-session-id small { display: block;
-
  max-width: 260px;
-
  overflow: hidden;
-
  text-overflow: ellipsis;
-
  white-space: nowrap;
-
  font-family: Consolas, Monaco, monospace;
-
  font-size: 11px;
-
  opacity: .40; } 
-
 /* ========================================================= État session active ========================================================= */
-
 .admin-user-session-info::after { content: "";
-
  width: 7px; height: 7px;
-
  display: none;
-
  border-radius: 50%; } 
-
 /* ========================================================= Message aucune session ========================================================= */
-
 .admin-user-sessions-list .admin-users-empty { padding: 60px 20px;
-
  border: 1px solid rgba(255, 255, 255, .08);
-
  border-radius: 14px;
-
  background: linear-gradient( 145deg, rgba(20, 31, 55, .90), rgba(10, 17, 32, .98) );
-
  text-align: center; }
-
 .admin-user-sessions-list .admin-users-empty i { margin-bottom: 15px;
-
  font-size: 30px;
-
  opacity: .55; }
-
 .admin-user-sessions-list .admin-users-empty p { margin: 0;
-
  font-size: 14px;
-
  opacity: .60; } 
-
 /* ========================================================= Responsive ========================================================= */
-
 @media (max-width: 800px) {
-
  .admin-user-session { grid-template-columns: 45px minmax(0, 1fr); }
-
  .admin-user-session-id { grid-column: 2;
-
  text-align: left; }
-
  .admin-user-session-id small { max-width: 100%; }
-
 } 
-
 @media (max-width: 600px) {
-
  .admin-user-session-actions { flex-direction: column;
-
  align-items: stretch; }
-
  .admin-user-session-actions > a, .admin-user-session-actions > form, .admin-user-session-actions > form button { width: 100%; }
-
  .admin-user-session { padding: 15px; }
-
 } /* ========================================================= SECURITY / 2FA ========================================================= */
-
 .admin-user-security-action { margin-top: 20px; padding: 20px; border: 1px solid rgba(220, 60, 70, 0.18); border-radius: 12px; background: rgba(220, 60, 70, 0.05); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-
 .admin-user-security-action h3 { margin: 0 0 8px; font-size: 18px; color: #fff; }
-
 .admin-user-security-action h3 i { margin-right: 8px; }
-
 .admin-user-security-action p { margin: 4px 0; color: #9ca8bb; font-size: 14px; }
-
 .admin-user-security-action form { margin: 0; flex-shrink: 0; }
-
 .admin-security-warning { color: #e6a8ad !important; }
-
 .admin-security-warning i { margin-right: 5px; } 
-
 /* ========================================================= RESPONSIVE ========================================================= */
-
 @media (max-width: 700px) {
-
  .admin-user-security-action { flex-direction: column; align-items: stretch; }
-
  .admin-user-security-action form { width: 100%; }
-
  .admin-user-security-action .admin-user-button { width: 100%; }
-
 } /* ========================================================= USER EDIT - SECURITY / 2FA ========================================================= */
-
 .admin-user-security-action { margin-top: 20px; padding: 20px; border: 1px solid rgba(220, 60, 70, 0.25); border-radius: 12px; background: rgba(220, 60, 70, 0.05); }
-
 .admin-user-security-action h3 { margin: 0 0 8px 0; color: #ffffff; font-size: 18px; font-weight: 600; }
-
 .admin-user-security-action h3 i { margin-right: 8px; color: #ff6875; }
-
 .admin-user-security-action p { margin: 5px 0; color: #9ca8bb; font-size: 14px; line-height: 1.5; }
-
 .admin-user-security-action form { margin: 15px 0 0 0; }
-
 .admin-security-warning { color: #ff9ca5 !important; }
-
 .admin-security-warning i { margin-right: 6px; } 
-
 /* ========================================================= ADMIN ALERTS ========================================================= */
-
 .admin-alert { display: flex; align-items: center; gap: 10px;
-
  margin-bottom: 20px; padding: 14px 18px;
-
  border-radius: 10px;
-
  font-size: 14px; }
-
 .admin-alert.success { color: #b9f6d0; background: rgba(40, 180, 100, 0.10); border: 1px solid rgba(40, 180, 100, 0.25); }
-
 .admin-alert.success i { color: #4ade80; } 
-
 /* ========================================================= USER EDIT BUTTONS ========================================================= */
-
 .admin-user-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-
  padding: 10px 16px;
-
  border-radius: 8px;
-
  border: 1px solid transparent;
-
  text-decoration: none;
-
  font-size: 14px; font-weight: 500;
-
  cursor: pointer;
-
  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
-
 .admin-user-button:hover { transform: translateY(-1px); }
-
 .admin-user-button.primary { color: #ffffff; background: #1769ff; border-color: #1769ff; }
-
 .admin-user-button.primary:hover { background: #0d5ce5; }
-
 .admin-user-button.secondary { color: #d5dbea; background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.10); }
-
 .admin-user-button.secondary:hover { background: rgba(255, 255, 255, 0.08); }
-
 .admin-user-button.danger { color: #ffffff; background: #c93645; border-color: #c93645; }
-
 .admin-user-button.danger:hover { background: #aa2937; } 
-
 /* ========================================================= USER EDIT - CARD ========================================================= */
-
 .admin-user-card { margin-bottom: 20px;
-
  overflow: hidden;
-
  border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 12px;
-
  background: rgba(255, 255, 255, 0.025); }
-
 .admin-user-card-header { padding: 16px 20px;
-
  border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
-
 .admin-user-card-header h2 { margin: 0;
-
  color: #ffffff;
-
  font-size: 17px; font-weight: 600; }
-
 .admin-user-card-header h2 i { margin-right: 8px; color: #4b8dff; }
-
 .admin-user-card-body { padding: 20px; } 
-
 /* ========================================================= FORMULAIRE ========================================================= */
-
 .admin-form-group { margin-bottom: 20px; }
-
 .admin-form-group:last-child { margin-bottom: 0; }
-
 .admin-form-group label:not(.admin-checkbox) { display: block;
-
  margin-bottom: 7px;
-
  color: #cfd6e5;
-
  font-size: 14px; font-weight: 500; }
-
 .admin-form-group input[type="text"], .admin-form-group input[type="email"] { width: 100%; box-sizing: border-box;
-
  padding: 11px 13px;
-
  color: #ffffff;
-
  background: rgba(0, 0, 0, 0.20);
-
  border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 8px;
-
  outline: none;
-
  transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-
 .admin-form-group input[type="text"]:focus, .admin-form-group input[type="email"]:focus { border-color: #287cff;
-
  box-shadow: 0 0 0 3px rgba(40, 124, 255, 0.12); } 
-
 /* ========================================================= CHECKBOX ========================================================= */
-
 .admin-checkbox { display: flex; align-items: center; gap: 9px;
-
  color: #cfd6e5;
-
  cursor: pointer; }
-
 .admin-checkbox input { width: 16px; height: 16px;
-
  cursor: pointer; } 
-
 /* ========================================================= INFORMATIONS TECHNIQUES ========================================================= */
-
 .admin-info-row { display: flex; align-items: center;
-
  gap: 15px;
-
  padding: 12px 0;
-
  border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-
 .admin-info-row:last-child { border-bottom: 0; }
-
 .admin-info-label { min-width: 180px;
-
  color: #8f9bb0;
-
  font-size: 13px; }
-
 .admin-info-row code { padding: 5px 8px;
-
  color: #74a8ff;
-
  background: rgba(50, 100, 180, 0.10);
-
  border-radius: 5px;
-
  word-break: break-all; } 
-
 /* ========================================================= STATUS ========================================================= */
-
 .admin-status { display: inline-flex; align-items: center; gap: 6px;
-
  padding: 5px 9px;
-
  border-radius: 6px;
-
  font-size: 12px; font-weight: 600; }
-
 .admin-status.active { color: #72e3a0; background: rgba(50, 190, 110, 0.10); }
-
 .admin-status.inactive { color: #9ca8bb; background: rgba(255, 255, 255, 0.05); } 
-
 /* ========================================================= ACTIONS ========================================================= */
-
-.admin-user-actions { display: flex; align-items: center; gap: 10px;
-
- margin-top: 20px; } 
-
+.admin-user-actions { display: flex; align-items: center; gap: 10px; } 
 /* ========================================================= RESPONSIVE ========================================================= */
-
 @media (max-width: 700px) {
-
  .admin-user-security-action { padding: 15px; }
-
  .admin-info-row { flex-direction: column; align-items: flex-start; gap: 7px; }
-
  .admin-info-label { min-width: auto; }
-
  .admin-user-actions { flex-direction: column; align-items: stretch; }
-
  .admin-user-actions .admin-user-button { width: 100%; box-sizing: border-box; }
-
  .admin-user-security-action form { width: 100%; }
-
  .admin-user-security-action .admin-user-button { width: 100%; }
-
 }
