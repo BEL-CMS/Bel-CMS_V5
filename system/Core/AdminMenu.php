@@ -151,6 +151,19 @@ final class AdminMenu
             );
 
             /*
+             * Route principale du module d'administration.
+             *
+             * Exemple :
+             * User -> /admin/users
+             */
+            $adminRoute = trim(
+                (string) (
+                    $admin['route']
+                    ?? ''
+                )
+            );
+
+            /*
              * Menu interne du module
              */
             $menu = [];
@@ -240,6 +253,7 @@ final class AdminMenu
                 ),
                 'label'   => $label,
                 'icon'    => $icon,
+                'route'   => $adminRoute,
                 'order'   => $order,
                 'path'    => $path,
                 'menu'    => $menu,
@@ -370,8 +384,20 @@ public function all(): array
                 $item['module']
             );
 
-            $base = '/admin/'
-                . strtolower($module);
+            $base = trim(
+                (string) (
+                    $item['route']
+                    ?? ''
+                )
+            );
+
+            if ($base === '') {
+                $base = '/admin/'
+                    . strtolower($module);
+            }
+
+            $base = '/'
+                . ltrim($base, '/');
 
             if (
                 $path === $base

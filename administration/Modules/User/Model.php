@@ -6,9 +6,13 @@
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  */
+
 declare(strict_types=1);
+
 namespace BelCMS\Admin\User;
+
 use BelCMS\Core\BDD;
+
 final class Model
 {
     public function __construct(

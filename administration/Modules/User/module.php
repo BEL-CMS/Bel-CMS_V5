@@ -1,6 +1,5 @@
 <?php
 
-
 declare(strict_types=1);
 
 return [
@@ -9,7 +8,8 @@ return [
     'author'  => 'Bel-CMS',
     'admin' => [
         'label' => 'Utilisateurs',
-        'icon' => 'fa-users',
+        'icon'  => 'fa-users',
+        'route' => '/admin/users',
         'order' => 10,
         'menu' => [
             [
