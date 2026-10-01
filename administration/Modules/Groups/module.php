@@ -1,0 +1,36 @@
+<?php
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @link https://determe.be
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ * @author as Stive - stive@determe.be
+*/
+
+declare(strict_types=1);
+
+return [
+    'name'    => 'groups',
+    'version' => '1.0.0',
+    'author'  => 'Bel-CMS',
+    'admin' => [
+        'label' => 'Groupes',
+        'icon'  => 'fa-users',
+        'route' => '/admin/groups',
+        'order' => 10,
+        'menu' => [
+            [
+                'label' => 'Groupes',
+                'route' => '/admin/groups',
+                'icon'  => 'fa-users',
+                'order' => 10,
+            ]
+        ],
+    ],
+    'assets' => [
+        'css' => true,
+        'js' => true,
+    ],
+];

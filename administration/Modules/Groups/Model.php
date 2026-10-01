@@ -9,7 +9,9 @@
 declare(strict_types=1);
 
 namespace BelCMS\Admin\Groups;
+
 use BelCMS\Core\BDD;
+
 final class Model
 {
     public function __construct(
