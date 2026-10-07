@@ -12,6 +12,7 @@
 declare(strict_types=1);
 
 use BelCMS\Admin\User\Controller as UserController;
+
 return [
     [
         'method' => 'GET',
@@ -69,6 +70,7 @@ return [
             'sessions',
         ],
     ],
+
     [
         'method' => 'POST',
         'path' => '/admin/users/sessions/delete',
@@ -77,12 +79,31 @@ return [
             'deleteSession',
         ],
     ],
+
     [
         'method' => 'POST',
         'path' => '/admin/users/sessions/delete-all',
         'handler' => [
             UserController::class,
             'deleteAllSessions',
+        ],
+    ],
+
+    [
+        'method' => 'POST',
+        'path' => '/admin/users/valid/validate',
+        'handler' => [
+            UserController::class,
+            'validatepending',
+        ],
+    ],
+
+    [
+        'method' => 'POST',
+        'path' => '/admin/users/valid/delete',
+        'handler' => [
+            UserController::class,
+            'deletepending',
         ],
     ],
 ];

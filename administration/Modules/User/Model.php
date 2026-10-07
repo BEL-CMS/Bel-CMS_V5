@@ -3,9 +3,11 @@
  * Bel-CMS [Content management system]
  * @version 5.0.0 [PHP8.5]
  * @link https://bel-cms.dev
+ * @link https://determe.be
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
- */
+ * @author as Stive - stive@determe.be
+*/
 
 declare(strict_types=1);
 
@@ -15,18 +17,12 @@ use BelCMS\Core\BDD;
 
 final class Model
 {
-    public function __construct(
-        private BDD $db
-    ) {
-    }
+    public function __construct(private BDD $db) { }
     /**
      * Liste des utilisateurs.
      */
-    public function getUsers(
-        int $page = 1,
-        int $perPage = 25,
-        string $search = ''
-    ): array {
+    public function getUsers(int $page = 1, int $perPage = 25, string $search = ''): array 
+    {
         $page = max(1, $page);
         $perPage = max(1, $perPage);
         $offset = ($page - 1) * $perPage;
@@ -45,9 +41,8 @@ final class Model
     /**
      * Nombre total d'utilisateurs.
      */
-    public function countUsers(
-        string $search = ''
-    ): int {
+    public function countUsers(string $search = ''): int
+    {
         $this->db->table('TABLE_USERS');
         if ($search !== '') {
             $this->db->whereLike(array('name' => 'username', 'value' => $search));
@@ -58,9 +53,8 @@ final class Model
     /**
      * Récupère un utilisateur par son hash_key.
      */
-    public function getUserByHashKey(
-        string $hashKey
-    ): ?object {
+    public function getUserByHashKey(string $hashKey): ?object
+    {
         $hashKey = trim($hashKey);
         if ($hashKey === '') {
             return null;
@@ -80,9 +74,8 @@ final class Model
     /**
      * Récupère le profil utilisateur.
      */
-    public function getProfileByHashKey(
-        string $hashKey
-    ): ?object {
+    public function getProfileByHashKey(string $hashKey): ?object
+    {
         $hashKey = trim($hashKey);
         if ($hashKey === '') {
             return null;
@@ -102,9 +95,8 @@ final class Model
     /**
      * Récupère les groupes utilisateur.
      */
-    public function getGroupsByHashKey(
-        string $hashKey
-    ): ?object {
+    public function getGroupsByHashKey(string $hashKey): ?object 
+    {
         $hashKey = trim($hashKey);
         if ($hashKey === '') {
             return null;
@@ -124,10 +116,8 @@ final class Model
     /**
      * Met à jour le compte utilisateur.
      */
-    public function updateUser(
-        string $hashKey,
-        array $data
-    ): bool {
+    public function updateUser(string $hashKey,array $data): bool 
+    {
         $hashKey = trim($hashKey);
         if ($hashKey === '' || $data === []) {
             return false;
@@ -145,9 +135,8 @@ final class Model
     /**
      * Réinitialise le 2FA d'un utilisateur.
      */
-    public function resetTwoFactor(
-        string $hashKey
-    ): bool {
+    public function resetTwoFactor(string $hashKey): bool 
+    {
         $hashKey = trim($hashKey);
         if ($hashKey === '') {
             return false;
@@ -170,9 +159,8 @@ final class Model
     /**
      * Supprime un utilisateur.
      */
-    public function deleteUser(
-        string $hashKey
-    ): bool {
+    public function deleteUser(string $hashKey): bool 
+    {
         if ($hashKey === '') {
             return false;
         }
@@ -257,10 +245,9 @@ final class Model
      * Les données sont transférées de belcms_user_temp
      * vers TABLE_USERS.
      */
-    public function validatePendingUser(
-        int $id
-    ): bool {
-        if ($id <= 0) {
+    public function validatePendingUser(string $hashKey): bool 
+    {
+        if ($hashKey === '') {
             return false;
         }
         /*
@@ -271,8 +258,8 @@ final class Model
         $this->db->table('belcms_user_temp');
         $this->db->where([
             [
-                'name'  => 'id',
-                'value' => $id,
+                'name'  => 'hash_key',
+                'value' => $hashKey,
             ],
         ]);
         $this->db->queryOne();
@@ -302,7 +289,7 @@ final class Model
          * Vérification du hash_key déjà existant
          * -----------------------------------------------------
          */
-        $this->db->table(TABLE_USERS);
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             [
                 'name'  => 'hash_key',
@@ -318,7 +305,7 @@ final class Model
          * Vérification du username
          * -----------------------------------------------------
          */
-        $this->db->table(TABLE_USERS);
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             [
                 'name'  => 'username',
@@ -334,7 +321,7 @@ final class Model
          * Vérification de l'email
          * -----------------------------------------------------
          */
-        $this->db->table(TABLE_USERS);
+        $this->db->table('TABLE_USERS');
         $this->db->where([
             [
                 'name'  => 'email',
@@ -389,8 +376,8 @@ final class Model
         $this->db->table('TABLE_USERS_TMP');
         $this->db->where([
             [
-                'name'  => 'id',
-                'value' => $id,
+                'name'  => 'hash_key',
+                'value' => $hashKey,
             ],
         ]);
         $this->db->delete();
@@ -399,28 +386,24 @@ final class Model
     /**
      * Supprime un membre en attente.
      */
-    public function deletePendingUser(
-        int $id
-    ): bool {
-        if ($id <= 0) {
-            return false;
-        }
-        $this->db->table('TABLE_USERS_TMP');
+    public function deletePendingUser(string $hashKey): bool 
+    {
+        $this->db->table('TABLE_USER_TEMP');
+
         $this->db->where([
             [
-                'name'  => 'id',
-                'value' => $id,
+                'name'  => 'hash_key',
+                'value' => $hashKey,
             ],
         ]);
-        $this->db->delete();
-        return true;
+
+        return $this->db->delete();
     }
     /**
      * Nombre total d'utilisateurs.
      */
-    public function countUsersPending(
-        string $search = ''
-    ): int {
+    public function countUsersPending(string $search = ''): int
+    {
         $this->db->table('TABLE_USERS_TMP');
         if ($search !== '') {
             $this->db->whereLike('username', $search);
@@ -428,4 +411,33 @@ final class Model
         $this->db->count();
         return (int) $this->db->data;
     }
+
+    public function getPendingUserById(string $hashKey)
+    {
+        $this->db->table('TABLE_USERS_TMP');
+        $this->db->where([
+            [
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+            ],
+        ]);
+        $this->db->delete();
+    }
+    public function getPendingUserByHashKey(string $hashKey): ? object
+    {
+        if ($hashKey === '') {
+            return null;
+        }
+
+        return $this->db
+            ->table('TABLE_USERS_TMP')
+            ->where([
+                [
+                    'name'  => 'hash_key',
+                    'value' => $hashKey,
+                    'op'    => '=',
+                ],
+            ])
+            ->queryOne();
+    } 
 }

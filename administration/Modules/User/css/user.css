@@ -125,7 +125,7 @@
  gap: 7px; }
 .admin-user-action { display: inline-flex;
  align-items: center; justify-content: center;
- width: 34px; height: 34px;
+height: 34px;
  border: 1px solid rgba(255, 255, 255, .07);
  border-radius: 8px;
  background: rgba(255, 255, 255, .035);

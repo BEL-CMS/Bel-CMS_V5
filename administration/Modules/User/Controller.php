@@ -18,6 +18,7 @@ use BelCMS\Core\User;
 use BelCMS\Core\View;
 use BelCMS\Core\UserSession;
 use BelCMS\Core\Errors\ErrorPage;
+use BelCMS\Core\Csrf;
 
 final class Controller
 {
@@ -27,7 +28,8 @@ final class Controller
         private Assets $assets,
         private Model $model,
         private UserSession $userSession,
-        private ErrorPage $errorPage
+        private ErrorPage $errorPage,
+        private Csrf $csrf,
     ) { }
     /**
      * Liste des utilisateurs
@@ -65,6 +67,16 @@ final class Controller
         $this->assets->css(
             '/administration/Modules/User/css/user.css'
         );
+        $this->assets->css(
+            '/assets/plugins/datatables/datatables.min.css'
+        );
+        $this->assets->css(
+            '/assets/plugins/datatables/belcms-datatables.css'
+        );
+        $this->assets->js(
+            '/assets/plugins/datatables/datatables.min.js'
+        );
+
         echo $this->view->renderAdmin(
             'User',
             'index',
@@ -475,6 +487,16 @@ final class Controller
         $this->assets->css(
             '/administration/Modules/User/css/user.css'
         );
+        $this->assets->css(
+            '/assets/plugins/datatables/datatables.min.css'
+        );
+        $this->assets->css(
+            '/assets/plugins/datatables/belcms-datatables.css'
+        );
+        $this->assets->js(
+            '/assets/plugins/datatables/datatables.min.js'
+        );
+
         echo $this->view->renderAdmin(
             'User',
             'valid',
@@ -486,7 +508,142 @@ final class Controller
                 'total'        => $total,
                 'pages'        => $pages,
                 'search'       => $search,
+                'csrf'         => $this->csrf->field(),
             ]
         );
+    }
+    public function validatepending(): void
+    {
+        if (!$this->user->isLogged()) {
+            header('Location: /user/login');
+            exit;
+        }
+
+        if (!$this->user->isAdmin()) {
+            $this->errorPage->show(
+                403,
+                'Administration',
+                'Accès interdit.'
+            );
+            return;
+        }
+
+        if (!$this->csrf->verify($_POST['csrf_token'] ?? '')) {
+            $this->errorPage->show(
+                403,
+                'Administration',
+                'Jeton de sécurité invalide.'
+            );
+            return;
+        }
+
+        $hashKey = trim((is_string($_POST['hash_key'] ?? '')) ? $_POST['hash_key'] : '');
+
+        if ($hashKey === '') {
+            $this->errorPage->show(
+                400,
+                'Administration',
+                'Utilisateur invalide.'
+            );
+            return;
+        }
+
+        $targetUser = $this->model->getPendingUserByHashKey($hashKey);
+
+        if (!$targetUser) {
+            $this->errorPage->show(
+                404,
+                'Administration',
+                'Utilisateur en attente introuvable.'
+            );
+            return;
+        }
+
+        if (!$this->model->validatePendingUser($hashKey)) {
+            $this->errorPage->show(
+                500,
+                'Administration',
+                'Impossible d\'approuver l\'utilisateur.'
+            );
+            return;
+        }
+
+        $this->csrf->regenerate();
+
+        header(
+            'Location: /admin/users/valid?approved=1'
+        );
+        exit;
+    }
+    public function deletepending(): void
+    {
+        if (!$this->user->isLogged()) {
+            header('Location: /user/login');
+            exit;
+        }
+
+        if (!$this->user->isAdmin()) {
+            $this->errorPage->show(
+                403,
+                'Administration',
+                'Accès interdit.'
+            );
+            return;
+        }
+
+        if (!$this->csrf->verify(
+            $_POST['csrf_token'] ?? ''
+        )) {
+            $this->errorPage->show(
+                403,
+                'Administration',
+                'Jeton de sécurité invalide.'
+            );
+            return;
+        }
+
+        $hashKey = trim(
+            (string) (
+                $_POST['hash_key'] ?? ''
+            )
+        );
+
+        if ($hashKey === '') {
+            $this->errorPage->show(
+                400,
+                'Administration',
+                'Utilisateur invalide.'
+            );
+            return;
+        }
+
+        $targetUser = $this->model->getPendingUserByHashKey(
+            $hashKey
+        );
+
+        if (!$targetUser) {
+            $this->errorPage->show(
+                404,
+                'Administration',
+                'Utilisateur en attente introuvable.'
+            );
+            return;
+        }
+
+        if (!$this->model->deletePendingUser($hashKey)) {
+            $this->errorPage->show(
+                500,
+                'Administration',
+                'Impossible de supprimer l\'utilisateur.'
+            );
+            return;
+        }
+
+        $this->csrf->regenerate();
+
+        header(
+            'Location: /admin/users/valid?deleted=1'
+        );
+        exit;
     }
 }

@@ -11,6 +11,8 @@
 
 declare(strict_types=1);
 
+use BelCMS\system\Common;
+
 $users = $users ?? [];
 $pendingUsers = $pendingUsers ?? [];
 $page = max(
@@ -64,25 +66,18 @@ $search = (string) ($search ?? '');
          Membres en attente
          ===================================================== -->
     <?php if ($pendingUsers !== []): ?>
-        <div class="admin-users-table" style="margin-bottom: 20px;">
-            <!-- En-tête -->
-            <div class="admin-users-table-header">
-                <div>
-                    Utilisateur
-                </div>
-                <div>
-                    Email
-                </div>
-                <div>
-                    Statut
-                </div>
-                <div>
-                    2FA
-                </div>
-                <div>
-                    Actions
-                </div>
-            </div>
+    <table class="BelCMS_TABLES" class="display">
+		<thead>
+			<tr>
+				<th>Utilisateur</th>
+				<th>Email</th>
+				<th>Date d'inscription</th>
+				<th>Statut</th>
+				<th>2FA</th>
+                <th>Actions</th>
+			</tr>
+		</thead> 
+        <tbody>
             <!-- =================================================
                  Membres en attente
                  ================================================= -->
@@ -91,6 +86,9 @@ $search = (string) ($search ?? '');
                 $pendingId = (int) (
                     $item->id ?? 0
                 );
+                $hash_key = trim(
+                    (string) ($item->hash_key ?? '')
+                );
                 $username = trim(
                     (string) ($item->username ?? '')
                 );
@@ -98,52 +96,56 @@ $search = (string) ($search ?? '');
                     (string) ($item->email ?? '')
                 );
                 ?>
-                <div class="admin-user-row">
-                    <!-- Utilisateur -->
-                    <div class="admin-user-name">
-                        <div class="admin-user-avatar">
-                            <i class="fa-solid fa-user-clock"></i>
-                        </div>
-                        <div>
-                            <strong>
-                                <?= htmlspecialchars(
-                                    $username,
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
-                            </strong>
-                        </div>
-                    </div>
+                <tr>
+                    <td>
+                        <i class="fa-solid fa-user-clock"></i> 
+                        <strong> <?= htmlspecialchars($username,ENT_QUOTES,'UTF-8'); ?></strong>                        
+                    </td>
                     <!-- Email -->
-                    <div class="admin-user-email">
+                    <td class="admin-user-email">
                         <?= htmlspecialchars(
                             $email,
                             ENT_QUOTES,
                             'UTF-8'
                         ) ?>
-                    </div>
+                    </td>
+                    <td class="admin-user-datecreate">
+                        <?= Common::TransformDate(htmlspecialchars($item->created_at,ENT_QUOTES,'UTF-8'),'MEDIUM', 'MEDIUM'); ?>
                     <!-- Statut -->
-                    <div>
+                    </td>
+                    <td>
                         <span class="admin-user-status">
                             En attente
                         </span>
-                    </div>
+                    </td>
                     <!-- 2FA -->
-                    <div>
+                    <td>
                         <span class="admin-user-2fa disabled">
                             <i class="fa-solid fa-shield"></i>
                             Non activée
                         </span>
-                    </div>
+                    </td>
                     <!-- Actions -->
-                    <div class="admin-user-actions">
+                    <td>
                         <?php if ($pendingId > 0): ?>
-                            <span class="admin-user-action" title="Membre en attente de validation">
-                                <i class="fa-solid fa-clock"></i>
-                            </span>
+                            <form method="post" action="/admin/users/valid/validate" style="display:inline-block">
+                                <?= $csrf ?>
+                                <input type="hidden" name="hash_key" value="<?= htmlspecialchars($hash_key,ENT_QUOTES,'UTF-8') ?>">
+                                <button type="submit" class="admin-user-button admin-user-color-green">
+                                    <i class="fa-solid fa-check"></i>  Valider
+                                </button>
+                            </form>
+                            <form method="post" action="/admin/users/valid/delete" onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');" style="display:inline-block">
+                                <?= $csrf ?>
+                                <input type="hidden" name="hash_key" value="<?= htmlspecialchars($hash_key,ENT_QUOTES,'UTF-8') ?>">
+                                <button type="submit" class="admin-user-button admin-user-color-red">
+                                    <i class="fa-solid fa-trash"></i> Supprimer
+                                </button>
+                            </form>
                         <?php endif; ?>
-                    </div>
-                </div>
+                    </td>
+                </tr>
             <?php endforeach; ?>
-        </div>
+        </tbody>
+    </table>
     <?php endif; ?>

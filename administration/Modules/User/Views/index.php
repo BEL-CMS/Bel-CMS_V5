@@ -33,9 +33,6 @@ $total = max(
 $search = (string) ($search ?? '');
 ?>
 <div class="admin-users">
-    <!-- =====================================================
-         En-tête
-         ===================================================== -->
     <div class="admin-users-header">
         <h1>
             <i class="fa-solid fa-users"></i>
@@ -48,66 +45,48 @@ $search = (string) ($search ?? '');
             enregistré<?= $total > 1 ? 's' : '' ?>.
         </p>
     </div>
-    <!-- =====================================================
-         Recherche
-         ===================================================== -->
-    <form
-        method="get"
-        action="/admin/users"
-        class="admin-users-search"
-    >
-        <input
-            type="search"
-            name="search"
-            value="<?= htmlspecialchars(
-                $search,
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>"
-            placeholder="Rechercher un utilisateur..."
-            autocomplete="off"
-        >
+
+    <form method="get" action="/admin/users" class="admin-users-search">
+        <input  type="search"  name="search"  value="<?= htmlspecialchars($search,ENT_QUOTES,'UTF-8'); ?>" placeholder="Rechercher un utilisateur..." autocomplete="on">
         <button type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
             Rechercher
         </button>
         <?php if ($search !== ''): ?>
-            <a
-                href="/admin/users"
-                class="admin-user-action"
-                title="Réinitialiser la recherche"
-            >
+            <a href="/admin/users" class="admin-user-action" title="Réinitialiser la recherche">
                 <i class="fa-solid fa-xmark"></i>
             </a>
         <?php endif; ?>
     </form>
-    <div class="admin-users-table">
-        <!-- En-tête -->
-        <div class="admin-users-table-header">
-            <div>Utilisateur</div>
-            <div>Email</div>
-            <div>Statut</div>
-            <div>2FA</div>
-            <div>Actions</div>
-        </div>
+
+    <table class="BelCMS_TABLES" class="display">
+		<thead>
+			<tr>
+				<th>Utilisateur</th>
+				<th>Email</th>
+				<th>Statut</th>
+				<th>2FA</th>
+				<th>Actions</th>
+			</tr>
+		</thead> 
+        <tbody>
         <?php if ($users === []): ?>
             <!-- Aucun résultat -->
-            <div class="admin-users-empty">
-                <i class="fa-solid fa-user-slash"></i>
-                <div>Aucun utilisateur trouvé.</div>
-                <?php if ($search !== ''): ?>
-                    <small>
-                        Aucun résultat pour :
-                        <strong>
-                            <?= htmlspecialchars(
-                                $search,
-                                ENT_QUOTES,
-                                'UTF-8'
-                            ) ?>
-                        </strong>
-                    </small>
+            <tr>
+                <td colspan="5">
+                    <div class="admin-users-empty">
+                        <i class="fa-solid fa-user-slash"></i>
+                        <div>Aucun utilisateur trouvé.</div>
+                        <?php if ($search !== ''): ?>
+                        <small>
+                            Aucun résultat pour :
+                            <strong>
+                                <?= htmlspecialchars($search,ENT_QUOTES,'UTF-8'); ?>
+                            </strong>
+                        </small>
                 <?php endif; ?>
-            </div>
+                </td>
+            </tr>
         <?php else: ?>
             <?php foreach ($users as $item): ?>
                 <?php
@@ -127,32 +106,14 @@ $search = (string) ($search ?? '');
                     $item->two_factor_enabled ?? 0
                 );
                 ?>
-                <div class="admin-user-row">
-                    <!-- Utilisateur -->
-                    <div class="admin-user-name">
-                        <div class="admin-user-avatar">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <div>
-                            <strong>
-                                <?= htmlspecialchars(
-                                    $username,
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
-                            </strong>
-                        </div>
-                    </div>
-                    <!-- Email -->
-                    <div class="admin-user-email">
-                        <?= htmlspecialchars(
-                            $email,
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>
-                    </div>
-                    <!-- Statut -->
-                    <div>
+                <tr>
+                    <td>
+                        <i class="fa-solid fa-user"></i><?= htmlspecialchars($username,ENT_QUOTES,'UTF-8'); ?>
+                    </td>
+                    <td>
+                        <?= htmlspecialchars($email,ENT_QUOTES,'UTF-8'); ?>
+                    </td>
+                    <td>
                         <?php if ($valid === 1): ?>
                             <span class="admin-user-status">
                                 Actif
@@ -162,9 +123,9 @@ $search = (string) ($search ?? '');
                                 Inactif
                             </span>
                         <?php endif; ?>
-                    </div>
+                    </td>
                     <!-- 2FA -->
-                    <div>
+                     <td>
                         <?php if ($twoFactor === 1): ?>
                             <span class="admin-user-2fa enabled">
                                 <i class="fa-solid fa-shield-halved"></i>
@@ -176,9 +137,9 @@ $search = (string) ($search ?? '');
                                 Désactivée
                             </span>
                         <?php endif; ?>
-                    </div>
+                    </td>
                     <!-- Actions -->
-                    <div class="admin-user-actions">
+                    <td>
                         <?php if ($hashKey !== ''): ?>
                             <!-- Modifier -->
                             <a
@@ -235,14 +196,14 @@ $search = (string) ($search ?? '');
                                 </button>
                             </form>
                         <?php endif; ?>
-                    </div>
+                    </td>
                 </div>
+                        </tr>
             <?php endforeach; ?>
         <?php endif; ?>
-    </div>
-    <!-- =====================================================
-         Pagination
-         ===================================================== -->
+        </tbody>
+    </table>
+
     <?php if ($pages > 1): ?>
         <div class="admin-users-pagination">
             <?php if ($page > 1): ?>
