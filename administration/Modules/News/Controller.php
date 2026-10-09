@@ -5,15 +5,20 @@
  * @link https://bel-cms.dev
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
- */
+ * @author as Stive - stive@determe.be
+*/
+
+
 declare(strict_types=1);
 
 namespace BelCMS\Admin\News;
+
 use BelCMS\Core\Assets;
 use BelCMS\Core\Csrf;
 use BelCMS\Core\Errors\ErrorPage;
 use BelCMS\Core\View;
 use BelCMS\Core\User;
+
 final class Controller
 {
     private View $view;

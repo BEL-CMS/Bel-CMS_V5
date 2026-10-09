@@ -125,13 +125,13 @@
  gap: 7px; }
 .admin-user-action { display: inline-flex;
  align-items: center; justify-content: center;
-height: 34px;
  border: 1px solid rgba(255, 255, 255, .07);
  border-radius: 8px;
  background: rgba(255, 255, 255, .035);
  color: inherit;
  text-decoration: none;
  cursor: pointer;
+ padding: 12px;
  transition: background .2s ease, border-color .2s ease, transform .2s ease; }
 .admin-user-action:hover { background: rgba(30, 120, 255, .12);
  border-color: rgba(30, 120, 255, .25);

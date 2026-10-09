@@ -41,8 +41,11 @@ final class Controller
             exit;
         }
         if (!$this->user->isAdmin()) {
-            http_response_code(403);
-            exit('Accès interdit.');
+            $this->errorPage->show(
+                403,
+                'Administration',
+                'Accès interdit.'
+            );
         }
         $page = max(
             1,
@@ -89,6 +92,7 @@ final class Controller
                 'total'        => $total,
                 'pages'        => $pages,
                 'search'       => $search,
+                'csrf'         => $this->csrf->field(),
             ]
         );
     }
@@ -131,8 +135,11 @@ final class Controller
         */
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if (!csrf_verify($_POST['csrf_token'] ?? null)) {
-                http_response_code(403);
-                exit('Jeton CSRF invalide.');
+                $this->errorPage->show(
+                    400,
+                    'Administration',
+                    'Jeton CSRF invalide.'
+                );
             }
             $username = trim(
                 (string) ($_POST['username'] ?? '')

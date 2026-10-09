@@ -5,11 +5,16 @@
  * @link https://bel-cms.dev
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
- */
+ * @author as Stive - stive@determe.be
+*/
+
+
 declare(strict_types=1);
 
 namespace BelCMS\Admin\News;
+
 use BelCMS\Core\BDD;
+
 final class Model
 {
     private BDD $db;

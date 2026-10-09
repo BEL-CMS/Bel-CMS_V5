@@ -15,7 +15,6 @@ if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
 	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
 endif;
-
 $users = $users ?? [];
 $pendingUsers = $pendingUsers ?? [];
 $page = max(
@@ -59,11 +58,12 @@ $search = (string) ($search ?? '');
         <?php endif; ?>
     </form>
 
-    <table class="BelCMS_TABLES" class="display">
+    <table class="BelCMS_TABLES">
 		<thead>
 			<tr>
 				<th>Utilisateur</th>
 				<th>Email</th>
+                <th>IP</th>
 				<th>Statut</th>
 				<th>2FA</th>
 				<th>Actions</th>
@@ -73,7 +73,7 @@ $search = (string) ($search ?? '');
         <?php if ($users === []): ?>
             <!-- Aucun résultat -->
             <tr>
-                <td colspan="5">
+                <td colspan="6">
                     <div class="admin-users-empty">
                         <i class="fa-solid fa-user-slash"></i>
                         <div>Aucun utilisateur trouvé.</div>
@@ -114,13 +114,16 @@ $search = (string) ($search ?? '');
                         <?= htmlspecialchars($email,ENT_QUOTES,'UTF-8'); ?>
                     </td>
                     <td>
-                        <?php if ($valid === 1): ?>
-                            <span class="admin-user-status">
-                                Actif
+                        <?= htmlspecialchars($item->ip,ENT_QUOTES,'UTF-8'); ?>
+                    </td>
+                    <td>
+                        <?php if ($item->ban === 1): ?>
+                            <span class="admin-user-status admin-user-color-red">
+                                Banni
                             </span>
                         <?php else: ?>
-                            <span class="admin-user-status">
-                                Inactif
+                            <span class="admin-user-status admin-user-color-green">
+                                Actif
                             </span>
                         <?php endif; ?>
                     </td>
@@ -142,63 +145,29 @@ $search = (string) ($search ?? '');
                     <td>
                         <?php if ($hashKey !== ''): ?>
                             <!-- Modifier -->
-                            <a
-                                href="/admin/users/edit?hash_key=<?= urlencode($hashKey) ?>"
-                                class="admin-user-action"
-                                title="Modifier l'utilisateur"
-                            >
+                            <a href="/admin/users/edit?hash_key=<?= urlencode($hashKey) ?>" class="admin-user-action admin-user-color-green" title="Modifier l'utilisateur">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
                             <!-- Sessions -->
-                            <a
-                                href="/admin/users/sessions?hash_key=<?= urlencode($hashKey) ?>"
-                                class="admin-user-action"
-                                title="Sessions"
-                            >
+                            <a href="/admin/users/sessions?hash_key=<?= urlencode($hashKey) ?>" class="admin-user-action admin-user-color-blue" title="Sessions">
                                 <i class="fa-solid fa-laptop"></i>
                             </a>
                             <!-- Supprimer -->
-                            <form
-                                method="post"
-                                action="/admin/users/delete"
-                                style="display: inline;"
-                                onsubmit="return confirm(
+                            <form method="post" action="/admin/users/delete" style="display: inline;" onsubmit="return confirm(
                                     'ATTENTION !\n\n' +
                                     'Vous êtes sur le point de supprimer définitivement cet utilisateur et ses données associées.\n\n' +
                                     'Cette action est irréversible.\n\n' +
                                     'Voulez-vous vraiment continuer ?'
-                                );"
-                            >
-                                <input
-                                    type="hidden"
-                                    name="csrf_token"
-                                    value="<?= htmlspecialchars(
-                                        csrf_token(),
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>"
-                                >
-                                <input
-                                    type="hidden"
-                                    name="hash_key"
-                                    value="<?= htmlspecialchars(
-                                        $hashKey,
-                                        ENT_QUOTES,
-                                        'UTF-8'
-                                    ) ?>"
-                                >
-                                <button
-                                    type="submit"
-                                    class="admin-user-action delete"
-                                    title="Supprimer l'utilisateur"
-                                >
+                                );">
+                                <?= $csrf ?>
+                                <input type="hidden" name="hash_key" value="<?= htmlspecialchars($hashKey, ENT_QUOTES, 'UTF-8') ?>">
+                                <button type="submit" class="admin-user-action admin-user-color-red" title="Supprimer l'utilisateur">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </form>
                         <?php endif; ?>
                     </td>
-                </div>
-                        </tr>
+                </tr>
             <?php endforeach; ?>
         <?php endif; ?>
         </tbody>

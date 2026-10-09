@@ -11,8 +11,6 @@
 
 declare(strict_types=1);
 
-use BelCMS\system\Common;
-
 $users = $users ?? [];
 $pendingUsers = $pendingUsers ?? [];
 $page = max(
@@ -33,40 +31,20 @@ $search = (string) ($search ?? '');
     <div class="admin-users-header">
         <h1>
             <i class="fa-solid fa-users"></i>
-            Utilisateurs
+            Utilisateurs en attente
         </h1>
         <p>
-            Gestion des comptes utilisateurs de Bel-CMS.
+            Gestion des comptes utilisateurs.
             <?= $total ?>
             utilisateur<?= $total > 1 ? 's' : '' ?>
             enregistré<?= $total > 1 ? 's' : '' ?>.
         </p>
     </div>
-    <form method="get" action="/admin/users" class="admin-users-search">
-        <input type="search" name="search"
-            value="<?= htmlspecialchars(
-                $search,
-                ENT_QUOTES,
-                'UTF-8'
-            ) ?>"
-            placeholder="Rechercher un utilisateur..."
-            autocomplete="off"
-        >
-        <button type="submit">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            Rechercher
-        </button>
-        <?php if ($search !== ''): ?>
-            <a href="/admin/users" class="admin-user-action" title="Réinitialiser la recherche">
-                <i class="fa-solid fa-xmark"></i>
-            </a>
-        <?php endif; ?>
-    </form>
-    <!-- =====================================================
+    <!-- =================================================
          Membres en attente
-         ===================================================== -->
+    =================================================  -->
     <?php if ($pendingUsers !== []): ?>
-    <table class="BelCMS_TABLES" class="display">
+    <table class="BelCMS_TABLES">
 		<thead>
 			<tr>
 				<th>Utilisateur</th>
@@ -146,6 +124,16 @@ $search = (string) ($search ?? '');
                     </td>
                 </tr>
             <?php endforeach; ?>
-        </tbody>
+            <?php else: ?>
+            <tr>
+                <td colspan="6">
+                    <div class="admin-users-empty">
+                        <i class="fa-solid fa-user-slash"></i>
+                        <div>Aucun utilisateur en attente.</div>
+                    </div>
+                </td>
+            </tr>
+            <?php endif; ?>
+        </tbody>    
     </table>
-    <?php endif; ?>
+</div>

@@ -8,6 +8,8 @@
  */
 declare(strict_types=1);
 
+use BelCMS\system\Common;
+
 /** @var array $news */
 /** @var array $categories */
 /** @var string $csrf */
@@ -51,7 +53,7 @@ foreach ($categories as $category) {
     </div>
     <!-- =========================================================
          STATISTIQUES
-         ========================================================= -->
+    ========================================================= -->
     <div class="admin-news-stats">
         <div class="admin-news-stat">
             <div class="admin-news-stat-icon">
@@ -175,19 +177,12 @@ foreach ($categories as $category) {
                         <tr>
                             <!-- =================================================
                                  TITRE
-                                 ================================================= -->
+                            ================================================= -->
                             <td>
                                 <div class="admin-news-title">
                                     <?php if (!empty($article->image)): ?>
                                         <div class="admin-news-thumbnail">
-                                            <img
-                                                src="<?= htmlspecialchars(
-                                                    (string) $article->image,
-                                                    ENT_QUOTES,
-                                                    'UTF-8'
-                                                ) ?>"
-                                                alt=""
-                                            >
+                                            <img src="<?= htmlspecialchars((string) $article->image,ENT_QUOTES,'UTF-8') ?>" alt="">
                                         </div>
                                     <?php else: ?>
                                         <div class="admin-news-thumbnail placeholder">
@@ -196,41 +191,24 @@ foreach ($categories as $category) {
                                     <?php endif; ?>
                                     <div class="admin-news-title-content">
                                         <strong>
-                                            <?= htmlspecialchars(
-                                                $title,
-                                                ENT_QUOTES,
-                                                'UTF-8'
-                                            ) ?>
+                                            <?= htmlspecialchars($title,ENT_QUOTES,'UTF-8'); ?>
                                         </strong>
                                         <span>
-                                            <?= htmlspecialchars(
-                                                $slug,
-                                                ENT_QUOTES,
-                                                'UTF-8'
-                                            ) ?>
+                                            <?= htmlspecialchars($slug,ENT_QUOTES,'UTF-8'); ?>
                                         </span>
                                     </div>
                                 </div>
                             </td>
                             <!-- =================================================
                                  CATEGORIE
-                                 ================================================= -->
+                            ================================================= -->
                             <td>
                                 <?php if ($category !== null): ?>
                                     <span
                                         class="admin-news-category"
-                                        style="--category-color: <?= htmlspecialchars(
-                                            (string) $category->color,
-                                            ENT_QUOTES,
-                                            'UTF-8'
-                                        ) ?>"
-                                    >
+                                        style="--category-color: <?= htmlspecialchars((string) $category->color,ENT_QUOTES,'UTF-8'); ?>">
                                         <span class="category-dot"></span>
-                                        <?= htmlspecialchars(
-                                            (string) $category->name,
-                                            ENT_QUOTES,
-                                            'UTF-8'
-                                        ) ?>
+                                        <?= htmlspecialchars((string) $category->name,ENT_QUOTES,'UTF-8') ?>
                                     </span>
                                 <?php else: ?>
                                     <span class="admin-news-no-category">
@@ -240,7 +218,7 @@ foreach ($categories as $category) {
                             </td>
                             <!-- =================================================
                                  STATUT
-                                 ================================================= -->
+                            ================================================= -->
                             <td>
                                 <?php if ($status === 1): ?>
                                     <span class="admin-news-status published">
@@ -256,26 +234,16 @@ foreach ($categories as $category) {
                             </td>
                             <!-- =================================================
                                  STATISTIQUES
-                                 ================================================= -->
+                            ================================================= -->
                             <td>
                                 <div class="admin-news-metrics">
                                     <span title="Vues">
                                         <i class="fa-regular fa-eye"></i>
-                                        <?= number_format(
-                                            $views,
-                                            0,
-                                            ',',
-                                            ' '
-                                        ) ?>
+                                        <?= number_format($views,0,',',' ') ?>
                                     </span>
                                     <span title="Likes">
                                         <i class="fa-regular fa-heart"></i>
-                                        <?= number_format(
-                                            $likes,
-                                            0,
-                                            ',',
-                                            ' '
-                                        ) ?>
+                                        <?= number_format($likes,0,',',' ') ?>
                                     </span>
                                 </div>
                             </td>
@@ -285,11 +253,11 @@ foreach ($categories as $category) {
                             <td>
                                 <span class="admin-news-date">
                                     <i class="fa-regular fa-calendar"></i>
-                                    <?= htmlspecialchars(
+                                    <?= Common::TransformDate(htmlspecialchars(
                                         $createdAt,
                                         ENT_QUOTES,
                                         'UTF-8'
-                                    ) ?>
+                                    ),'MEDIUM', 'MEDIUM') ?>
                                 </span>
                             </td>
                             <!-- =================================================
@@ -297,52 +265,17 @@ foreach ($categories as $category) {
                                  ================================================= -->
                             <td>
                                 <div class="admin-news-row-actions">
-                                    <!-- Modifier -->
-                                    <a
-                                        href="/admin/news/edit?id=<?= $id ?>"
-                                        class="admin-news-icon-button"
-                                        title="Modifier"
-                                    >
+                                    <a href="/admin/news/edit?id=<?= $id ?>" class="admin-news-icon-button" title="Modifier">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <!-- Voir -->
-                                    <a
-                                        href="/news/view?slug=<?= urlencode($slug) ?>"
-                                        target="_blank"
-                                        class="admin-news-icon-button"
-                                        title="Voir"
-                                    >
+                                    <a href="/news/view?slug=<?= urlencode($slug) ?>" target="_blank" class="admin-news-icon-button" title="Voir">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
-                                    <!-- Publier / brouillon -->
-                                    <form
-                                        method="post"
-                                        action="/admin/news/status"
-                                    >
-                                        <input
-                                            type="hidden"
-                                            name="csrf_token"
-                                            value="<?= htmlspecialchars(
-                                                $csrf,
-                                                ENT_QUOTES,
-                                                'UTF-8'
-                                            ) ?>"
-                                        >
-                                        <input
-                                            type="hidden"
-                                            name="id"
-                                            value="<?= $id ?>"
-                                        >
-                                        <input
-                                            type="hidden"
-                                            name="status"
-                                            value="<?= $status === 1 ? 0 : 1 ?>"
-                                        >
-                                        <button
-                                            type="submit"
-                                            class="admin-news-icon-button <?= $status === 1 ? 'warning' : 'success' ?>"
-                                            title="<?= $status === 1 ? 'Dépublier' : 'Publier' ?>"
-                                        >
+                                    <form method="post" action="/admin/news/status">
+                                        <?= $csrf ?>
+                                        <input type="hidden" name="id" value="<?= $id ?>">
+                                        <input type="hidden" name="status" value="<?= $status === 1 ? 0 : 1 ?>">
+                                        <button type="submit" class="admin-news-icon-button <?= $status === 1 ? 'warning' : 'success' ?>" title="<?= $status === 1 ? 'Dépublier' : 'Publier' ?>">
                                             <?php if ($status === 1): ?>
                                                 <i class="fa-solid fa-eye-slash"></i>
                                             <?php else: ?>
@@ -351,30 +284,10 @@ foreach ($categories as $category) {
                                         </button>
                                     </form>
                                     <!-- Supprimer -->
-                                    <form
-                                        method="post"
-                                        action="/admin/news/delete"
-                                        onsubmit="return confirm('Voulez-vous vraiment supprimer cette actualité ?');"
-                                    >
-                                        <input
-                                            type="hidden"
-                                            name="csrf_token"
-                                            value="<?= htmlspecialchars(
-                                                $csrf,
-                                                ENT_QUOTES,
-                                                'UTF-8'
-                                            ) ?>"
-                                        >
-                                        <input
-                                            type="hidden"
-                                            name="id"
-                                            value="<?= $id ?>"
-                                        >
-                                        <button
-                                            type="submit"
-                                            class="admin-news-icon-button danger"
-                                            title="Supprimer"
-                                        >
+                                    <form method="post" action="/admin/news/delete" onsubmit="return confirm('Voulez-vous vraiment supprimer cette actualité ?');">
+                                        <?= $csrf ?>
+                                        <input type="hidden" name="id" value="<?= $id ?>">
+                                        <button type="submit" class="admin-news-icon-button danger" title="Supprimer">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </form>

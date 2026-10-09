@@ -72,38 +72,27 @@ if (isset($adminMenu)) {
             </div>
         </div>
         <nav class="admin-navigation">
-            <div class="admin-nav-title">GÉNÉRAL</div>
-            <a
-                href="/admin"
-                class="admin-nav-link"
-            >
-                <i class="fa-solid fa-gauge-high"></i>
-                <span>Tableau de bord</span>
-            </a>
-            <div class="admin-nav-title">GESTION</div>
-            <a href="/admin/users" class="admin-nav-link">
-                <i class="fa-solid fa-users"></i>
-                <span>Utilisateurs</span>
-            </a>
-            <a href="/admin/groups" class="admin-nav-link">
-                <i class="fa-solid fa-user-group"></i>
-                <span>Groupes</span>
-            </a>
-            <a href="/admin/modules" class="admin-nav-link">
-                <i class="fa-solid fa-puzzle-piece"></i>
-                <span>Modules</span>
-            </a>
             <?php if (!empty($moduleMenuItems)): ?>
                 <div class="admin-nav-title">MODULES</div>
                 <?php foreach ($moduleMenuItems as $item): ?>
                     <?php
-                    $moduleName = strtolower(
-                        (string) (
-                            $item['module'] ?? ''
+                    /*
+                     * Route d'administration du module.
+                     *
+                     * On utilise la route définie par le module
+                     * afin de ne pas déduire l'URL depuis son nom.
+                     *
+                     * Exemple :
+                     * User -> /admin/users
+                     */
+                    $moduleRoute = (string) (
+                        $item['route']
+                        ?? '/admin/' . strtolower(
+                            (string) (
+                                $item['module'] ?? ''
+                            )
                         )
                     );
-                    $moduleRoute = '/admin/'
-                        . $moduleName;
                     $moduleActive = false;
                     if ($currentModule !== null) {
                         $moduleActive =
@@ -248,31 +237,14 @@ if (isset($adminMenu)) {
                         );
                         ?>
                         <a
-                            href="<?= htmlspecialchars(
-                                $menuRoute,
-                                ENT_QUOTES,
-                                'UTF-8'
-                            ) ?>"
-                            class="admin-module-menu-link<?= $menuActive ? ' active' : '' ?>"
-                        >
+                            href="<?= htmlspecialchars($menuRoute,ENT_QUOTES,'UTF-8') ?>" class="admin-module-menu-link<?= $menuActive ? ' active' : '' ?>">
                             <?php if (
                                 !empty($menuItem['icon'])
                             ): ?>
-                                <i class="fa-solid <?= htmlspecialchars(
-                                    (string) $menuItem['icon'],
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>"></i>
+                                <i class="fa-solid <?= htmlspecialchars((string) $menuItem['icon'],ENT_QUOTES,'UTF-8') ?>"></i>
                             <?php endif; ?>
                             <span>
-                                <?= htmlspecialchars(
-                                    (string) (
-                                        $menuItem['label']
-                                        ?? ''
-                                    ),
-                                    ENT_QUOTES,
-                                    'UTF-8'
-                                ) ?>
+                                <?= htmlspecialchars((string) ($menuItem['label']?? ''),ENT_QUOTES,'UTF-8') ?>
                             </span>
                         </a>
                     <?php endforeach; ?>
@@ -288,6 +260,8 @@ if (isset($adminMenu)) {
         </footer>
     </main>
 </div>
+
+<?= $this->assets->renderJs() ?>
 <script>
 document.addEventListener(
     'DOMContentLoaded',
@@ -296,8 +270,7 @@ document.addEventListener(
             document.getElementById(
                 'adminMenuToggle'
             );
-        const body =
-            document.body;
+        const body = document.body;
         if (toggle) {
             toggle.addEventListener(
                 'click',
@@ -311,6 +284,5 @@ document.addEventListener(
     }
 );
 </script>
-<?= $this->assets->renderJs() ?>
 </body>
 </html>
