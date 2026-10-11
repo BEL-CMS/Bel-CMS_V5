@@ -12,10 +12,11 @@
 declare(strict_types=1);
 
 return [
-    'name' => 'User',
-
+    'name'    => 'News',
+    'version' => '1.0.0',
+    'author'  => 'Bel-CMS',
     'assets' => [
         'css' => true,
-        'js' => true,
+        'js'  => true,
     ],
 ];

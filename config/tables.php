@@ -20,6 +20,8 @@ $config = require __DIR__ . '/database.php';
 $DB_PREFIX = $config['prefix'] ?? '';
 
 $tables = [
+    'TABLE_BANISHMENT'        => $DB_PREFIX . 'banishment',
+    'TABLE_BANISHMENT_LOGS'   => $DB_PREFIX . 'banishment_logs',
     'TABLE_CAPTCHA'           => $DB_PREFIX . 'captcha',
     'TABLE_BELCMS_SHIELD'     => $DB_PREFIX . 'captcha_shield',
     'TABLE_CAPTCHA_LOGS'      => $DB_PREFIX . 'captcha_log',
@@ -35,6 +37,8 @@ $tables = [
     'TABLE_USERS_PROFILS'     => $DB_PREFIX . 'users_profils',
     'TABLE_USERS_SOCIAL'      => $DB_PREFIX . 'users_social',
     'TABLE_RECOVERY'          => $DB_PREFIX . 'user_recovery',
+    'TABLE_USERS_SESSIONS'    => $DB_PREFIX . 'user_sessions',
+    'TABLE_USERS_TMP'         => $DB_PREFIX . 'user_temp',
 ];
 
 foreach ($tables as $name => $value) {

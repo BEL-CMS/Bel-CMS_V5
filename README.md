@@ -1,7 +1,7 @@
 # 🚀 Bel-CMS v5.0
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![PHP Version](https://img.shields.io/badge/PHP-8.4%2B-777BB4.svg)](https://www.php.net/)
+[![PHP Version](https://img.shields.io/badge/PHP-8.5%2B-777BB4.svg)](https://www.php.net/)
 [![Website](https://img.shields.io/badge/Website-bel--cms.dev-blue)](https://www.bel-cms.dev)
 
 **Bel-CMS v5** est la nouvelle génération majeure du système de gestion de contenu open-source [Bel-CMS](https://www.bel-cms.dev). Entièrement repensé et réécrit pour offrir des performances inégalées, une sécurité renforcée et une expérience développeur moderne, Bel-CMS v5 s'impose comme la solution idéale pour concevoir des sites web, des portails communautaires et des applications web légères.

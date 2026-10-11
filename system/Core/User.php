@@ -3,7 +3,6 @@
  * Bel-CMS [Content management system]
  * @version 5.0.0 [PHP8.5]
  * @link https://bel-cms.dev
- * @link https://determe.be
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
@@ -16,12 +15,14 @@ namespace BelCMS\Core;
 use BelCMS\Core\Security\RecoveryCode;
 use BelCMS\Core\Security\TOTP\ProvisioningUri;
 use BelCMS\Core\Security\TOTP\TOTP;
+use BelCMS\Core\Security\Banishment;
 
 final class User
 {
     private BDD $db;
     private Session $session;
     private UserSession $userSession;
+    private Banishment $banishment;
 
     private ?object $currentUser = null;
     private bool $loaded = false;
@@ -879,5 +880,19 @@ final class User
         return (bool)$this->db->update([
             'ip' => $ip,
         ]);
+    }
+
+    public static function isUserToHahskey(string $hash_key): string|null
+    {
+        $db = new BDD();
+        $db->table('TABLE_USERS');
+        $db->where([
+            'name'  => 'hash_key',
+            'value' => $hash_key,
+        ]);
+        $db->fields(['username']);
+        $db->queryOne();
+
+        return is_object($db->data) ? $db->data->username : null;
     }
 }

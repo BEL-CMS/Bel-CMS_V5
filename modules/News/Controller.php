@@ -7,103 +7,187 @@
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
-*/
+ */
 declare(strict_types=1);
+
 namespace BelCMS\Modules\News;
 
-use BelCMS\Core\Pagination;
+use BelCMS\Core\Assets;
 use BelCMS\Core\View;
-
-if (!defined('CHECK_INDEX')):
-	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
-	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
-endif;
 
 final class Controller
 {
-    private Model $model;
-    private View $view;
-
-    public function __construct(Model $model, View $view)
-    {
-        $this->model = $model;
-        $this->view = $view;
+    public function __construct(
+        private View $view,
+        private Assets $assets,
+        private Model $model
+    ) {
     }
 
+    /**
+     * Liste des actualités.
+     */
     public function index(): void
     {
-        $news = $this->model->getNews();
+        $this->loadAssets();
 
+        $news = $this->model->getPublishedNews(10, 0);
         $categories = $this->model->getCategories();
-
-        foreach ($news as $article) {
-            $text = strip_tags($article->content);
-
-            $article->excerpt = mb_strlen($text) > 250
-                ? mb_substr($text, 0, 250) . '...'
-                : $text;
-        }
 
         echo $this->view->render(
             'News',
             'index',
             [
                 'news' => $news,
-                'categories' => $categories
+                'categories' => $categories,
             ]
         );
     }
 
-    public function show(string $rewrite): void
+    /**
+     * Affichage d'une actualité.
+     */
+    public function view(): void
     {
-        $article = $this->model->getNewsByRewrite($rewrite);
+        $this->loadAssets();
 
-        if (!$article) {
-            http_response_code(404);
-            echo 'Actualité introuvable';
+        $slug = trim((string) ($_GET['slug'] ?? ''));
+
+        if ($slug === '') {
+            $this->renderNotFound();
             return;
         }
 
-        $this->model->addView((int) $article->id);
-        $article->view = (int) $article->view + 1;
+        $news = $this->model->getNewsBySlug($slug);
 
-        echo $this->view->render('News', 'show', [
-            'article' => $article,
-        ]);
+        if ($news === null || (int) ($news->status ?? 0) !== 1) {
+            $this->renderNotFound();
+            return;
+        }
+
+        $category = null;
+        $idCat = (int) ($news->id_cat ?? 0);
+
+        if ($idCat > 0) {
+            $category = $this->model->getCategoryByIdCat($idCat);
+        }
+
+        if ($this->model->incrementViews((int) $news->id)) {
+            $news->views = (int) ($news->views ?? 0) + 1;
+        }
+
+        echo $this->view->render(
+            'News',
+            'show',
+            [
+                'news' => $news,
+                'category' => $category,
+            ]
+        );
     }
 
-    public function category(string $category): void
+    /**
+     * Affichage des actualités d'une catégorie.
+     */
+    public function category(): void
     {
-        $categories = $this->model->getCategories();
-        $categoryId = null;
-        $categoryName = null;
+        $this->loadAssets();
 
-        foreach ($categories as $item) {
-            if ((string) $item->value === $category) {
-                $categoryId = (int) $item->id;
-                $categoryName = (string) $item->value;
-                break;
-            }
-        }
+        $idCat = filter_input(
+            INPUT_GET,
+            'id_cat',
+            FILTER_VALIDATE_INT
+        );
 
-        if ($categoryId === null) {
-            http_response_code(404);
-            echo 'Catégorie introuvable';
+        if ($idCat === false || $idCat === null || $idCat <= 0) {
+            $this->renderCategoryNotFound();
             return;
         }
 
-        $news = $this->model->getNewsByCategory($categoryId);
+        $category = $this->model->getCategoryByIdCat($idCat);
 
-        foreach ($news as $article) {
-            $text = trim(strip_tags((string) $article->content));
-            $article->excerpt = mb_strlen($text) > 250
-                ? mb_substr($text, 0, 250) . '...'
-                : $text;
+        if ($category === null) {
+            $this->renderCategoryNotFound();
+            return;
         }
 
-        echo $this->view->render('News', 'category', [
-            'news' => $news,
-            'categoryName' => $categoryName,
-        ]);
+        $news = $this->model->getPublishedNewsByCategory(
+            $idCat,
+            10,
+            0
+        );
+
+        echo $this->view->render(
+            'News',
+            'category',
+            [
+                'category' => $category,
+                'news' => $news,
+            ]
+        );
+    }
+
+    /**
+     * Ajoute un like à une actualité.
+     */
+    public function like(): void
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+
+        $id = filter_input(
+            INPUT_POST,
+            'id',
+            FILTER_VALIDATE_INT
+        );
+
+        if ($id === false || $id === null || $id <= 0) {
+            http_response_code(400);
+            return;
+        }
+
+        if (!$this->model->incrementLikes($id)) {
+            http_response_code(404);
+            return;
+        }
+
+        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/news'));
+        exit;
+    }
+
+    private function loadAssets(): void
+    {
+        $this->assets->css('/modules/News/css/news.css');
+        $this->assets->js('/modules/News/js/news.js');
+    }
+
+    private function renderNotFound(): void
+    {
+        http_response_code(404);
+
+        echo $this->view->render(
+            'News',
+            'show',
+            [
+                'news' => null,
+                'category' => null,
+            ]
+        );
+    }
+
+    private function renderCategoryNotFound(): void
+    {
+        http_response_code(404);
+
+        echo $this->view->render(
+            'News',
+            'category',
+            [
+                'category' => null,
+                'news' => [],
+            ]
+        );
     }
 }

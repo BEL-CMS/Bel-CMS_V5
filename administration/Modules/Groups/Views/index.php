@@ -198,11 +198,7 @@ declare(strict_types=1);
                                     Non supprimable
                                 </button>
                             <?php else: ?>
-                                <form
-                                    method="post"
-                                    action="/admin/groups/delete"
-                                    class="group-delete-form"
-                                    onsubmit="return confirm(
+                                <form method="post" action="/admin/groups/delete" class="group-delete-form" onsubmit="return confirm(
                                         'Voulez-vous vraiment supprimer le groupe « <?= htmlspecialchars(
                                             $name,
                                             ENT_QUOTES,
@@ -211,10 +207,7 @@ declare(strict_types=1);
                                     );"
                                 >
                                     <?= $csrf ?>
-                                    <input
-                                        type="hidden"
-                                        name="id_group"
-                                        value="<?= $idGroup ?>"
+                                    <input type="hidden" name="id_group" value="<?= $idGroup ?>"
                                     >
                                     <button
                                         type="submit"

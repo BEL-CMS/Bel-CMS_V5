@@ -32,13 +32,7 @@ return [
                 'route' => '/admin/users/valid',
                 'icon'  => 'fa-solid fa-person-circle-check',
                 'order' => 20,
-            ],
-            [
-                'label' => 'Bannissement',
-                'route' => '/admin/users/banishment',
-                'icon'  => 'fa-ban',
-                'order' => 30,
-            ],
+            ]
         ],
     ],
     'assets' => [

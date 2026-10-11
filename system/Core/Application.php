@@ -3,7 +3,6 @@
  * Bel-CMS [Content management system]
  * @version 5.0.0 [PHP8.5]
  * @link https://bel-cms.dev
- * @link https://determe.be
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
@@ -15,6 +14,7 @@ namespace BelCMS\Core;
 
 use RuntimeException;
 use BelCMS\Core\Errors\ErrorPage;
+use BelCMS\Core\Security\Banishment;
 
 if (!defined('CHECK_INDEX')):
 	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
@@ -38,6 +38,8 @@ final class Application
     private UserSession $userSession;
     private Csrf $csrf;
     private Profils $profils;
+    private Banishment $banishment;
+    
     public function __construct()
     {
         /*
@@ -75,6 +77,12 @@ final class Application
         * Base de données
         */
         $this->db = new BDD();
+        /*
+        * Bannissement
+        */
+        $this->banishment = new Banishment(
+            $this->db
+        );
         /*
         * Sessions utilisateur
         */
@@ -444,6 +452,32 @@ final class Application
                     }
                 }
             }
+        }
+        /*
+        * Vérification du bannissement avant le routage.
+        */
+        $ipAddress  = $_SERVER['REMOTE_ADDR'] ?? null;
+        $hashKey    = $this->user->hashKey();
+        $banishment = $this->banishment->findActive(
+            $hashKey,
+            is_string($ipAddress) ? $ipAddress : null
+        );
+        if ($banishment !== null) {
+            http_response_code(403);
+
+            header('Content-Type: text/html; charset=UTF-8');
+            header('Cache-Control: no-store');
+            $reason = (string) ($banishment->reason ?? 'Aucun motif communiqué.');
+            $expiresAt = isset($banishment->expires_at)
+                ? (string) $banishment->expires_at
+                : null;
+            $banishmentKey = isset($banishment->banishment_key)
+                ? (string) $banishment->banishment_key
+                : null;
+
+            require dirname(__DIR__)
+                . '/Core/Security/Views/banished.php';
+            exit;
         }
         /*
         * ---------------------------------------------------------

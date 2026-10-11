@@ -1,0 +1,273 @@
+/* Bel-CMS V5 - DataTables Dark Administration Theme */
+
+:root {
+    --bel-dt-bg: #111827;
+    --bel-dt-header: #151e31;
+    --bel-dt-row: #101a2d;
+    --bel-dt-hover: #16243c;
+    --bel-dt-input: #121b2d;
+    --bel-dt-border: #26344c;
+    --bel-dt-border-soft: #202c42;
+    --bel-dt-text: #f1f5fb;
+    --bel-dt-text-soft: #c5cedc;
+    --bel-dt-muted: #7f8ba0;
+    --bel-dt-primary: #1677ff;
+}
+
+div.dt-container {
+    width: 100%;
+    color: var(--bel-dt-text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 14px;
+}
+
+div.dt-container .dt-layout-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 0 0 15px;
+}
+
+div.dt-container .dt-length,
+div.dt-container .dt-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+div.dt-container .dt-length label,
+div.dt-container .dt-search label,
+div.dt-container .dt-info {
+    color: var(--bel-dt-muted);
+    font-size: 13px;
+}
+
+div.dt-container .dt-length select,
+div.dt-container .dt-search input,
+div.dt-container select.dt-input,
+div.dt-container input.dt-input {
+    height: 36px;
+    color: var(--bel-dt-text);
+    background: var(--bel-dt-input);
+    border: 1px solid var(--bel-dt-border);
+    border-radius: 7px;
+    outline: none;
+    font-size: 13px;
+}
+
+div.dt-container .dt-length select,
+div.dt-container select.dt-input {
+    min-width: 65px;
+    padding: 0 28px 0 10px;
+}
+
+div.dt-container .dt-search input,
+div.dt-container input.dt-input {
+    width: 250px;
+    margin-left: 7px;
+    padding: 0 12px;
+}
+
+div.dt-container .dt-search input::placeholder {
+    color: var(--bel-dt-muted);
+}
+
+div.dt-container .dt-length select:focus,
+div.dt-container .dt-search input:focus,
+div.dt-container select.dt-input:focus,
+div.dt-container input.dt-input:focus {
+    border-color: var(--bel-dt-primary);
+    box-shadow: 0 0 0 3px rgba(22,119,255,.12);
+}
+
+div.dt-container table.dataTable {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: var(--bel-dt-text);
+    background: var(--bel-dt-row);
+    border: 1px solid var(--bel-dt-border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,.18);
+}
+
+div.dt-container table.dataTable thead > tr > th,
+div.dt-container table.dataTable thead > tr > td {
+    padding: 14px 16px;
+    color: #aeb8c9;
+    background: var(--bel-dt-header);
+    border-bottom: 1px solid var(--bel-dt-border);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .045em;
+}
+
+div.dt-container table.dataTable tbody > tr > td {
+    padding: 14px 16px;
+    color: var(--bel-dt-text-soft);
+    background: var(--bel-dt-row);
+    border-bottom: 1px solid var(--bel-dt-border-soft);
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+div.dt-container table.dataTable tbody > tr:last-child > td {
+    border-bottom: 0;
+}
+
+div.dt-container table.dataTable tbody > tr:hover > td {
+    color: var(--bel-dt-text);
+    background: var(--bel-dt-hover) !important;
+}
+
+div.dt-container table.dataTable tbody td strong {
+    color: #f4f7fc;
+    font-weight: 650;
+}
+
+div.dt-container table.dataTable tbody td a {
+    color: #75adff;
+    text-decoration: none;
+}
+
+div.dt-container table.dataTable tbody td a:hover {
+    color: #a6ccff;
+}
+
+div.dt-container table.dataTable thead .dt-column-order {
+    opacity: .55;
+}
+
+div.dt-container table.dataTable thead th.dt-orderable-asc:hover,
+div.dt-container table.dataTable thead th.dt-orderable-desc:hover {
+    color: #dbe8ff;
+    background: #1a263c;
+}
+
+div.dt-container .dt-paging {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+    min-width: 34px;
+    height: 34px;
+    margin: 0 !important;
+    padding: 0 9px !important;
+    color: var(--bel-dt-text-soft) !important;
+    background: #121b2d !important;
+    border: 1px solid var(--bel-dt-border) !important;
+    border-radius: 6px !important;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 32px;
+    text-align: center;
+}
+
+div.dt-container .dt-paging .dt-paging-button:hover {
+    color: #fff !important;
+    background: #1b2b46 !important;
+    border-color: #385271 !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current {
+    color: #fff !important;
+    background: var(--bel-dt-primary) !important;
+    border-color: var(--bel-dt-primary) !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button.disabled,
+div.dt-container .dt-paging .dt-paging-button.disabled:hover {
+    color: #586579 !important;
+    background: #0e1625 !important;
+    border-color: #202b3e !important;
+}
+
+div.dt-container table.dataTable tbody td.dataTables_empty {
+    padding: 45px 20px;
+    color: var(--bel-dt-muted);
+    text-align: center;
+}
+
+div.dt-container div.dt-processing {
+    color: var(--bel-dt-text);
+    background: rgba(17,24,39,.97);
+    border: 1px solid var(--bel-dt-border);
+    border-radius: 8px;
+}
+
+div.dt-container .dt-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+div.dt-container .dt-badge--success {
+    color: #8fe0c3;
+    background: #142b27;
+}
+
+div.dt-container .dt-badge--warning {
+    color: #f4c56a;
+    background: #332a18;
+}
+
+div.dt-container .dt-badge--danger {
+    color: #f18a9a;
+    background: #351d25;
+}
+
+div.dt-container .dt-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 30px;
+    padding: 0 9px;
+    margin-left: 4px;
+    color: #d5deeb;
+    background: #182338;
+    border: 1px solid #2b3951;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+div.dt-container .dt-action:hover {
+    color: #fff;
+    background: #21324d;
+    border-color: #405675;
+}
+
+@media (max-width: 800px) {
+    div.dt-container .dt-layout-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    div.dt-container .dt-search input,
+    div.dt-container input.dt-input {
+        width: min(100%, 300px);
+        flex: 1;
+    }
+
+    div.dt-container .dt-paging {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 600px) {
+    div.dt-container table.dataTable {
+        min-width: 650px;
+    }
+}

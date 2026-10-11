@@ -1,0 +1,508 @@
+
+/*
+ * Bel-CMS V5
+ * Page de bannissement
+ */
+
+:root {
+    color-scheme: dark;
+
+    --background: #080d18;
+    --surface: #101827;
+    --surface-light: #151f31;
+    --border: #26354b;
+
+    --blue: #3997ff;
+    --blue-light: #70b7ff;
+
+    --red: #ff637a;
+    --red-soft: rgba(255, 99, 122, 0.12);
+
+    --text: #f1f5fb;
+    --text-muted: #9aaac0;
+    --text-subtle: #6f819a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    background: var(--background);
+}
+
+body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    font-family:
+        Inter,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+    color: var(--text);
+    background: var(--background);
+    line-height: 1.6;
+}
+
+/* Arrière-plan */
+
+.banished-background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.background-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(
+            rgba(75, 132, 202, 0.045) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(75, 132, 202, 0.045) 1px,
+            transparent 1px
+        );
+    background-size: 42px 42px;
+    mask-image: linear-gradient(
+        to bottom,
+        black,
+        transparent 85%
+    );
+}
+
+.background-glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: 0.12;
+}
+
+.background-glow-one {
+    top: -180px;
+    left: -100px;
+    background: var(--blue);
+}
+
+.background-glow-two {
+    right: -180px;
+    bottom: -200px;
+    background: #744cff;
+}
+
+/* Conteneur */
+
+.banished-container {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+/* Carte principale */
+
+.banished-card {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    padding: 34px;
+
+    background: rgba(16, 24, 39, 0.94);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.38),
+        0 0 50px rgba(57, 151, 255, 0.035);
+
+    animation: card-appear 0.45s ease-out both;
+}
+
+/* Marque */
+
+.brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 32px;
+}
+
+.brand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 35px;
+    height: 35px;
+
+    color: #ffffff;
+    font-size: 19px;
+    font-weight: 800;
+
+    background: linear-gradient(
+        135deg,
+        #58b1ff,
+        #2466dc
+    );
+
+    border-radius: 10px;
+    box-shadow: 0 0 22px rgba(57, 151, 255, 0.2);
+}
+
+.brand-name {
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: -0.7px;
+}
+
+.brand-name > span {
+    color: var(--blue);
+}
+
+.brand-version {
+    padding: 3px 7px;
+
+    color: var(--blue-light);
+    font-size: 10px;
+    font-weight: 700;
+
+    background: rgba(57, 151, 255, 0.1);
+    border: 1px solid rgba(57, 151, 255, 0.2);
+    border-radius: 5px;
+}
+
+/* Icône de sécurité */
+
+.security-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 86px;
+    height: 86px;
+    margin: 0 auto 22px;
+
+    color: var(--red);
+    background: var(--red-soft);
+    border: 1px solid rgba(255, 99, 122, 0.22);
+    border-radius: 24px;
+
+    box-shadow: 0 0 45px rgba(255, 99, 122, 0.06);
+}
+
+.security-icon svg {
+    width: 48px;
+    height: 48px;
+}
+
+/* Titre et description */
+
+.status-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    margin-bottom: 12px;
+
+    color: var(--red);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+
+    background: var(--red);
+    border-radius: 50%;
+
+    box-shadow: 0 0 10px rgba(255, 99, 122, 0.5);
+}
+
+.banished-card h1 {
+    margin: 0;
+
+    color: var(--text);
+    font-size: clamp(29px, 5vw, 37px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.25;
+    text-align: center;
+}
+
+.banished-card h1 span {
+    color: var(--blue-light);
+}
+
+.banished-description {
+    max-width: 420px;
+    margin: 16px auto 27px;
+
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.8;
+    text-align: center;
+}
+
+/* Détails de la sanction */
+
+.details-panel {
+    overflow: hidden;
+
+    background: rgba(8, 13, 24, 0.58);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 15px 18px;
+
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+
+    background: rgba(57, 151, 255, 0.045);
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-heading-icon {
+    color: var(--blue-light);
+    font-size: 17px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 17px 18px;
+}
+
+.detail-row + .detail-row {
+    border-top: 1px solid rgba(38, 53, 75, 0.7);
+}
+
+.detail-icon {
+    display: flex;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    color: var(--blue-light);
+    background: rgba(57, 151, 255, 0.09);
+    border-radius: 9px;
+}
+
+.detail-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.detail-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.detail-label {
+    display: block;
+    margin-bottom: 4px;
+
+    color: var(--text-subtle);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.detail-content p {
+    margin: 0;
+
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.detail-content .permanent-text {
+    color: var(--red);
+    font-weight: 700;
+}
+
+.reference-value {
+    font-family: Consolas, "Courier New", monospace;
+    color: var(--blue-light) !important;
+}
+
+/* Message d'assistance */
+
+.notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-top: 22px;
+    padding: 15px;
+
+    background: rgba(57, 151, 255, 0.055);
+    border: 1px solid rgba(57, 151, 255, 0.15);
+    border-radius: 11px;
+}
+
+.notice-icon {
+    display: flex;
+    flex: 0 0 22px;
+    align-items: center;
+    justify-content: center;
+
+    width: 22px;
+    height: 22px;
+
+    color: var(--blue-light);
+    font-size: 12px;
+    font-weight: 800;
+
+    border: 1px solid rgba(112, 183, 255, 0.5);
+    border-radius: 50%;
+}
+
+.notice p {
+    margin: 0;
+
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+/* Pied de carte */
+
+.banished-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    margin-top: 27px;
+
+    color: var(--text-subtle);
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    text-align: center;
+}
+
+.footer-line {
+    width: 25px;
+    height: 1px;
+    background: var(--border);
+}
+
+.footer-separator {
+    color: var(--blue);
+}
+
+.copyright {
+    margin: 20px 0 0;
+
+    color: var(--text-subtle);
+    font-size: 11px;
+    text-align: center;
+}
+
+/* Responsive */
+
+@media (max-width: 520px) {
+    .banished-container {
+        padding: 20px 12px;
+    }
+
+    .banished-card {
+        padding: 25px 18px;
+        border-radius: 16px;
+    }
+
+    .brand {
+        margin-bottom: 26px;
+    }
+
+    .security-icon {
+        width: 74px;
+        height: 74px;
+        border-radius: 20px;
+    }
+
+    .security-icon svg {
+        width: 42px;
+        height: 42px;
+    }
+
+    .banished-description {
+        font-size: 13px;
+    }
+
+    .detail-row {
+        padding: 15px 12px;
+        gap: 11px;
+    }
+
+    .panel-heading {
+        padding: 14px 12px;
+    }
+
+    .banished-footer {
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .footer-line {
+        width: 15px;
+    }
+}
+
+/* Accessibilité : réduire les animations si demandé */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+@keyframes card-appear {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

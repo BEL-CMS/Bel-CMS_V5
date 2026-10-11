@@ -12,10 +12,20 @@
 declare(strict_types=1);
 
 return [
-    'name' => 'News',
-
+    'name'    => 'News',
+    'version' => '1.0.0',
+    'author'  => 'Bel-CMS',
     'assets' => [
         'css' => true,
-        'js' => true,
+        'js'  => true,
+    ],
+    'admin' => [
+        'enabled' => true,
+        'menu' => [
+            'enabled' => true,
+            'label'   => 'Actualités',
+            'icon'    => 'fa-newspaper',
+            'order'   => 20,
+        ],
     ],
 ];

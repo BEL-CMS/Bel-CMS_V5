@@ -74,6 +74,10 @@ if (
                         <span>Connexion</span>
                     </a>
                 <?php endif; ?>
+                <a href="/Admin">
+                    <i class="fa-solid fa-coags"></i>
+                    <span>Administration</span>
+                </a>
             </nav>
         </div>
     </header>
