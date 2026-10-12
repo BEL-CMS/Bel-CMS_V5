@@ -151,6 +151,39 @@ final class AdminMenu
             );
 
             /*
+             * Catégorie explicite de la sidebar.
+             * Priorité à admin.category, avec compatibilité
+             * pour category défini à la racine de module.php.
+             */
+            $allowedCategories = [
+                'Accueil',
+                'Paramètres',
+                'Pages',
+                'Utilisateurs',
+                'Widgets',
+                'Extras',
+                'Teams',
+                'ASEH',
+            ];
+
+            $category = trim((string) (
+                $admin['category']
+                ?? $config['category']
+                ?? 'Extras'
+            ));
+
+            foreach ($allowedCategories as $allowedCategory) {
+                if (strcasecmp($category, $allowedCategory) === 0) {
+                    $category = $allowedCategory;
+                    break;
+                }
+            }
+
+            if (!in_array($category, $allowedCategories, true)) {
+                $category = 'Extras';
+            }
+
+            /*
              * Route principale du module d'administration.
              *
              * Exemple :
@@ -251,9 +284,10 @@ final class AdminMenu
                     $config['author']
                     ?? ''
                 ),
-                'label'   => $label,
-                'icon'    => $icon,
-                'route'   => $adminRoute,
+                'label'    => $label,
+                'icon'     => $icon,
+                'category' => $category,
+                'route'    => $adminRoute,
                 'order'   => $order,
                 'path'    => $path,
                 'menu'    => $menu,

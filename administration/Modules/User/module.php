@@ -16,10 +16,11 @@ return [
     'version' => '1.0.0',
     'author'  => 'Bel-CMS',
     'admin' => [
-        'label' => 'Utilisateurs',
-        'icon'  => 'fa-users',
-        'route' => '/admin/users',
-        'order' => 10,
+        'label'    => 'Utilisateurs',
+        'icon'     => 'fa-users',
+        'route'    => '/admin/users',
+        'category' => 'Utilisateurs',
+        'order' => 5,
         'menu' => [
             [
                 'label' => 'Membres',

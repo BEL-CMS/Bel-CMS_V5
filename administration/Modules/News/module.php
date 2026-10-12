@@ -15,11 +15,11 @@ return [
     'version' => '1.0.0',
     'author'  => 'Bel-CMS',
     'admin' => [
-        'label' => 'Actualités',
-        'icon'  => 'fa-newspaper',
-        'route' => '/admin/news',
+        'label'    => 'Actualités',
+        'icon'     => 'fa-newspaper',
+        'route'    => '/admin/news',
+        'category' => 'Pages',
         'order' => 10,
-        'menu' => [],
     ],
     'assets' => [
         'css' => true,

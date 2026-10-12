@@ -806,3 +806,141 @@
         white-space: nowrap;
     }
 }
+
+/* =========================================================
+   SIDEBAR ACCORDÉON — menu Bel-CMS V5
+   ========================================================= */
+.admin-sidebar {
+    background: linear-gradient(180deg, #23354e 0%, #202329 36%, #202329 100%);
+}
+.admin-logo {
+    min-height: 104px;
+    height: 104px;
+    justify-content: center;
+    padding: 0 18px;
+    border-bottom: 0;
+    text-decoration: none;
+}
+.admin-logo-wordmark {
+    display: inline-block;
+    color: #258cff;
+    font-size: 28px;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: -1.3px;
+    text-shadow: 0 2px 0 #10233c, 0 0 15px rgba(22, 140, 255, .18);
+}
+.admin-logo-wordmark span {
+    color: #68c84b;
+}
+.admin-navigation {
+    padding: 12px 18px 24px;
+}
+.admin-nav-title {
+    display: none;
+}
+.admin-nav-link,
+.admin-nav-group-toggle {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 60px;
+    margin: 0 0 5px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 28px;
+    background: transparent;
+    color: #e5e7eb;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color .2s ease, background .2s ease;
+}
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+}
+.admin-nav-label {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 10px;
+}
+.admin-nav-label > i {
+    display: none;
+}
+.admin-nav-group-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.admin-nav-link:hover,
+.admin-nav-group-toggle:hover {
+    color: #fff;
+    background: rgba(59, 130, 246, .08);
+    transform: none;
+}
+.admin-nav-group.is-open > .admin-nav-group-toggle {
+    color: #2787ff;
+    background: rgba(30, 58, 91, .72);
+}
+.admin-nav-plus {
+    flex: 0 0 auto;
+    color: #c7cbd1;
+    font-size: 23px;
+    font-weight: 400;
+    line-height: 1;
+}
+.admin-nav-group.is-open > .admin-nav-group-toggle .admin-nav-plus {
+    color: #2787ff;
+}
+.admin-nav-submenu {
+    display: none;
+    padding: 6px 0 12px 20px;
+}
+.admin-nav-group.is-open > .admin-nav-submenu {
+    display: block;
+}
+.admin-nav-sublink {
+    display: block;
+    padding: 10px 16px 10px 20px;
+    border-radius: 9px;
+    color: #b7b9bf;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+    text-decoration: none;
+    transition: color .2s ease, background .2s ease;
+}
+.admin-nav-sublink:hover,
+.admin-nav-sublink.active {
+    color: #fff;
+    background: rgba(255, 255, 255, .045);
+}
+.admin-nav-sublink.active {
+    color: #2787ff;
+}
+.admin-sidebar-footer {
+    padding: 12px 18px;
+}
+.admin-footer-link {
+    min-height: 44px;
+    border-radius: 22px;
+}
+@media (max-width: 900px) {
+    .admin-sidebar {
+        max-width: min(86vw, 320px);
+        width: min(86vw, 320px);
+        min-width: 0;
+    }
+    .admin-logo {
+        height: 100px;
+        min-height: 100px;
+    }
+    .admin-navigation {
+        padding: 10px 14px 20px;
+    }
+}

@@ -11,11 +11,17 @@
 
 declare(strict_types=1);
 
-if (!defined('CHECK_INDEX')) { http_response_code(403); exit('Accès interdit.'); }
+if (!defined('CHECK_INDEX')) {
+    http_response_code(403);
+    exit('Accès interdit.');
+}
 
 return [
-    'name'=>'Banishment',
-    'label'=>'Bannissements',
-    'description'=>'Gestion des bannissements et historique.',
-    'version'=>'1.0.0'
+    'admin' => [
+        'label'    => 'Bannissements',
+        'icon'     => 'fa-ban',
+        'route'    => '/admin/banishment',
+        'category' => 'Utilisateurs',
+        'order'    => 30,
+    ],
 ];

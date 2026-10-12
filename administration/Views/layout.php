@@ -58,99 +58,96 @@ if (isset($adminMenu)) {
 <body class="admin-body">
 <div class="admin-wrapper">
     <aside class="admin-sidebar">
-        <div class="admin-logo">
-            <div class="admin-logo-icon">
-                <i class="fa-solid fa-cube"></i>
+        <a class="admin-logo" href="/admin" aria-label="Bel-CMS Administration">
+            <span class="admin-logo-wordmark">Bel-<span>CMS</span></span>
+        </a>
+        <nav class="admin-navigation" aria-label="Navigation d’administration">
+            <a href="/admin" class="admin-nav-link admin-nav-home<?= ($currentPath === '/admin' || $currentPath === '/admin/') ? ' active' : '' ?>">
+                <span class="admin-nav-label"><i class="fa-solid fa-house"></i><span>Accueil</span></span>
+            </a>
+
+            <div class="admin-nav-group<?= (str_starts_with($currentPath, '/admin/settings') || str_starts_with($currentPath, '/admin/security') || str_starts_with($currentPath, '/admin/logs')) ? ' is-open' : '' ?>">
+                <button type="button" class="admin-nav-group-toggle" aria-expanded="false">
+                    <span class="admin-nav-label"><i class="fa-solid fa-sliders"></i><span>Paramètres</span></span>
+                    <span class="admin-nav-plus" aria-hidden="true"><?= (str_starts_with($currentPath, '/admin/settings') || str_starts_with($currentPath, '/admin/security') || str_starts_with($currentPath, '/admin/logs')) ? '−' : '+' ?></span>
+                </button>
+                <div class="admin-nav-submenu">
+                    <a href="/admin/settings" class="admin-nav-sublink<?= str_starts_with($currentPath, '/admin/settings') ? ' active' : '' ?>">Configuration</a>
+                    <a href="/admin/security" class="admin-nav-sublink<?= str_starts_with($currentPath, '/admin/security') ? ' active' : '' ?>">Sécurité</a>
+                    <a href="/admin/logs" class="admin-nav-sublink<?= str_starts_with($currentPath, '/admin/logs') ? ' active' : '' ?>">Journaux</a>
+                </div>
             </div>
-            <div class="admin-logo-text">
-                <strong>
-                    Bel-CMS
-                </strong>
-                <span>
-                    Administration
-                </span>
-            </div>
-        </div>
-        <nav class="admin-navigation">
-            <?php if (!empty($moduleMenuItems)): ?>
-                <div class="admin-nav-title">MODULES</div>
-                <?php foreach ($moduleMenuItems as $item): ?>
-                    <?php
-                    /*
-                     * Route d'administration du module.
-                     *
-                     * On utilise la route définie par le module
-                     * afin de ne pas déduire l'URL depuis son nom.
-                     *
-                     * Exemple :
-                     * User -> /admin/users
-                     */
-                    $moduleRoute = (string) (
-                        $item['route']
-                        ?? '/admin/' . strtolower(
-                            (string) (
-                                $item['module'] ?? ''
-                            )
-                        )
-                    );
-                    $moduleActive = false;
-                    if ($currentModule !== null) {
-                        $moduleActive =
-                            strcasecmp(
-                                (string) (
-                                    $currentModule['module']
-                                    ?? ''
-                                ),
-                                (string) (
-                                    $item['module']
-                                    ?? ''
-                                )
-                            ) === 0;
+
+            <?php
+            /*
+             * Les modules peuvent définir une catégorie via "category" ou "group".
+             * Sinon, Bel-CMS tente de les ranger selon leur nom/label.
+             */
+            $menuGroups = [
+                'Pages' => [],
+                'Utilisateurs' => [],
+                'Widgets' => [],
+                'Extras' => [],
+                'Teams' => [],
+                'ASEH' => [],
+                'Modules' => [],
+            ];
+
+            foreach ($moduleMenuItems as $item) {
+                $moduleName = strtolower((string) ($item['module'] ?? ''));
+                $moduleLabel = strtolower((string) ($item['label'] ?? $item['module'] ?? ''));
+                $category = trim((string) ($item['category'] ?? $item['group'] ?? ''));
+
+                if ($category === '') {
+                    $haystack = $moduleName . ' ' . $moduleLabel;
+                    if (str_contains($haystack, 'page') || str_contains($haystack, 'article') || str_contains($haystack, 'news')) {
+                        $category = 'Pages';
+                    } elseif (str_contains($haystack, 'user') || str_contains($haystack, 'member') || str_contains($haystack, 'utilisateur') || str_contains($haystack, 'banish') || str_contains($haystack, 'bannissement') || str_contains($haystack, 'banissement')) {
+                        $category = 'Utilisateurs';
+                    } elseif (str_contains($haystack, 'widget')) {
+                        $category = 'Widgets';
+                    } elseif (str_contains($haystack, 'team') || str_contains($haystack, 'equipe')) {
+                        $category = 'Teams';
+                    } else {
+                        $category = 'Extras';
                     }
-                    ?>
-                    <a
-                        href="<?= htmlspecialchars(
-                            $moduleRoute,
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>"
-                        class="admin-nav-link<?= $moduleActive ? ' active' : '' ?>"
-                    >
-                        <i class="fa-solid <?= htmlspecialchars(
-                            (string) (
-                                $item['icon']
-                                ?? 'fa-puzzle-piece'
-                            ),
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>"></i>
-                        <span>
-                            <?= htmlspecialchars(
-                                (string) (
-                                    $item['label']
-                                    ?? $item['module']
-                                    ?? ''
-                                ),
-                                ENT_QUOTES,
-                                'UTF-8'
-                            ) ?>
-                        </span>
-                    </a>
-                <?php endforeach; ?>
-            <?php endif; ?>
-            <div class="admin-nav-title">SYSTÈME</div>
-            <a href="/admin/security" class="admin-nav-link">
-                <i class="fa-solid fa-shield-halved"></i>
-                <span>Sécurité</span>
-            </a>
-            <a href="/admin/settings" class="admin-nav-link">
-                <i class="fa-solid fa-gears"></i>
-                <span>Configuration</span>
-            </a>
-            <a href="/admin/logs" class="admin-nav-link">
-                <i class="fa-solid fa-file-lines"></i>
-                <span>Journaux</span>
-            </a>
+                }
+
+                $categoryKey = array_key_exists($category, $menuGroups) ? $category : 'Modules';
+                $menuGroups[$categoryKey][] = $item;
+            }
+
+            foreach ($menuGroups as $groupName => $items):
+                if (empty($items)) {
+                    continue;
+                }
+                $groupOpen = false;
+                foreach ($items as $groupItem) {
+                    $route = (string) ($groupItem['route'] ?? '');
+                    if ($route !== '' && ($currentPath === $route || str_starts_with($currentPath, rtrim($route, '/') . '/'))) {
+                        $groupOpen = true;
+                        break;
+                    }
+                }
+            ?>
+                <div class="admin-nav-group<?= $groupOpen ? ' is-open' : '' ?>">
+                    <button type="button" class="admin-nav-group-toggle" aria-expanded="<?= $groupOpen ? 'true' : 'false' ?>">
+                        <span class="admin-nav-label"><i class="fa-solid <?= $groupName === 'Pages' ? 'fa-file-lines' : ($groupName === 'Utilisateurs' ? 'fa-users' : ($groupName === 'Widgets' ? 'fa-puzzle-piece' : ($groupName === 'Teams' ? 'fa-people-group' : ($groupName === 'ASEH' ? 'fa-water' : 'fa-folder-open'))) ) ?>"></i><span><?= htmlspecialchars($groupName, ENT_QUOTES, 'UTF-8') ?></span></span>
+                        <span class="admin-nav-plus" aria-hidden="true"><?= $groupOpen ? '−' : '+' ?></span>
+                    </button>
+                    <div class="admin-nav-submenu">
+                        <?php foreach ($items as $item): ?>
+                            <?php
+                            $moduleRoute = (string) ($item['route'] ?? '/admin/' . strtolower((string) ($item['module'] ?? '')));
+                            $moduleActive = $currentModule !== null && strcasecmp((string) ($currentModule['module'] ?? ''), (string) ($item['module'] ?? '')) === 0;
+                            ?>
+                            <a href="<?= htmlspecialchars($moduleRoute, ENT_QUOTES, 'UTF-8') ?>" class="admin-nav-sublink<?= $moduleActive ? ' active' : '' ?>">
+                                <?= htmlspecialchars((string) ($item['label'] ?? $item['module'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </nav>
         <div class="admin-sidebar-footer">
             <a href="/" class="admin-footer-link">
@@ -281,6 +278,23 @@ document.addEventListener(
                 }
             );
         }
+
+        document.querySelectorAll('.admin-nav-group-toggle').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const group = button.closest('.admin-nav-group');
+                if (!group) {
+                    return;
+                }
+
+                const isOpen = group.classList.toggle('is-open');
+                button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+                const indicator = button.querySelector('.admin-nav-plus');
+                if (indicator) {
+                    indicator.textContent = isOpen ? '−' : '+';
+                }
+            });
+        });
     }
 );
 </script>

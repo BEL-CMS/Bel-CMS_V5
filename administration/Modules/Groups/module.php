@@ -12,22 +12,12 @@
 declare(strict_types=1);
 
 return [
-    'name'    => 'groups',
-    'version' => '1.0.0',
-    'author'  => 'Bel-CMS',
     'admin' => [
-        'label' => 'Groupes',
-        'icon'  => 'fa-users',
-        'route' => '/admin/groups',
+        'label'    => 'Groupes',
+        'icon'     => 'fa-users',
+        'route'    => '/admin/groups',
+        'category' => 'Utilisateurs',
         'order' => 10,
-        'menu' => [
-            [
-                'label' => 'Groupes',
-                'route' => '/admin/groups',
-                'icon'  => 'fa-users',
-                'order' => 10,
-            ]
-        ],
     ],
     'assets' => [
         'css' => true,
