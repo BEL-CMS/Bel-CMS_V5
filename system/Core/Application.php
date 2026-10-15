@@ -518,11 +518,11 @@ final class Application
         * ---------------------------------------------------------
         */
         $title = 'Bel-CMS';
+
         $this->layout->render(
             $content,
             $title
         );
-        echo $content;
     }
     public function user(): User
     {
