@@ -17,6 +17,7 @@ if (!defined('CHECK_INDEX')):
 endif;
 
 use BelCMS\Core\BDD;
+use InvalidArgumentException;
 
 final class Model
 {
@@ -30,4 +31,121 @@ final class Model
 		$this->db->queryAll();
 		return $this->db->data;
 	}
+
+	public function addban (array $data) : bool
+	{
+		$this->db->table('TABLE_BANISHMENT');
+		$this->db->insert($data);
+		$this->db->data;
+		if ($this->db->data === true) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+    public function isBanned(?string $hashKey = null,?string $ipAddress = null): bool
+	{
+        $hashKey = $this->normalizeHashKey($hashKey);
+        $ipAddress = $this->normalizeIp($ipAddress);
+
+        if ($hashKey === null && $ipAddress === null) {
+            return false;
+        }
+
+        // Une sanction révoquée n'est plus active.
+        $this->db
+            ->table('TABLE_BANISHMENT')
+            ->fields(['id'])
+            ->where([
+                [
+                    'name'  => 'revoked_at',
+                    'value' => null,
+                    'op'    => 'IS NULL',
+                ],
+            ]);
+
+        // Cible : compte ou adresse IP.
+        $targets = [];
+
+        if ($hashKey !== null) {
+            $targets[] = [
+                'name'  => 'hash_key',
+                'value' => $hashKey,
+                'op'    => '=',
+            ];
+        }
+
+        if ($ipAddress !== null) {
+            $targets[] = [
+                'name'  => 'ip_address',
+                'value' => $ipAddress,
+                'op'    => '=',
+            ];
+        }
+
+        $this->db->whereOr($targets);
+
+        // Une sanction sans échéance est définitive.
+        // Une échéance future signifie que la sanction est active.
+        $this->db->whereOr([
+            [
+                'name'  => 'expires_at',
+                'value' => null,
+                'op'    => 'IS NULL',
+            ],
+            [
+                'name'  => 'expires_at',
+                'value' => gmdate('Y-m-d H:i:s'),
+                'op'    => '>',
+            ],
+        ]);
+
+        return $this->db->queryOne() !== false;
+    }
+
+    /**
+     * Normalise et valide le hash_key.
+     */
+    private function normalizeHashKey(?string $hashKey): ?string
+    {
+        if ($hashKey === null || trim($hashKey) === '') {
+            return null;
+        }
+
+        $hashKey = trim($hashKey);
+
+        // Bel-CMS utilise des identifiants alphanumériques.
+        if (!preg_match('/^[a-zA-Z0-9]{32}$/', $hashKey)) {
+            throw new InvalidArgumentException(
+                'Identifiant hash_key invalide.'
+            );
+        }
+
+        return $hashKey;
+    }
+
+    /**
+     * Valide une adresse IPv4 ou IPv6.
+     */
+    private function normalizeIp(
+        ?string $ipAddress
+    ): ?string {
+        $ipAddress = trim((string) $ipAddress);
+
+        if ($ipAddress === '') {
+            return null;
+        }
+
+        if (filter_var(
+            $ipAddress,
+            FILTER_VALIDATE_IP
+        ) === false) {
+            throw new InvalidArgumentException(
+                'Adresse IP invalide.'
+            );
+        }
+
+        return $ipAddress;
+    }
 }

@@ -21,9 +21,11 @@ return [
     [
         'method' => 'GET',
         'path' => '/admin/logs',
-        'handler' => [
-            LogsController::class,
-            'index',
-        ],
+        'handler' => [LogsController::class, 'index'],
+    ],
+    [
+        'method' => 'POST',
+        'path' => '/admin/logs/ban',
+        'handler' => [LogsController::class, 'ban'],
     ],
 ];

@@ -11,6 +11,7 @@
 declare(strict_types=1);
 
 namespace BelCMS\Core;
+
 use BelCMS\Core\BDD;
 
 final class Profils

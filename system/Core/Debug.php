@@ -112,7 +112,7 @@ final class Debug
         bool $collapse
     ): void {
         $values = is_object($data)
-            ? get_object_vars($data)
+            ? self::getObjectProperties($data)
             : $data;
         /*
          * Mode terminal
@@ -160,7 +160,7 @@ final class Debug
         );
         $display = $collapse
             ? 'none'
-            : 'inline';
+            : 'block';
 
         $arrow = $collapse
             ? '&#10549;'
@@ -230,6 +230,42 @@ final class Debug
 
         echo '</div>';
     }
+    /**
+     * Récupère les propriétés d'un objet, y compris protected/private.
+     * Les objets imbriqués seront ensuite affichés récursivement.
+     *
+     * @return array<string, mixed>
+     */
+    private static function getObjectProperties(object $data): array
+    {
+        $properties = [];
+        $reflection = new \ReflectionObject($data);
+
+        foreach ($reflection->getProperties() as $property) {
+            if ($property->isStatic()) {
+                continue;
+            }
+
+            if (!$property->isInitialized($data)) {
+                $properties[$property->getName()] = '[non initialisée]';
+                continue;
+            }
+
+            try {
+                $properties[$property->getName()] = $property->getValue($data);
+            } catch (\Throwable $e) {
+                $properties[$property->getName()] = '[inaccessible]';
+            }
+        }
+
+        // Inclut aussi les propriétés dynamiques éventuelles.
+        foreach (get_object_vars($data) as $key => $value) {
+            $properties[$key] ??= $value;
+        }
+
+        return $properties;
+    }
+
     /**
      * Affiche une valeur simple
      */
@@ -336,7 +372,7 @@ window.BelCMSDebug = {
             container.style.display === 'none';
 
         container.style.display =
-            hidden ? 'inline' : 'none';
+            hidden ? 'block' : 'none';
 
         if (plus) {
             plus.innerHTML =

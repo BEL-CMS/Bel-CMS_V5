@@ -9,6 +9,7 @@
 */
 
 declare(strict_types=1);
+
 namespace BelCMS\Core;
 
 if (!defined('CHECK_INDEX')):

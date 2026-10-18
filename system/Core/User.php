@@ -12,6 +12,11 @@ declare(strict_types=1);
 
 namespace BelCMS\Core;
 
+if (!defined('CHECK_INDEX')):
+	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
+	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
+endif;
+
 use BelCMS\Core\Security\RecoveryCode;
 use BelCMS\Core\Security\TOTP\ProvisioningUri;
 use BelCMS\Core\Security\TOTP\TOTP;
@@ -70,6 +75,8 @@ final class User
 
         if (is_object($this->db->data)) {
             $this->currentUser = $this->db->data;
+
+            define("HASH_KEY_USER", $this->db->data->hash_key);
 
             // Charge les informations complémentaires une seule fois
             // pour la durée de vie de l'instance User.
@@ -894,5 +901,18 @@ final class User
         $db->queryOne();
 
         return is_object($db->data) ? $db->data->username : null;
+    }
+
+    public static function isUserExist(string $hash_key): bool
+    {
+        $db = new BDD();
+        $db->table('TABLE_USERS');
+        $db->where([
+            'name'  => 'hash_key',
+            'value' => $hash_key,
+        ]);
+        $db->count();
+
+        return $db->data == 1 ? true : false;
     }
 }

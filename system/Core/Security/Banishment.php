@@ -189,15 +189,15 @@ final class Banishment
             ->insert([
                 'banishment_key' => $banishmentKey,
                 'hash_key'       => $hashKey,
-                'ip_address'   => $ipAddress,
-                'reason'       => $reason,
-                'level'        => $level,
-                'created_by'   => $adminHashKey,
-                'created_at'   => $now,
-                'expires_at'   => $expiresAt,
-                'revoked_at'   => null,
-                'revoked_by'   => null,
-                'revoke_reason' => null,
+                'ip_address'     => $ipAddress,
+                'reason'         => $reason,
+                'level'          => $level,
+                'created_by'     => $adminHashKey,
+                'created_at'     => $now,
+                'expires_at'     => $expiresAt,
+                'revoked_at'     => null,
+                'revoked_by'     => null,
+                'revoke_reason'  => null,
             ]);
 
         if (!$inserted) {
@@ -214,7 +214,7 @@ final class Banishment
         $this->db
             ->table('TABLE_BANISHMENT_LOGS')
             ->insert([
-                'banishment_id'  => $id,
+                'banishment_id'   => $id,
                 'target_hash_key' => $hashKey,
                 'target_ip'       => $ipAddress,
                 'admin_hash_key'  => $adminHashKey,
@@ -411,5 +411,10 @@ final class Banishment
         }
 
         return null;
+    }
+
+    public static function isBan(string $ipAddress) : bool
+    {
+        return self::isBanned($ipAddress);
     }
 }
