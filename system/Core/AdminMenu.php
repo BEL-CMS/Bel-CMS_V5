@@ -168,7 +168,6 @@ final class AdminMenu
                 'Widgets',
                 'Extras',
                 'Teams',
-                'ASEH',
             ];
 
             $category = trim((string) (
@@ -297,6 +296,7 @@ final class AdminMenu
                 'path'    => $path,
                 'menu'    => $menu,
             ];
+
         }
 
         /*

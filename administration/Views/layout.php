@@ -38,6 +38,20 @@ if (isset($adminMenu)) {
         $currentModuleMenu = $adminMenu->currentMenu();
     }
 }
+
+// Modules de la catégorie Paramètres à intégrer au sous-menu fixe.
+$settingsModuleItems = [];
+foreach ($moduleMenuItems as $moduleItem) {
+    $itemRoute = parse_url((string) ($moduleItem['route'] ?? ''), PHP_URL_PATH);
+    $itemCategory = trim((string) ($moduleItem['category'] ?? $moduleItem['group'] ?? ''));
+    if (
+        strcasecmp($itemCategory, 'Paramètres') === 0
+        && !in_array($itemRoute, ['/admin/settings', '/admin/security', '/admin/logs'], true)
+        && !empty($moduleItem['route'])
+    ) {
+        $settingsModuleItems[] = $moduleItem;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -75,6 +89,19 @@ if (isset($adminMenu)) {
                     <a href="/admin/settings" class="admin-nav-sublink<?= str_starts_with($currentPath, '/admin/settings') ? ' active' : '' ?>">Configuration</a>
                     <a href="/admin/security" class="admin-nav-sublink<?= str_starts_with($currentPath, '/admin/security') ? ' active' : '' ?>">Sécurité</a>
                     <a href="/admin/logs" class="admin-nav-sublink<?= str_starts_with($currentPath, '/admin/logs') ? ' active' : '' ?>">Journaux</a>
+                    <?php foreach ($settingsModuleItems ?? [] as $settingsItem): ?>
+                        <?php
+                        $settingsRoute = (string) ($settingsItem['route'] ?? '');
+                        if ($settingsRoute === '') {
+                            continue;
+                        }
+                        $settingsActive = $currentPath === $settingsRoute
+                            || str_starts_with($currentPath, rtrim($settingsRoute, '/') . '/');
+                        ?>
+                        <a href="<?= htmlspecialchars($settingsRoute, ENT_QUOTES, 'UTF-8') ?>" class="admin-nav-sublink<?= $settingsActive ? ' active' : '' ?>">
+                            <?= htmlspecialchars((string) ($settingsItem['label'] ?? $settingsItem['module'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
             </div>
 
@@ -84,19 +111,29 @@ if (isset($adminMenu)) {
              * Sinon, Bel-CMS tente de les ranger selon leur nom/label.
              */
             $menuGroups = [
-                'Pages' => [],
+                'Pages'        => [],
                 'Utilisateurs' => [],
-                'Widgets' => [],
-                'Extras' => [],
-                'Teams' => [],
-                'ASEH' => [],
-                'Modules' => [],
+                'Widgets'      => [],
+                'Teams'        => [],
             ];
 
             foreach ($moduleMenuItems as $item) {
+
+                $moduleRoute = parse_url(
+                    (string) ($item['route'] ?? ''),
+                    PHP_URL_PATH
+                );
+
+                // Ces entrées sont déjà déclarées manuellement
+                // dans le sous-menu Paramètres.
+                if (in_array($moduleRoute, ['/admin/settings', '/admin/security', '/admin/logs'], true)) {
+                    continue;
+                }
+
                 $moduleName = strtolower((string) ($item['module'] ?? ''));
                 $moduleLabel = strtolower((string) ($item['label'] ?? $item['module'] ?? ''));
                 $category = trim((string) ($item['category'] ?? $item['group'] ?? ''));
+
 
                 if ($category === '') {
                     $haystack = $moduleName . ' ' . $moduleLabel;
@@ -108,13 +145,23 @@ if (isset($adminMenu)) {
                         $category = 'Widgets';
                     } elseif (str_contains($haystack, 'team') || str_contains($haystack, 'equipe')) {
                         $category = 'Teams';
-                    } else {
-                        $category = 'Extras';
+                    } elseif (str_contains($haystack, 'settings') || str_contains($haystack, 'configuration') || str_contains($haystack, 'security') || str_contains($haystack, 'logs')) {
+                        $category = 'Paramètres';
                     }
                 }
 
-                $categoryKey = array_key_exists($category, $menuGroups) ? $category : 'Modules';
-                $menuGroups[$categoryKey][] = $item;
+                // Les modules de catégorie Paramètres sont ajoutés
+                // au sous-menu Paramètres existant, sans créer de doublon.
+                if (strcasecmp($category, 'Paramètres') === 0) {
+                    continue;
+                }
+
+                // Ne créer aucune nouvelle catégorie automatiquement.
+                if (!array_key_exists($category, $menuGroups)) {
+                    continue;
+                }
+
+                $menuGroups[$category][] = $item;
             }
 
             foreach ($menuGroups as $groupName => $items):
@@ -132,7 +179,8 @@ if (isset($adminMenu)) {
             ?>
                 <div class="admin-nav-group<?= $groupOpen ? ' is-open' : '' ?>">
                     <button type="button" class="admin-nav-group-toggle" aria-expanded="<?= $groupOpen ? 'true' : 'false' ?>">
-                        <span class="admin-nav-label"><i class="fa-solid <?= $groupName === 'Pages' ? 'fa-file-lines' : ($groupName === 'Utilisateurs' ? 'fa-users' : ($groupName === 'Widgets' ? 'fa-puzzle-piece' : ($groupName === 'Teams' ? 'fa-people-group' : ($groupName === 'ASEH' ? 'fa-water' : 'fa-folder-open'))) ) ?>"></i><span><?= htmlspecialchars($groupName, ENT_QUOTES, 'UTF-8') ?></span></span>
+                        <span class="admin-nav-label">
+                            <i class="fa-solid <?= $groupName === 'Pages' ? 'fa-file-lines' : ($groupName === 'Utilisateurs' ? 'fa-users' : ($groupName === 'Widgets' ? 'fa-puzzle-piece' : ($groupName === 'Teams' ? 'fa-people-group' : ($groupName === 'Settings' ? 'fa-gear' : 'fa-folder-open'))) ) ?>"></i><span><?= htmlspecialchars($groupName, ENT_QUOTES, 'UTF-8') ?></span></span>
                         <span class="admin-nav-plus" aria-hidden="true"><?= $groupOpen ? '−' : '+' ?></span>
                     </button>
                     <div class="admin-nav-submenu">
@@ -180,14 +228,7 @@ if (isset($adminMenu)) {
                         <i class="fa-solid fa-user"></i>
                     </span>
                     <span class="admin-user-name">
-                        <?= htmlspecialchars(
-                            (string) (
-                                $user->username
-                                ?? 'Administrateur'
-                            ),
-                            ENT_QUOTES,
-                            'UTF-8'
-                        ) ?>
+                        <?= htmlspecialchars((string) ($user->username?? 'Administrateur'),ENT_QUOTES,'UTF-8'); ?>
                     </span>
                 </a>
             </div>

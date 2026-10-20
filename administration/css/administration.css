@@ -1,6 +1,21 @@
 :root {
     --admin-color-red: red;
     --admin-color-blue: #168cff;
+    --bel-cms-color-green: #57C785;
+    --bel-cms-color-red: rgba(222, 62, 57, 0.667);
+    --bel-cms-color-blue: #457cfc;
+    --bel-cms-color-yellow: #eddd53;
+    --bel-cms-color-orange: #fdb045;
+    --bel-cms-color-purple: #9b5de5;
+    --bel-cms-color-pink: #f15bb5;
+    --bel-cms-color-cyan: #00bbf9;
+    --bel-cms-color-gray: #6c757d;
+    --bel-cms-color-dark: #343a40;
+    --bel-cms-color-light: #f8f9fa;
+    --bel-cms-admin-bg: linear-gradient( 145deg, rgba(13, 31, 54, 0.96), rgba(6, 15, 28, 0.96) );
+    --bel-cms-admin-border: rgba(255, 255, 255, 0.10);
+    --bel-cms-admin-title: #8f9bb0;
+    --bel-cms-admin-white: #FFF;
 }
 .admin-user-button {
     display: inline-flex;
@@ -27,13 +42,17 @@
 }
 .admin-user-color-red {
     background: #b43a83;
-    background: linear-gradient(180deg,rgba(180, 58, 131, 1) 0%, rgba(253, 29, 29, 1) 50%, rgba(252, 176, 69, 1) 100%);
+    background: linear-gradient(180deg,rgba(180, 58, 131, 1) 0%, rgba(253, 29, 29, 1) 75%, rgba(252, 176, 69, 1) 100%);
     color: #fff !important;
 }
 .admin-user-color-blue {
     background: #457cfc;
     background: linear-gradient(180deg,rgba(69, 124, 252, 1) 0%, rgba(112, 175, 186, 1) 50%, rgba(109, 118, 138, 1) 100%);
     color: #fff !important;
+}
+.admin-user-color-green {
+    color: #3fcf8e;
+    background: rgba(63, 207, 142, .10);
 }
 .admin-user-color-blue a {
     color: #fff !important;
@@ -943,4 +962,207 @@
     .admin-navigation {
         padding: 10px 14px 20px;
     }
+}
+
+.admin-card-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+.admin-panel {
+  background: var(--bel-cms-admin-bg);
+  border: 1px solid rgba(44, 143, 224, 0.17);
+  border-radius: 14px;
+  padding: 25px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.16);
+}
+.admin-panel-two-columns {
+    background: var(--bel-cms-admin-bg);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+    overflow: hidden;
+    border: 1px solid var(--bel-cms-color-border);
+    border-radius: 12px;
+    padding: 20px;
+
+}
+.admin-panel-two-columns-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: #111b2b;
+  border: 1px solid #1d3049;
+  border-radius: 12px;
+}
+.admin-panel-card-body table {
+    width: 100%;
+}
+.admin-panel-card-body table tr {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.admin-panel-card-body table tr td:nth-child(1)
+{
+    min-width: 180px;
+    color: var(--bel-cms-admin-title);
+    font-size: 13px;    
+}
+input[type="text"], input[type="email"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.20);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+input[type="text"]:focus, input[type="email"]:focus {
+    border-color: #287cff;
+    box-shadow: 0 0 0 3px rgba(40, 124, 255, 0.12);
+}
+.admin-checkbox { display: flex; align-items: center; gap: 9px;
+ color: #cfd6e5;
+ cursor: pointer; }
+.admin-checkbox input { width: 16px; height: 16px;
+ cursor: pointer; } 
+textarea {
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.20);
+    width: calc(99% - 30px);
+    max-width: 100%;
+    height: 50px;
+    border: 1px solid var(--bel-cms-admin-border);
+    padding: 15px;
+    border-radius: 8px;
+    resize: vertical;
+}
+.btn-primary {
+    color: #ffffff;
+    background: #2381c0;
+    border-color: #2381c0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 0 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin: 0 5px;
+}
+.btn-action.red {
+    background-color: var(--admin-color-red);
+    color: var(--bel-cms-admin-white);
+    border: 1px solid var(--bel-cms-admin-white);
+}
+.btn-action.blue {
+    background-color: var(--bel-cms-color-blue);
+    color:var(--bel-cms-color-dark);
+    border: 1px solid var(--bel-cms-color-dark);
+}
+#belcms_admin_grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+.belcms_admin_content {
+    background: linear-gradient( 145deg, rgba(13, 31, 54, 0.96), rgba(6, 15, 28, 0.96) );
+    border: 1px solid rgba(44, 143, 224, 0.17);
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.16);
+}
+.belcms_admin_content_grid_2 {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 25px;
+    width: 100%;
+}
+.belcms_admin_grid_title {
+    display: block;
+    width: 100%;
+    margin: 0;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+.belcms_form {
+    display: block;
+    width: 100%;
+    margin: auto;
+}
+.belcms_form_div {
+    display: flex;
+    margin-bottom: 20px;
+}
+.belcms_form label {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    color: #71839a;
+    background: #162235;
+    border: 1px solid #263c57;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: rgb(38, 60, 87);
+    border-right: 0;
+    border-radius: 8px 0 0 8px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.belcms_form select,
+.belcms_form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.20);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.belcms_form select:active,
+.belcms_form input:active {
+    color: rgba(0, 0, 0, 0.80);
+}
+.belcms_form_prefix {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 25px;
+}
+.belcms_form_prefix:last-child {
+    margin-bottom: 0;
 }
