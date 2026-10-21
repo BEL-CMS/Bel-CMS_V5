@@ -27,6 +27,7 @@ final class Application
     private Config $config;
     private BDD $db;
     private ModuleManager $modules;
+    private ConfigCMS $configCMS;
     private Groups $groups;
     private View $view;
     private Layout $layout;
@@ -56,6 +57,12 @@ final class Application
         * Tables
         */
         require_once dirname(__DIR__, 2) . '/config/tables.php';
+        /*
+        * Config CMS
+        */
+        $this->configCMS = new ConfigCMS();
+        $this->configCMS->loadConfig();
+        $GLOBALS['belcms_config'] = $this->configCMS;
         /*
         * Groupes
         */
