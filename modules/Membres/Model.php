@@ -1,83 +1,70 @@
 <?php
-/**
- * Bel-CMS [Content management system]
- * @version 5.0.0 [PHP8.5]
- * @link https://bel-cms.dev
- * @link https://determe.be
- * @license Apache-2.0 license
- * @copyright 2015-2026 Bel-CMS
- * @author as Stive - stive@determe.be
- */
-
+/** Bel-CMS V5 — Module Membres | Apache-2.0 */
 declare(strict_types=1);
-
 namespace BelCMS\Modules\Membres;
-
 use BelCMS\Core\BDD;
-
 final class Model
 {
-    /**
-     * Retourne les profils publics disponibles.
-     *
-     * On utilise la table des profils comme source publique afin de ne jamais
-     * exposer directement les champs sensibles de la table principale des utilisateurs.
-     */
-    public function getMembers(): array
+    private const PUBLIC_FIELDS = [
+        'hash_key', 'username', 'avatar', 'cover_avatar', 'last_name',
+        'country', 'infos_text', 'websites', 'profils', 'date_registration', 'public_mail',
+    ];
+
+    public function getMembers(int $page = 1, int $perPage = 24, string $search = ''): array
+    {
+        $page = max(1, $page);
+        $perPage = max(1, min(60, $perPage));
+        $db = new BDD();
+        $db->table(TABLE_USERS_PROFILS);
+        $db->fields(['hash_key', 'username', 'avatar', 'country', 'infos_text']);
+        if ($search !== '') {
+            $db->whereLike(['name' => 'username', 'value' => $search]);
+        }
+        $db->orderby([['name' => 'username', 'type' => 'ASC']]);
+        $db->limit([($page - 1) * $perPage, $perPage], true);
+        $rows = $db->queryAll();
+        return array_values(array_filter($rows, static fn($member): bool =>
+            is_object($member)
+            && trim((string) ($member->hash_key ?? '')) !== ''
+            && trim((string) ($member->username ?? '')) !== ''
+        ));
+    }
+
+    public function countMembers(string $search = ''): int
     {
         $db = new BDD();
         $db->table(TABLE_USERS_PROFILS);
-        $db->queryAll();
-
-        if (!is_array($db->data)) {
-            return [];
+        if ($search !== '') {
+            $db->whereLike(['name' => 'username', 'value' => $search]);
         }
-
-        return array_values(array_filter(
-            $db->data,
-            static function ($member): bool {
-                return is_object($member)
-                    && trim((string) ($member->hash_key ?? '')) !== ''
-                    && trim((string) ($member->username ?? '')) !== '';
-            }
-        ));
+        return $db->count();
     }
 
     public function getMemberByHashKey(string $hashKey): ?object
     {
         $hashKey = trim($hashKey);
-
-        if ($hashKey === '') {
-            return null;
-        }
-
+        if ($hashKey === '') return null;
         $db = new BDD();
         $db->table(TABLE_USERS_PROFILS);
-        $db->where([
-            'name'  => 'hash_key',
-            'value' => $hashKey,
-        ]);
+        $db->fields(self::PUBLIC_FIELDS);
+        $db->where(['name' => 'hash_key', 'value' => $hashKey, 'op' => '=']);
         $db->queryOne();
-
         return is_object($db->data) ? $db->data : null;
     }
 
     public function getSocialByHashKey(string $hashKey): ?object
     {
         $hashKey = trim($hashKey);
-
-        if ($hashKey === '') {
-            return null;
-        }
-
+        if ($hashKey === '' || !defined('TABLE_USERS_SOCIAL')) return null;
         $db = new BDD();
         $db->table(TABLE_USERS_SOCIAL);
-        $db->where([
-            'name'  => 'hash_key',
-            'value' => $hashKey,
+        $db->fields([
+            'hash_key', 'facebook', 'youtube', 'whatsapp', 'instagram', 'messenger',
+            'tiktok', 'snapchat', 'telegram', 'pinterest', 'x_twitter', 'reddit',
+            'linkedIn', 'skype', 'viber', 'teams_ms', 'discord', 'twitch',
         ]);
+        $db->where(['name' => 'hash_key', 'value' => $hashKey, 'op' => '=']);
         $db->queryOne();
-
         return is_object($db->data) ? $db->data : null;
     }
 }

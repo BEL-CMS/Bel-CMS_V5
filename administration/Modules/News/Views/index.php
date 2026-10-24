@@ -162,17 +162,14 @@ foreach ($categories as $category) {
                     <tbody>
                     <?php foreach ($news as $article): ?>
                         <?php
-                        $id = (int) $article->id;
-                        $category =
-                            $categoryMap[(int) $article->id_cat]
-                            ?? null;
-                        $title = (string) $article->title;
-                        $slug = (string) $article->slug;
-                        $status = (int) $article->status;
-                        $views = (int) $article->views;
-                        $likes = (int) $article->likes;
-                        $createdAt =
-                            (string) $article->created_at;
+                        $id        = (int) $article->id;
+                        $category  = $categoryMap[(int) $article->id_cat] ?? null;
+                        $title     = (string) $article->title;
+                        $slug      = (string) $article->slug;
+                        $status    = (int) $article->status;
+                        $views     = (int) $article->views;
+                        $likes     = (int) $article->likes;
+                        $createdAt = (string) $article->created_at;
                         ?>
                         <tr>
                             <!-- =================================================

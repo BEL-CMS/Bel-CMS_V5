@@ -3,7 +3,6 @@
  * Bel-CMS [Content management system]
  * @version 5.0.0 [PHP8.5]
  * @link https://bel-cms.dev
- * @link https://determe.be
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
@@ -28,7 +27,7 @@ final class Model
     {
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'id',
@@ -47,7 +46,7 @@ final class Model
     {
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'username',
@@ -66,7 +65,7 @@ final class Model
     {
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'email',
@@ -93,7 +92,7 @@ final class Model
 
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'id',
@@ -124,7 +123,7 @@ final class Model
 
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'id',
@@ -144,7 +143,7 @@ final class Model
     ): bool {
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'id',
@@ -213,7 +212,7 @@ final class Model
 
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'id',
@@ -264,7 +263,7 @@ public function verifyPassword(
 
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'id',
@@ -284,7 +283,7 @@ public function verifyPassword(
     ): mixed {
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         $sql->where([
             'name'  => 'hash_key',
@@ -309,7 +308,7 @@ public function deleteTemporary(
 
     $sql = new BDD();
 
-    $sql->table('belcms_user_temp');
+    $sql->table('TABLE_USERS_TMP');
 
     $sql->where([
         'name'  => 'validation_key',
@@ -371,7 +370,7 @@ public function createFromTemporary(
      */
     $sql = new BDD();
 
-    $sql->table('belcms_user');
+    $sql->table('TABLE_USERS');
 
     return $sql->insert([
         'username'           => $temporaryUser->username,
@@ -405,7 +404,7 @@ public function createFromTemporary(
 
         $sql = new BDD();
 
-        $sql->table('belcms_user_sessions');
+        $sql->table('TABLE_USERS_SESSIONS');
 
         return $sql->insert([
             'hash_key'       => $hashKey,
@@ -425,7 +424,7 @@ public function createFromTemporary(
     ): mixed {
         $sql = new BDD();
 
-        $sql->table('belcms_user_sessions');
+        $sql->table('TABLE_USERS_SESSIONS');
 
         $sql->where([
             'name'  => 'session_token',
@@ -444,7 +443,7 @@ public function createFromTemporary(
     ): bool {
         $sql = new BDD();
 
-        $sql->table('belcms_user_sessions');
+        $sql->table('TABLE_USERS_SESSIONS');
 
         $sql->where([
             'name'  => 'session_token',
@@ -550,7 +549,7 @@ public function createFromTemporary(
         */
         $sql = new BDD();
 
-        $sql->table('belcms_user');
+        $sql->table('TABLE_USERS');
 
         return $sql->insert([
             'username'           => $username,
@@ -592,7 +591,7 @@ public function createFromTemporary(
 
         $sql = new BDD();
 
-        $sql->table('belcms_user_temp');
+        $sql->table('TABLE_USERS_TMP');
 
         return $sql->insert([
             'username'       => $username,
@@ -619,7 +618,7 @@ public function createFromTemporary(
 
         $sql = new BDD();
 
-        $sql->table('belcms_user_temp');
+        $sql->table('TABLE_USERS_TMP');
 
         $sql->where([
             'name'  => 'validation_key',
@@ -645,7 +644,7 @@ public function createFromTemporary(
 
         $sql = new BDD();
 
-        $sql->table('belcms_user_temp');
+        $sql->table('TABLE_USERS_TMP');
 
         $sql->where([
             'name'  => 'username',
@@ -671,7 +670,7 @@ public function createFromTemporary(
 
         $sql = new BDD();
 
-        $sql->table('belcms_user_temp');
+        $sql->table('TABLE_USERS_TMP');
 
         $sql->where([
             'name'  => 'email',
@@ -687,7 +686,7 @@ public function createFromTemporary(
     {
         $sql = new BDD();
 
-        $sql->table('belcms_user_temp');
+        $sql->table('TABLE_USERS_TMP');
 
         $sql->where([
             'name'  => 'expires_at',

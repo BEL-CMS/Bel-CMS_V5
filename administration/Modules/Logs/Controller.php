@@ -53,7 +53,9 @@ final class Controller
                 'Accès interdit'
             );
         }
-
+        $this->assets->css(
+            '/administration/Modules/News/css/news.css'
+        );
         $this->assets->css(
             '/administration/Modules/Logs/css/logs.css'
         );

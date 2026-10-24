@@ -19,14 +19,14 @@ $errors = $errors ?? [];
 if ($news === null) {
     return;
 }
-$id = (int) $news->id;
-$title = (string) ($news->title ?? '');
-$slug = (string) ($news->slug ?? '');
-$idCat = (int) ($news->id_cat ?? 0);
-$image = (string) ($news->image ?? '');
+$id      = (int) $news->id;
+$title   = (string) ($news->title ?? '');
+$slug    = (string) ($news->slug ?? '');
+$idCat   = (int) ($news->id_cat ?? 0);
+$image   = (string) ($news->image ?? '');
 $content = (string) ($news->content ?? '');
-$tags = (string) ($news->tags ?? '');
-$status = (int) ($news->status ?? 0);
+$tags    = (string) ($news->tags ?? '');
+$status  = (int) ($news->status ?? 0);
 ?>
 <div class="admin-news-form">
     <!-- =====================================================

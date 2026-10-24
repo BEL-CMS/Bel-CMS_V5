@@ -419,3 +419,13 @@
         height: 96px;
     }
 }
+
+/* Recherche et pagination de l'annuaire */
+.members-search{display:flex;align-items:center;gap:10px;margin:0 0 24px;padding:14px;background:rgba(7,20,34,.78);border:1px solid rgba(42,93,140,.34);border-radius:14px}
+.members-search input{flex:1;min-width:0;min-height:44px;padding:0 14px;color:#e8f3ff;background:#071624;border:1px solid rgba(47,101,150,.45);border-radius:9px;outline:none}
+.members-search input:focus{border-color:#168cff;box-shadow:0 0 0 3px rgba(22,140,255,.14)}
+.members-search button,.members-search>a,.members-pagination a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 14px;color:#fff;text-decoration:none;background:#0f77d4;border:1px solid rgba(75,161,228,.42);border-radius:9px;font-weight:700;cursor:pointer}
+.members-search>a{color:#9bb6ce;background:transparent}
+.members-pagination{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:28px;color:#9bb6ce}
+.members-pagination a{min-height:38px}
+@media(max-width:560px){.members-search{align-items:stretch;flex-direction:column}.members-search input,.members-search button,.members-search>a{width:100%;box-sizing:border-box}.members-pagination{flex-wrap:wrap}}

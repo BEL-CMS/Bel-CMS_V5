@@ -1,6 +1,20 @@
 <?php
+/**
+ * Bel-CMS [Content management system]
+ * @version 5.0.0 [PHP8.5]
+ * @link https://bel-cms.dev
+ * @license Apache-2.0 license
+ * @copyright 2015-2026 Bel-CMS
+ * @author as Stive - stive@determe.be
+*/
+
+if (!defined('CHECK_INDEX')):
+	header($_SERVER['SERVER_PROTOCOL'] . ' 403 Direct access forbidden');
+	exit('<!doctype html><html><head><meta charset="utf-8"><title>BEL-CMS : Error 403 Forbidden</title><style>h1{margin: 20px auto;text-align:center;color: red;}p{text-align:center;font-weight:bold;</style></head><body><h1>HTTP Error 403 : Forbidden</h1><p>You don\'t permission to access / on this server.</p></body></html>');
+endif;
 
 use BelCMS\system\Common;
+
 
 $member = $member ?? null;
 $social = $social ?? null;
@@ -19,11 +33,17 @@ function membres_profile_media(?string $value): ?string
         return null;
     }
 
-    if (preg_match('~^(?:https?:)?//~i', $value) === 1 || str_starts_with($value, '/')) {
-        return $value;
+    // Accepte uniquement les URL HTTP(S) ou les chemins locaux sûrs.
+    if (preg_match('~^https?://~i', $value) === 1) {
+        return preg_match('/[\x00-\x20\'"()<>\\]/', $value) === 1 ? null : $value;
     }
-
-    return '/' . ltrim($value, '/');
+    if (str_starts_with($value, '/') && !str_starts_with($value, '//')) {
+        return preg_match("~[\\x00-\\x20'\"()<>\\x5C]~", $value) === 1 ? null : $value;
+    }
+    if (preg_match('/^[a-zA-Z0-9_./-]+$/', $value) === 1) {
+        return '/' . ltrim($value, '/');
+    }
+    return null;
 }
 
 function membres_social_url(string $network, string $value): string

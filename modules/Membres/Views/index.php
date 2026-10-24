@@ -1,6 +1,10 @@
 <?php
 /** @var array $members */
 $members = $members ?? [];
+$page = max(1, (int) ($page ?? 1));
+$pages = max(1, (int) ($pages ?? 1));
+$total = max(0, (int) ($total ?? count($members)));
+$search = (string) ($search ?? '');
 
 function membres_e(mixed $value): string
 {
@@ -35,6 +39,13 @@ function membres_avatar(?string $avatar): ?string
             <span>membre<?= count($members) > 1 ? 's' : '' ?></span>
         </div>
     </div>
+
+    <form class="members-search" method="get" action="/members" role="search">
+        <label class="visually-hidden" for="members-search">Rechercher un membre</label>
+        <input id="members-search" type="search" name="search" value="<?= membres_e($search) ?>" maxlength="100" placeholder="Rechercher par pseudo…">
+        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i> Rechercher</button>
+        <?php if ($search !== ''): ?><a href="/members">Effacer</a><?php endif; ?>
+    </form>
 
     <?php if ($members === []): ?>
         <div class="members-empty">
@@ -88,5 +99,12 @@ function membres_avatar(?string $avatar): ?string
                 </article>
             <?php endforeach; ?>
         </div>
+        <?php if ($pages > 1): ?>
+            <nav class="members-pagination" aria-label="Pagination des membres">
+                <?php if ($page > 1): ?><a href="/members?<?= http_build_query(['search' => $search, 'page' => $page - 1]) ?>" rel="prev">← Précédent</a><?php endif; ?>
+                <span>Page <?= $page ?> sur <?= $pages ?></span>
+                <?php if ($page < $pages): ?><a href="/members?<?= http_build_query(['search' => $search, 'page' => $page + 1]) ?>" rel="next">Suivant →</a><?php endif; ?>
+            </nav>
+        <?php endif; ?>
     <?php endif; ?>
 </div>

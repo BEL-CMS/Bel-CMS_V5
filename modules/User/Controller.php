@@ -3,7 +3,6 @@
  * Bel-CMS [Content management system]
  * @version 5.0.0 [PHP8.5]
  * @link https://bel-cms.dev
- * @link https://determe.be
  * @license Apache-2.0 license
  * @copyright 2015-2026 Bel-CMS
  * @author as Stive - stive@determe.be
@@ -17,6 +16,7 @@ use BelCMS\Core\User;
 use BelCMS\Core\View;
 use BelCMS\Core\UserSession;
 use BelCMS\Core\Captcha;
+use BelCMS\Core\Mail;
 
 final class Controller
 {
@@ -938,17 +938,7 @@ final class Controller
                             'Impossible d’enregistrer votre inscription.';
                     } else {
 
-                        $scheme = (
-                            (
-                                !empty($_SERVER['HTTPS'])
-                                && $_SERVER['HTTPS'] !== 'off'
-                            )
-                            ||
-                            (
-                                isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
-                                && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https'
-                            )
-                        ) ? 'https' : 'http';
+                        $scheme = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])&& $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) ? 'https' : 'http';
 
                         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
@@ -959,47 +949,12 @@ final class Controller
                             . '/user/verify?key='
                             . urlencode($validationKey);
 
-                        $subject =
-                            'Validez votre inscription sur Bel-CMS';
 
-                        $message = <<<MAIL
-Bonjour {$username},
-
-Votre inscription sur Bel-CMS a bien été enregistrée.
-
-Pour valider votre inscription et activer votre compte, veuillez utiliser le lien suivant :
-
-{$validationLink}
-
-Ce lien de validation est valable pendant 24 heures.
-
-Si vous n'êtes pas à l'origine de cette inscription, vous pouvez ignorer cet e-mail.
-
-Cordialement,
-
-L'équipe Bel-CMS
-https://bel-cms.dev
-MAIL;
-
-                        $headers = [
-                            'MIME-Version: 1.0',
-                            'Content-Type: text/plain; charset=UTF-8',
-                            'From: Bel-CMS <noreply@bel-cms.dev>',
-                            'Reply-To: noreply@bel-cms.dev',
-                        ];
-
-                        $mailSent = @mail(
-                            $email,
-                            $subject,
-                            $message,
-                            implode("\r\n", $headers)
-                        );
-
-                        $isLocalhost = in_array(
-                            strtolower($host),
-                            ['localhost', '127.0.0.1', '::1'],
-                            true
-                        );
+                        $mail = new Mail;
+                        $mail->addAdress($email);
+                        $mail->subject('Validez votre inscription sur Bel-CMS');
+                        $mail->body(self::getHtmlRegistred($username, $validationLink));
+                        $mailSent = $mail->submit();
 
                         if ($mailSent) {
                             $success =
@@ -1009,10 +964,6 @@ MAIL;
                             $validationLink = null;
                             $username = '';
                             $email = '';
-                        } elseif ($isLocalhost) {
-                            $success =
-                                'Inscription enregistrée en attente de validation. '
-                                . 'Mode développement : utilisez le lien ci-dessous pour valider le compte.';
                         } else {
                             $errors[] =
                                 'Votre inscription est enregistrée, mais '
@@ -1039,6 +990,94 @@ MAIL;
         );
     }
 
+    private function getHtmlRegistred (string $username, string $validationLink) : string
+    {
+        $data = '
+            <html>
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Confirmation d\'inscription</title>
+            </head>
+            <body style="margin:0; padding:0; background-color:#f1f5f9; font-family:Arial,Helvetica,sans-serif;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+                    style="background-color:#f1f5f9; padding:30px 10px;">
+                    <tr>
+                        <td align="center">
+                            <table role="presentation" width="600" cellspacing="0"
+                                cellpadding="0" style="max-width:600px; width:100%;
+                                background-color:#ffffff; border-radius:12px; overflow:hidden;">
+                                <tr>
+                                    <td align="center"
+                                        style="background:linear-gradient(135deg,#007bff,#0047ab);
+                                        padding:35px 20px; color:#ffffff;">
+                                        <h1 style="margin:0; font-size:28px;">
+                                            '.$GLOBALS['belcms_config']->configCMS['NAME_WEB'].'
+                                        </h1>
+                                        <p style="margin:10px 0 0; font-size:14px; color:#dbeafe;">
+                                            Bienvenue dans notre communauté !
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:35px 30px; color:#334155; line-height:1.7;">
+                                        <h2 style="color:#0f172a; font-size:22px;">
+                                            Bonjour '.$username.' !
+                                        </h2>
+                                        <p>Nous sommes ravis de vous accueillir sur <strong>'.$GLOBALS['belcms_config']->configCMS['NAME_WEB'].'</strong>.
+                                        </p>
+                                        <p>
+                                            Votre inscription a bien été prise en compte.
+                                            Pour activer votre compte et profiter de toutes
+                                            les fonctionnalités de notre plateforme,
+                                            veuillez confirmer votre adresse e-mail.
+                                        </p>
+                                        <table role="presentation" align="center" cellspacing="0" cellpadding="0" style="margin:30px auto;">
+                                            <tr>
+                                                <td align="center"
+                                                    style="background-color:#007bff;
+                                                    border-radius:6px;">
+                                                    <a href="{{confirmation_url}}"
+                                                    target="_blank"
+                                                    style="display:inline-block;
+                                                    padding:14px 28px;
+                                                    color:#ffffff;
+                                                    text-decoration:none;
+                                                    font-weight:bold;
+                                                    font-size:15px;">
+                                                        Confirmer mon inscription
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <p style="font-size:13px; color:#64748b;">Si le bouton ne fonctionne pas, copiez et collez le lien suivant dans votre navigateur :</p>
+                                        <p style="font-size:13px; word-break:break-all;">
+                                            <a href="'.$validationLink.'" style="color:#007bff;">
+                                                '.$validationLink.'
+                                            </a>
+                                        </p>
+                                        <p>Si vous n\'êtes pas à l\'origine de cette inscription, vous pouvez simplement ignorer cet e-mail.</p>
+                                        <p style="margin-top:25px;">À bientôt,<br><strong>L\'équipe '.$GLOBALS['belcms_config']->configCMS['NAME_WEB'].'</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="background-color:#f8fafc; padding:20px;border-top:1px solid #e2e8f0;">
+                                        <p style="margin:0; font-size:12px; color:#64748b;">© '.date('Y').' '.$GLOBALS['belcms_config']->configCMS['NAME_WEB'].' — Tous droits réservés.</p>
+                                        <p style="margin:8px 0 0; font-size:11px; color:#94a3b8;"> Ceci est un e-mail automatique, merci de ne pas répondre directement à ce message.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+        ';
+        return $data;
+    }
+
     /**
      * Validation d'une inscription temporaire.
      */
@@ -1057,57 +1096,30 @@ MAIL;
         );
 
         if (
-            $validationKey === ''
-            || !preg_match('/^[a-f0-9]{64}$/i', $validationKey)
-        ) {
-            $error =
-                'Le lien de validation est invalide.';
-
+            $validationKey === '' || !preg_match('/^[a-f0-9]{64}$/i', $validationKey)) {
+            $error = 'Le lien de validation est invalide.';
         } else {
-
-            $temporaryUser =
-                $this->model->getTemporaryByValidationKey(
-                    $validationKey
-                );
+            $temporaryUser = $this->model->getTemporaryByValidationKey($validationKey);
 
             if (!$temporaryUser) {
+                $error = 'Cette inscription est introuvable ou le lien a déjà été utilisé.';
 
-                $error =
-                    'Cette inscription est introuvable ou le lien a déjà été utilisé.';
-
-            } elseif (
-                !empty($temporaryUser->expires_at)
-                && strtotime((string)$temporaryUser->expires_at) <= time()
-            ) {
-
+            } elseif (!empty($temporaryUser->expires_at) && strtotime((string)$temporaryUser->expires_at) <= time()) {
                 $this->model->deleteTemporary(
                     $validationKey
                 );
-
-                $error =
-                    'Ce lien de validation a expiré. Veuillez recommencer votre inscription.';
-
-            } elseif (
-                !$this->model->createFromTemporary(
-                    $temporaryUser
-                )
-            ) {
-
-                $error =
-                    'Impossible de finaliser la création de votre compte.';
-
+                $error = 'Ce lien de validation a expiré. Veuillez recommencer votre inscription.';
+            } elseif (!$this->model->createFromTemporary($temporaryUser)) {
+                $error = 'Impossible de finaliser la création de votre compte.';
             } else {
-
                 /*
                  * =========================================================
                  * LE COMPTE EST MAINTENANT VALIDÉ
                  * =========================================================
                  */
-
                 $this->model->deleteTemporary(
                     $validationKey
                 );
-
                 /*
                  * =========================================================
                  * MAIL DE CONFIRMATION APRÈS VALIDATION
@@ -1149,29 +1161,11 @@ MAIL;
                         . '/user/login';
                 }
 
-                $message = <<<MAIL
-Bonjour {$username},
-
-Votre compte Bel-CMS a été validé avec succès.
-
-Vous pouvez maintenant vous connecter à votre espace personnel :
-
-{$loginUrl}
-
-Merci pour votre inscription.
-
-Cordialement,
-
-L'équipe Bel-CMS
-https://bel-cms.dev
-MAIL;
-
-                $headers = [
-                    'MIME-Version: 1.0',
-                    'Content-Type: text/plain; charset=UTF-8',
-                    'From: Bel-CMS <noreply@bel-cms.dev>',
-                    'Reply-To: noreply@bel-cms.dev',
-                ];
+                    $mail = new Mail;
+                    $mail->addAdress($email);
+                    $mail->subject('Validez votre inscription sur Bel-CMS');
+                    $mail->body(self::getHtmlLogin($username, $loginUrl));
+                    $mailSent = $mail->submit();
 
                 /*
                  * L'échec du mail de confirmation ne remet PAS
@@ -1184,9 +1178,7 @@ MAIL;
                     implode("\r\n", $headers)
                 );
 
-                $success =
-                    'Votre compte a été validé avec succès. '
-                    . 'Vous pouvez maintenant vous connecter.';
+                $success = 'Votre compte a été validé avec succès. '. 'Vous pouvez maintenant vous connecter.';
             }
         }
 
@@ -1200,4 +1192,87 @@ MAIL;
         );
     }
 
+    private function getHtmlLogin(string $username, string $loginUrl) {
+        $data = '
+            <html>
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Confirmation d\'inscription</title>
+            </head>
+            <body style="margin:0; padding:0; background-color:#f1f5f9; font-family:Arial,Helvetica,sans-serif;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+                    style="background-color:#f1f5f9; padding:30px 10px;">
+                    <tr>
+                        <td align="center">
+                            <table role="presentation" width="600" cellspacing="0"
+                                cellpadding="0" style="max-width:600px; width:100%;
+                                background-color:#ffffff; border-radius:12px; overflow:hidden;">
+                                <tr>
+                                    <td align="center"
+                                        style="background:linear-gradient(135deg,#007bff,#0047ab);
+                                        padding:35px 20px; color:#ffffff;">
+                                        <h1 style="margin:0; font-size:28px;">
+                                            '.$GLOBALS['belcms_config']->configCMS['NAME_WEB'].'
+                                        </h1>
+                                        <p style="margin:10px 0 0; font-size:14px; color:#dbeafe;">
+                                            Bienvenue dans notre communauté !
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:35px 30px; color:#334155; line-height:1.7;">
+                                        <h2 style="color:#0f172a; font-size:22px;">
+                                            Bonjour '.$username.' !
+                                        </h2>
+                                        <p>Votre compte <strong>'.$GLOBALS['belcms_config']->configCMS['NAME_WEB'].'</strong> a été validé avec succès.
+                                        </p>
+                                        <p>
+                                            Vous pouvez maintenant vous connecter à votre espace personnel :
+                                        </p>
+                                        <table role="presentation" align="center" cellspacing="0" cellpadding="0" style="margin:30px auto;">
+                                            <tr>
+                                                <td align="center"
+                                                    style="background-color:#007bff;
+                                                    border-radius:6px;">
+                                                    <a href="'.$loginUrl.'"
+                                                    target="_blank"
+                                                    style="display:inline-block;
+                                                    padding:14px 28px;
+                                                    color:#ffffff;
+                                                    text-decoration:none;
+                                                    font-weight:bold;
+                                                    font-size:15px;">
+                                                        Confirmer mon inscription
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <p style="font-size:13px; color:#64748b;">Si le bouton ne fonctionne pas, copiez et collez le lien suivant dans votre navigateur :</p>
+                                        <p style="font-size:13px; word-break:break-all;">
+                                            <a href="'.$loginUrl.'" style="color:#007bff;">
+                                                '.$loginUrl.'
+                                            </a>
+                                        </p>
+                                        <p>Merci pour votre inscription.</p>
+                                        <p style="margin-top:25px;">À bientôt,<br><strong>L\'équipe '.$GLOBALS['belcms_config']->configCMS['NAME_WEB'].'</strong></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center" style="background-color:#f8fafc; padding:20px;border-top:1px solid #e2e8f0;">
+                                        <p style="margin:0; font-size:12px; color:#64748b;">© '.date('Y').' '.$GLOBALS['belcms_config']->configCMS['NAME_WEB'].' — Tous droits réservés.</p>
+                                        <p style="margin:8px 0 0; font-size:11px; color:#94a3b8;"> Ceci est un e-mail automatique, merci de ne pas répondre directement à ce message.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+        ';
+        return $data;
+    }
 }

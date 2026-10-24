@@ -147,6 +147,10 @@
     color: #f0a84b;
     background: rgba(240, 168, 75, .10);
 }
+.admin-news-stat-icon.ban {
+    color: red;
+    background: rgba(222, 62, 57, 0.667);
+}
 
 .admin-news-stat-value {
     display: block;
